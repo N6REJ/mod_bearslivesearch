@@ -2,6 +2,8 @@
 <extension type="package" version="5.0" method="upgrade">
     <name>Bears Live Search</name>
     <author>N6REJ</author>
+    <authorEmail>troy@hallhome.us</authorEmail>
+    <authorUrl>https://hallhome.us</authorUrl>
     <creationDate>2025-07-15</creationDate>
     <copyright>Copyright (c) 2025 N6REJ</copyright>
     <license>GNU General Public License version 3 or later; see License.txt</license>

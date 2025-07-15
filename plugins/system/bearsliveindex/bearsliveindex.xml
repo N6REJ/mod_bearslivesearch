@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="plugin" group="system" method="upgrade" version="4.0">
+    <state>1</state>
+    <name>Bears Live Search</name>
+    <author>N6REJ</author>
+    <authorEmail>troy@hallhome.us</authorEmail>
+    <authorUrl>https://hallhome.us</authorUrl>
+    <creationDate>2025-07-15</creationDate>
+    <copyright>Copyright (c) 2025 N6REJ</copyright>
+    <license>GNU General Public License version 3 or later; see License.txt</license>
+    <version>2025.7.15.1</version>
+    <description>System plugin to schedule Finder (Smart Search) indexing using Joomla Task Scheduler.</description>
+    <files>
+        <filename plugin="bearsliveindex">bearsliveindex.php</filename>
+    </files>
+    <config>
+        <fields name="params">
+            <fieldset name="basic">
+                <field name="schedule" type="text" label="Indexing Schedule (cron)" description="Cron expression for indexing schedule. Default: 0 0 * * * (daily at midnight)" default="0 0 * * *" />
+            </fieldset>
+        </fields>
+    </config>
+</extension>
