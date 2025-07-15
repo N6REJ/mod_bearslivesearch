@@ -1,0 +1,33 @@
+name: Package Extension
+
+on:
+  push:
+    tags:
+      - '*'
+  pull_request:
+    types: [closed]
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  package:
+    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'pull_request' && github.event.pull_request.merged == true) || github.event_name == 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GH_PAT }}
+      - name: Joomla Extension Packager
+        uses: N6REJ/joomla-packager@2025.6.24
+        with:
+          extension-name: 'pkg_bearslivesearch'
+          extension-xml: 'pkg_bearslivesearch.xml'
+          extension-type: 'package'
+          author: 'N6REJ'
+          copyright-holder: 'N6REJ'
+          copyright-start-year: '2025'
+          github-token: ${{ secrets.GH_PAT }}

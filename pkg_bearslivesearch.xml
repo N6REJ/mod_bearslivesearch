@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="package" version="5.0" method="upgrade">
+    <name>Bears Live Search</name>
+    <author>N6REJ</author>
+    <creationDate>2025-07-15</creationDate>
+    <copyright>Copyright (c) 2025 N6REJ</copyright>
+    <license>GNU General Public License version 3 or later; see License.txt</license>
+    <version>2025.7.15.1</version>
+    <description>AJAX live search system focused on accessibility for Joomla 5.</description>
+    <files>
+        <file type="module" id="mod_bearslivesearch">modules/mod_bearslivesearch</file>
+        <file type="plugin" group="finder" id="bearslivesearch">plugins/finder/bearslivesearch</file>
+    </files>
+</extension>

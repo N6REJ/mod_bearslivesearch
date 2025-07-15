@@ -703,3 +703,7 @@
 /README.txt
 /robots.txt.dist
 /web.config.txt
+
+# Idea
+.idea
+.godo
