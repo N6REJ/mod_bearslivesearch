@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="plugin" group="finder" method="upgrade" version="4.0">
+    <state>1</state>
+    <name>plg_finder_bearslivesearch</name>
+    <author>N6REJ</author>
+    <authorEmail>troy@hallhome.us</authorEmail>
+    <authorUrl>https://hallhome.us</authorUrl>
+    <creationDate>2025-07-15</creationDate>
+    <copyright>Copyright (c) 2025 N6REJ</copyright>
+    <license>GNU General Public License version 3 or later; see License.txt</license>
+    <version>2025.7.15.1</version>
+    <description>Finder plugin for indexing Bear's Live Search content.</description>
+    <files>
+        <filename plugin="bearslivesearch">bearslivesearch.php</filename>
+        <filename>language/en-GB.plg_finder_bearslivesearch.ini</filename>
+        <filename>language/en-GB.plg_finder_bearslivesearch.sys.ini</filename>
+    </files>
+</extension>

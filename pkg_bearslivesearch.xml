@@ -13,4 +13,7 @@
         <file type="module" id="mod_bearslivesearch">modules/mod_bearslivesearch</file>
         <file type="plugin" group="finder" id="bearslivesearch">plugins/finder/bearslivesearch</file>
     </files>
+<updateservers>
+    <server type="extension" priority="1" name="Bears Live Search Updates">https://raw.githubusercontent.com/N6REJ/bearslivesearch/main/updates.xml</server>
+</updateservers>
 </extension>
