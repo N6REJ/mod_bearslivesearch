@@ -168,6 +168,21 @@ class ModBearslivesearchHelper
         }
 
         try {
+            // Get module params for desc_limit (works for AJAX too)
+            $outputLimit = 0;
+            try {
+                $moduleId = (int) (\Joomla\CMS\Factory::getApplication()->input->get('moduleId', 0) ?: \Joomla\CMS\Factory::getApplication()->input->get('module', 0));
+                if ($moduleId) {
+                    $module = \Joomla\CMS\Helper\ModuleHelper::getModule('mod_bearslivesearch', '', $moduleId);
+                    if ($module && isset($module->params)) {
+                        $modParams = new \Joomla\Registry\Registry($module->params);
+                        $outputLimit = (int) $modParams->get('output_limit');
+                    }
+                }
+            } catch (\Throwable $e) {
+                $outputLimit = 0;
+            }
+
             $output = '<ul class="bearslivesearch-list" role="list">';
 
             // Check if results is iterable
@@ -242,9 +257,8 @@ class ModBearslivesearchHelper
                     try {
                         $desc = strip_tags($desc);
                         // Only use the field value, no fallback
-                        $descLimit = isset($params) ? (int)$params->get('desc_limit') : 0;
-                        if ($descLimit > 0 && mb_strlen($desc) > $descLimit) {
-                            $trunc = mb_substr($desc, 0, $descLimit);
+                        if ($outputLimit > 0 && mb_strlen($desc) > $outputLimit) {
+                            $trunc = mb_substr($desc, 0, $outputLimit);
                             // Break on last space (word boundary)
                             $lastSpace = mb_strrpos($trunc, ' ');
                             if ($lastSpace !== false) {
@@ -290,11 +304,12 @@ class ModBearslivesearchHelper
 
                     // Add the item to the output - use concatenation in a try-catch block
                     try {
-                        $itemOutput = '<li role="listitem"><a href="' . $link . '"><span class="bearslivesearch-title">' . $title . '</span>';
+                        $itemOutput = '<li role="listitem">';
+                        $itemOutput .= '<a href="' . $link . '" class="bearslivesearch-title-link"><span class="bearslivesearch-title">' . ($index + 1) . '. ' . $title . '</span></a>';
                         if (!empty($desc)) {
-                            $itemOutput .= '<span class="bearslivesearch-desc">' . $desc . '</span>';
+                            $itemOutput .= '<div class="bearslivesearch-result">' . $desc . '</div>';
                         }
-                        $itemOutput .= '</a></li>';
+                        $itemOutput .= '</li>';
                         $output .= $itemOutput;
                     } catch (\Throwable $t) {
                         // Log the error but continue with a simplified output

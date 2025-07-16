@@ -40,8 +40,21 @@
                 // Show loading indicator
                 updateResults('<div class="bearslivesearch-loading" role="status">Searching...</div>');
 
-                // Use the standard AJAX URL for this module
+                // Get moduleId from the container's id attribute
+                var moduleContainer = form.closest('.bearslivesearch');
+                var moduleId = '';
+                if (moduleContainer && moduleContainer.id) {
+                    var match = moduleContainer.id.match(/bearslivesearch-(\d+)/);
+                    if (match) {
+                        moduleId = match[1];
+                    }
+                }
+
+                // Use the standard AJAX URL for this module, including moduleId
                 var ajaxUrl = window.location.origin + '/index.php?option=com_ajax&module=bearslivesearch&method=search&format=raw&q=' + encodeURIComponent(query);
+                if (moduleId) {
+                    ajaxUrl += '&moduleId=' + encodeURIComponent(moduleId);
+                }
 
                 xhr = new XMLHttpRequest();
                 xhr.open('GET', ajaxUrl, true);
