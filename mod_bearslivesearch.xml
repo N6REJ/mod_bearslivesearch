@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="module" version="4.0" client="site" method="upgrade">
+    <name>mod_bearslivesearch</name>
+    <author>N6REJ</author>
+    <authorEmail>troy@hallhome.us</authorEmail>
+    <authorUrl>https://hallhome.us/software</authorUrl>
+    <creationDate>2025-07-15</creationDate>
+    <copyright>Copyright (c) 2025 N6REJ</copyright>
+    <license>GNU General Public License version 3 or later; see License.txt</license>
+    <version>2025.7.15.1</version>
+    <description>Bears Accessibility search module using Ajax.</description>
+    <files>
+        <filename module="mod_bearslivesearch">mod_bearslivesearch.php</filename>
+        <filename>helper.php</filename>
+        <filename>tmpl/default.php</filename>
+        <filename>media/js/bearslivesearch.js</filename>
+        <filename>media/css/bearslivesearch.css</filename>
+    </files>
+    <module>
+        <published>0</published>
+    </module>
+    <config>
+        <fields name="params">
+            <fieldset name="basic">
+                <field name="input_margin" type="text" label="Input Form Margin" description="CSS margin for the input form (e.g. 1em 0)" default="1em 0" />
+                <field name="output_margin" type="text" label="Output Form Margin" description="CSS margin for the output form (e.g. 1em 0)" default="1em 0" />
+            </fieldset>
+            <fieldset name="advanced">
+                <field
+                    name="moduleclass_sfx"
+                    type="text"
+                    label="COM_MODULES_FIELD_MODULECLASS_SFX_LABEL"
+                    description="COM_MODULES_FIELD_MODULECLASS_SFX_DESC" />
+                <field
+                    name="cache"
+                    type="list"
+                    default="1"
+                    label="COM_MODULES_FIELD_CACHING_LABEL"
+                    description="COM_MODULES_FIELD_CACHING_DESC">
+                    <option value="1">JGLOBAL_USE_GLOBAL</option>
+                    <option value="0">COM_MODULES_FIELD_VALUE_NOCACHING</option>
+                </field>
+                <field
+                    name="cache_time"
+                    type="text"
+                    default="900"
+                    label="COM_MODULES_FIELD_CACHE_TIME_LABEL"
+                    description="COM_MODULES_FIELD_CACHE_TIME_DESC" />
+                <field
+                    name="cachemode"
+                    type="hidden"
+                    default="static">
+                    <option value="static"></option>
+                </field>
+            </fieldset>
+        </fields>
+    </config>
+</extension>
