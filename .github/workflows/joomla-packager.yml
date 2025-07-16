@@ -24,9 +24,6 @@ jobs:
       - name: Joomla Extension Packager
         uses: N6REJ/joomla-packager@2025.6.24
         with:
-          extension-name: 'pkg_bearslivesearch'
-          extension-xml: 'pkg_bearslivesearch.xml'
-          extension-type: 'package'
           author: 'N6REJ'
           copyright-holder: 'N6REJ'
           copyright-start-year: '2025'
