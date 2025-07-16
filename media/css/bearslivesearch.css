@@ -10,18 +10,25 @@
  * @license GNU General Public License version 3 or later; see LICENSE.txt
  * @since 2025.7.15
  */
-/* Accessible, responsive styles for Bearslivesearch */
+
+/* Main container */
 .bearslivesearch {
     width: 100%;
     max-width: 600px;
     margin-left: auto;
     margin-right: auto;
+    margin-bottom: 1.5em;
 }
+
+/* Search form */
 .bearslivesearch-form {
     display: flex;
     align-items: center;
     gap: 0.5em;
+    position: relative;
+    max-width: 100%;
 }
+
 .bearslivesearch-form input[type="search"] {
     flex: 1 1 auto;
     padding: 0.75em 1em;
@@ -32,6 +39,7 @@
     width: 100%;
     box-sizing: border-box;
 }
+
 .bearslivesearch-form button {
     padding: 0.75em 1.5em;
     font-size: 1.1em;
@@ -42,14 +50,18 @@
     cursor: pointer;
     transition: background 0.2s;
 }
+
 .bearslivesearch-form button:focus,
 .bearslivesearch-form button:focus-visible {
     outline: 2px solid #222;
     outline-offset: 2px;
 }
+
 .bearslivesearch-form button:hover {
     background: #003d80;
 }
+
+/* Results area */
 .bearslivesearch-results {
     min-height: 2em;
     background: #f9f9f9;
@@ -57,14 +69,84 @@
     padding: 0.5em;
     margin-top: 0.5em;
     font-size: 1em;
+    max-height: 400px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
 }
+
+/* Loading indicator */
+.bearslivesearch-loading {
+    text-align: center;
+    padding: 1em;
+    color: #666;
+}
+
+.bearslivesearch-loading::after {
+    content: "";
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    margin-left: 0.5em;
+    border: 2px solid #ddd;
+    border-top: 2px solid #0056b3;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Results list */
+.bearslivesearch-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.bearslivesearch-list li {
+    padding: 0.5em;
+    border-bottom: 1px solid #eee;
+}
+
+.bearslivesearch-list li:last-child {
+    border-bottom: none;
+}
+
+.bearslivesearch-list a {
+    display: block;
+    color: #333;
+    text-decoration: none;
+}
+
+.bearslivesearch-list a:hover {
+    background: #f8f9fa;
+}
+
+.bearslivesearch-title {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 0.25em;
+}
+
+.bearslivesearch-desc {
+    display: block;
+    font-size: 0.9em;
+    color: #666;
+}
+
+/* Accessibility */
 .visually-hidden {
     position: absolute !important;
-    height: 1px; width: 1px;
+    height: 1px; 
+    width: 1px;
     overflow: hidden;
     clip: rect(1px, 1px, 1px, 1px);
     white-space: nowrap;
 }
+
+/* Responsive styles */
 @media (max-width: 600px) {
     .bearslivesearch-form {
         flex-direction: column;
