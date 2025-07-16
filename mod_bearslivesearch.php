@@ -8,7 +8,7 @@
  * @email troy@hallhome.us
  * @website https://hallhome.us/software
  * @copyright Copyright (C) 2025 Troy Hall (N6REJ)
- * @license GNU General Public License version 3 or later; see LICENSE.txt
+ * @license GNU General Public License version 3 or later; see License.txt
  * @since 2025.7.15
  */
 

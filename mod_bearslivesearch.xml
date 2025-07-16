@@ -15,15 +15,35 @@
         <filename>tmpl/default.php</filename>
         <filename>media/js/bearslivesearch.js</filename>
         <filename>media/css/bearslivesearch.css</filename>
+        <filename>ajax.php</filename>
+        <filename>language/en-GB/en-GB.mod_bearslivesearch.ini</filename>
+        <filename>language/en-GB/en-GB.mod_bearslivesearch.sys.ini</filename>
     </files>
+    <languages>
+        <language tag="en-GB">language/en-GB/en-GB.mod_bearslivesearch.ini</language>
+        <language tag="en-GB">language/en-GB/en-GB.mod_bearslivesearch.sys.ini</language>
+    </languages>
     <module>
         <published>0</published>
     </module>
     <config>
         <fields name="params">
             <fieldset name="basic">
-                <field name="input_margin" type="text" label="Input Form Margin" description="CSS margin for the input form (e.g. 1em 0)" default="1em 0" />
-                <field name="output_margin" type="text" label="Output Form Margin" description="CSS margin for the output form (e.g. 1em 0)" default="1em 0" />
+                <field name="input_margin" type="text" label="MOD_BEARSLIVESEARCH_INPUT_MARGIN" description="MOD_BEARSLIVESEARCH_INPUT_MARGIN_DESC" default="1em 0" />
+                <field name="output_margin" type="text" label="MOD_BEARSLIVESEARCH_OUTPUT_MARGIN" description="MOD_BEARSLIVESEARCH_OUTPUT_MARGIN_DESC" default="1em 0" />
+                <field name="use_fontawesome" type="radio" label="MOD_BEARSLIVESEARCH_USE_FONTAWESOME" description="MOD_BEARSLIVESEARCH_USE_FONTAWESOME_DESC" default="0">
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+                <field name="show_input_icon" type="radio" label="MOD_BEARSLIVESEARCH_SHOW_INPUT_ICON" description="MOD_BEARSLIVESEARCH_SHOW_INPUT_ICON_DESC" default="1">
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+                <field name="input_icon" type="text" label="MOD_BEARSLIVESEARCH_INPUT_ICON" description="MOD_BEARSLIVESEARCH_INPUT_ICON_DESC" default="fas fa-search" />
+                <field name="icon_position" type="list" label="MOD_BEARSLIVESEARCH_ICON_POSITION" description="MOD_BEARSLIVESEARCH_ICON_POSITION_DESC" default="end">
+                    <option value="beginning">MOD_BEARSLIVESEARCH_ICON_POSITION_BEGINNING</option>
+                    <option value="end">MOD_BEARSLIVESEARCH_ICON_POSITION_END</option>
+                </field>
             </fieldset>
             <fieldset name="advanced">
                 <field
@@ -55,4 +75,7 @@
             </fieldset>
         </fields>
     </config>
+    <updateservers>
+        <server type="extension" priority="1" name="Bears Live Search Updates">https://raw.githubusercontent.com/N6REJ/mod_bearslivesearch/main/updates.xml</server>
+    </updateservers>
 </extension>
