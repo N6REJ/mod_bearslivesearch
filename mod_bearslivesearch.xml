@@ -28,6 +28,7 @@
             <fieldset name="basic">
                 <field name="input_margin" type="text" label="MOD_BEARSLIVESEARCH_INPUT_MARGIN" description="MOD_BEARSLIVESEARCH_INPUT_MARGIN_DESC" default="1em 0" />
                 <field name="output_margin" type="text" label="MOD_BEARSLIVESEARCH_OUTPUT_MARGIN" description="MOD_BEARSLIVESEARCH_OUTPUT_MARGIN_DESC" default="1em 0" />
+                <field name="desc_limit" type="number" label="MOD_BEARSLIVESEARCH_DESC_LIMIT" description="MOD_BEARSLIVESEARCH_DESC_LIMIT_DESC" default="300" min="10" max="1000" />
             </fieldset>
             <fieldset name="advanced">
                 <field

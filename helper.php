@@ -238,9 +238,21 @@ class ModBearslivesearchHelper
                         \Joomla\CMS\Log\Log::add('Error getting description: ' . $t->getMessage(), \Joomla\CMS\Log\Log::WARNING, 'mod_bearslivesearch');
                     }
 
-                    // Safely strip tags and convert to string
+                    // Safely strip tags and convert to string, then limit length
                     try {
-                        $desc = htmlspecialchars(strip_tags($desc), ENT_QUOTES, 'UTF-8');
+                        $desc = strip_tags($desc);
+                        // Only use the field value, no fallback
+                        $descLimit = isset($params) ? (int)$params->get('desc_limit') : 0;
+                        if ($descLimit > 0 && mb_strlen($desc) > $descLimit) {
+                            $trunc = mb_substr($desc, 0, $descLimit);
+                            // Break on last space (word boundary)
+                            $lastSpace = mb_strrpos($trunc, ' ');
+                            if ($lastSpace !== false) {
+                                $trunc = mb_substr($trunc, 0, $lastSpace);
+                            }
+                            $desc = $trunc . '…';
+                        }
+                        $desc = htmlspecialchars($desc, ENT_QUOTES, 'UTF-8');
                     } catch (\Throwable $t) {
                         // Log the error but continue with empty description
                         \Joomla\CMS\Log\Log::add('Error processing description: ' . $t->getMessage(), \Joomla\CMS\Log\Log::WARNING, 'mod_bearslivesearch');

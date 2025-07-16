@@ -22,6 +22,11 @@
 
             function updateResults(html) {
                 results.innerHTML = html;
+                if (!html || !html.trim() || /role="status".*no results/i.test(html)) {
+                    results.classList.add('bearslivesearch-results--hidden');
+                } else {
+                    results.classList.remove('bearslivesearch-results--hidden');
+                }
                 input.focus();
             }
 
@@ -35,104 +40,29 @@
                 // Show loading indicator
                 updateResults('<div class="bearslivesearch-loading" role="status">Searching...</div>');
 
-                // Try different URL formats for the AJAX request
-                var urlFormats = [
-                    // First try the test method to verify the AJAX system is working
-                    window.location.origin + '/index.php?option=com_ajax&module=bearslivesearch&method=test&format=raw',
-                    window.location.origin + '/index.php?option=com_ajax&module=bearslivesearch&method=test&format=json',
+                // Use the standard AJAX URL for this module
+                var ajaxUrl = window.location.origin + '/index.php?option=com_ajax&module=bearslivesearch&method=search&format=raw&q=' + encodeURIComponent(query);
 
-                    // Then try different formats for the search method
-                    // Absolute URLs with window.location.origin
-                    window.location.origin + '/index.php?option=com_ajax&module=bearslivesearch&method=search&format=raw&q=' + encodeURIComponent(query),
-                    window.location.origin + '/index.php?option=com_ajax&module=bearslivesearch&format=raw&q=' + encodeURIComponent(query),
+                xhr = new XMLHttpRequest();
+                xhr.open('GET', ajaxUrl, true);
+                xhr.timeout = 5000; // 5 seconds timeout
 
-                    // Relative URLs with and without leading slash
-                    '/index.php?option=com_ajax&module=bearslivesearch&method=search&format=raw&q=' + encodeURIComponent(query),
-                    'index.php?option=com_ajax&module=bearslivesearch&method=search&format=raw&q=' + encodeURIComponent(query),
-
-                    // Try with different module name formats
-                    window.location.origin + '/index.php?option=com_ajax&module=mod_bearslivesearch&method=search&format=raw&q=' + encodeURIComponent(query),
-                    '/index.php?option=com_ajax&module=mod_bearslivesearch&method=search&format=raw&q=' + encodeURIComponent(query),
-
-                    // Try with different format parameters
-                    window.location.origin + '/index.php?option=com_ajax&module=bearslivesearch&method=search&format=json&q=' + encodeURIComponent(query),
-                    window.location.origin + '/index.php?option=com_ajax&module=bearslivesearch&method=search&q=' + encodeURIComponent(query)
-                ];
-
-                var currentUrlIndex = 0;
-
-                function tryNextUrl() {
-                    if (currentUrlIndex >= urlFormats.length) {
-                        console.error('All AJAX URL formats failed');
-                        // Fallback to direct URL access
-                        var fallbackUrl = window.location.origin + '/index.php?option=com_search&searchword=' + encodeURIComponent(query);
-                        console.log('Falling back to direct search URL:', fallbackUrl);
-                        updateResults('<div role="alert">AJAX search failed. <a href="' + fallbackUrl + '">Click here to search</a> or try again later.</div>');
-                        return;
-                    }
-
-                    var ajaxUrl = urlFormats[currentUrlIndex];
-                    console.log('Trying AJAX URL format ' + (currentUrlIndex + 1) + ':', ajaxUrl);
-
-                    xhr = new XMLHttpRequest();
-                    xhr.open('GET', ajaxUrl, true);
-                    xhr.timeout = 5000; // 5 seconds timeout
-
-                    // Handle timeout
-                    xhr.ontimeout = function() {
-                        console.error('AJAX request timed out for format ' + (currentUrlIndex + 1));
-                        currentUrlIndex++;
-                        tryNextUrl();
-                    };
-
-                    // Handle network errors
-                    xhr.onerror = function() {
-                        console.error('Network error for format ' + (currentUrlIndex + 1));
-                        currentUrlIndex++;
-                        tryNextUrl();
-                    };
-                    xhr.onreadystatechange = function() {
-                        if (xhr.readyState === 4) {
-                            console.log('AJAX response status for format ' + (currentUrlIndex + 1) + ':', xhr.status);
-                            if (xhr.status === 200) {
-                                // Special case for test method
-                                if (currentUrlIndex === 0 || currentUrlIndex === 1) {
-                                    console.log('Test method successful, response:', xhr.responseText);
-                                    // Test was successful, now try the actual search
-                                    currentUrlIndex = 2; // Skip to the first search URL
-                                    tryNextUrl();
-                                } else {
-                                    // Handle JSON response if needed
-                                    if (xhr.responseText.startsWith('{') && xhr.responseText.endsWith('}')) {
-                                        try {
-                                            var jsonResponse = JSON.parse(xhr.responseText);
-                                            if (jsonResponse.success === true && jsonResponse.data) {
-                                                updateResults(jsonResponse.data);
-                                            } else if (jsonResponse.message) {
-                                                console.error('JSON error message:', jsonResponse.message);
-                                                updateResults('<div role="alert">Error: ' + jsonResponse.message + '</div>');
-                                            } else {
-                                                updateResults(xhr.responseText);
-                                            }
-                                        } catch (e) {
-                                            console.error('Error parsing JSON:', e);
-                                            updateResults(xhr.responseText);
-                                        }
-                                    } else {
-                                        updateResults(xhr.responseText);
-                                    }
-                                }
-                            } else {
-                                console.error('AJAX error for format ' + (currentUrlIndex + 1) + ':', xhr.status, xhr.statusText);
-                                currentUrlIndex++;
-                                tryNextUrl();
-                            }
+                xhr.ontimeout = function() {
+                    updateResults('<div role="alert">AJAX search timed out. Please try again.</div>');
+                };
+                xhr.onerror = function() {
+                    updateResults('<div role="alert">AJAX search failed. Please check your connection.</div>');
+                };
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState === 4) {
+                        if (xhr.status === 200) {
+                            updateResults(xhr.responseText);
+                        } else {
+                            updateResults('<div role="alert">AJAX search failed. Please try again.</div>');
                         }
-                    };
-                    xhr.send();
-                }
-
-                tryNextUrl();
+                    }
+                };
+                xhr.send();
             }
 
             form.addEventListener('submit', function(e) {
