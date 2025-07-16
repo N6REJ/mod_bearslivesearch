@@ -375,6 +375,28 @@ class ModBearslivesearchHelper
                     \Joomla\CMS\HTML\HTMLHelper::_('behavior.core');
                     $pagination = new \JPagination($totalMatches, $offset, $resultsLimit);
                     $paginationHtml = $pagination->getPagesLinks();
+                    // Accessibility patch: add aria-current and aria-labels
+                    $paginationHtml = preg_replace_callback(
+                        '/<li[^>]*class="[^"]*active[^"]*"[^>]*>\s*<span[^>]*>(\d+)<\/span>\s*<\/li>/i',
+                        function ($m) {
+                            return '<li class="active"><span aria-current="page">' . $m[1] . '</span></li>';
+                        },
+                        $paginationHtml
+                    );
+                    $paginationHtml = preg_replace_callback(
+                        '/<a([^>]+)>(First|Last|Next|Previous)<\/a>/i',
+                        function ($m) {
+                            $label = '';
+                            switch (strtolower($m[2])) {
+                                case 'first': $label = 'First page'; break;
+                                case 'last': $label = 'Last page'; break;
+                                case 'next': $label = 'Next page'; break;
+                                case 'previous': $label = 'Previous page'; break;
+                            }
+                            return '<a' . $m[1] . ' aria-label="' . $label . '">' . $m[2] . '</a>';
+                        },
+                        $paginationHtml
+                    );
                     $output .= $paginationHtml;
                 }
 

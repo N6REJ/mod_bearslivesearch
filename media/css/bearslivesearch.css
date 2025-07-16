@@ -27,6 +27,23 @@
   min-width: 0;
   box-sizing: border-box;
 }
+.bearslivesearch-form input[type="search"]:focus {
+  outline: 2px solid #005fa3;
+  outline-offset: 2px;
+  background: #e6f0fa;
+}
+
+.bearslivesearch-form button[type="submit"]:focus {
+  outline: 2px solid #005fa3;
+  outline-offset: 2px;
+  background: #cce6ff;
+}
+
+.bearslivesearch-title-link:focus {
+  outline: 2px solid #005fa3;
+  outline-offset: 2px;
+  background: #e6f0fa;
+}
 
 .bearslivesearch-form button[type="submit"] {
   background: #0077cc;
