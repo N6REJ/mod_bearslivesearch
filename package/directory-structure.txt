@@ -1,0 +1,22 @@
+package/mod_bearslivesearch
+├── CHANGELOG.md
+├── README.md
+├── helper.php
+├── language
+│   └── en-GB
+│       ├── en-GB.mod_bearslivesearch.ini
+│       └── en-GB.mod_bearslivesearch.sys.ini
+├── media
+│   ├── css
+│   │   └── bearslivesearch.css
+│   └── js
+│       └── bearslivesearch.js
+├── mod_bearslivesearch.php
+├── mod_bearslivesearch.xml
+├── mod_bearslivesearch.xml.bak
+├── package
+│   └── mod_bearslivesearch
+└── tmpl
+    └── default.php
+
+9 directories, 11 files
