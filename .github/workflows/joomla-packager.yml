@@ -31,9 +31,5 @@ jobs:
           copyright-holder: 'N6REJ'
           copyright-start-year: '2025'
           github-token: ${{ secrets.GH_PAT }}
-          output-dir: dist
           extension-type: module
           extension-name: mod_bearslivesearch
-          php-compat: '8.0,8.1,8.2'
-          joomla-compat: '5.0'
-          zip-filename: mod_bearslivesearch-latest.zip

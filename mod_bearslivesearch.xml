@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension type="module" version="4.0" client="site" method="upgrade">
-    <name>mod_bearslivesearch</name>
+    <name>Bears Live Search</name>
     <author>N6REJ</author>
     <authorEmail>troy@hallhome.us</authorEmail>
     <authorUrl>https://hallhome.us/software</authorUrl>
@@ -13,11 +13,9 @@
         <filename module="mod_bearslivesearch">mod_bearslivesearch.php</filename>
         <filename>helper.php</filename>
         <filename>tmpl/default.php</filename>
+        <filename>mod_bearslivesearch.ajax.php</filename>
         <filename>media/js/bearslivesearch.js</filename>
         <filename>media/css/bearslivesearch.css</filename>
-        <filename>ajax.php</filename>
-        <filename>language/en-GB/en-GB.mod_bearslivesearch.ini</filename>
-        <filename>language/en-GB/en-GB.mod_bearslivesearch.sys.ini</filename>
     </files>
     <languages>
         <language tag="en-GB">language/en-GB/en-GB.mod_bearslivesearch.ini</language>
