@@ -2,7 +2,7 @@
 /**
  * Bears Live Search
  *
- * @version 2025.07.16
+ * @version 2025.07.16.2
  * @package Bears Live Search
  * @author N6REJ
  * @email troy@hallhome.us
@@ -55,7 +55,7 @@ class ModBearslivesearchHelper
             self::$debug = true;
 
             // Log PHP version and other environment info
-            \Joomla\CMS\Log\Log::add('PHP Version: 2025.07.16
+            \Joomla\CMS\Log\Log::add('PHP Version: 2025.07.16.2
             \Joomla\CMS\Log\Log::add('Server: ' . $_SERVER['SERVER_SOFTWARE'], \Joomla\CMS\Log\Log::INFO, 'mod_bearslivesearch');
 
             // Start output buffering to capture the output of the search method
