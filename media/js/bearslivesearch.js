@@ -22,7 +22,7 @@
 
             function updateResults(html) {
                 results.innerHTML = html;
-                results.focus();
+                input.focus();
             }
 
             function doSearch(query) {
@@ -39,6 +39,7 @@
                 var urlFormats = [
                     // First try the test method to verify the AJAX system is working
                     window.location.origin + '/index.php?option=com_ajax&module=bearslivesearch&method=test&format=raw',
+                    window.location.origin + '/index.php?option=com_ajax&module=bearslivesearch&method=test&format=json',
 
                     // Then try different formats for the search method
                     // Absolute URLs with window.location.origin
@@ -95,13 +96,31 @@
                             console.log('AJAX response status for format ' + (currentUrlIndex + 1) + ':', xhr.status);
                             if (xhr.status === 200) {
                                 // Special case for test method
-                                if (currentUrlIndex === 0) {
+                                if (currentUrlIndex === 0 || currentUrlIndex === 1) {
                                     console.log('Test method successful, response:', xhr.responseText);
                                     // Test was successful, now try the actual search
-                                    currentUrlIndex = 1; // Skip to the first search URL
+                                    currentUrlIndex = 2; // Skip to the first search URL
                                     tryNextUrl();
                                 } else {
-                                    updateResults(xhr.responseText);
+                                    // Handle JSON response if needed
+                                    if (xhr.responseText.startsWith('{') && xhr.responseText.endsWith('}')) {
+                                        try {
+                                            var jsonResponse = JSON.parse(xhr.responseText);
+                                            if (jsonResponse.success === true && jsonResponse.data) {
+                                                updateResults(jsonResponse.data);
+                                            } else if (jsonResponse.message) {
+                                                console.error('JSON error message:', jsonResponse.message);
+                                                updateResults('<div role="alert">Error: ' + jsonResponse.message + '</div>');
+                                            } else {
+                                                updateResults(xhr.responseText);
+                                            }
+                                        } catch (e) {
+                                            console.error('Error parsing JSON:', e);
+                                            updateResults(xhr.responseText);
+                                        }
+                                    } else {
+                                        updateResults(xhr.responseText);
+                                    }
                                 }
                             } else {
                                 console.error('AJAX error for format ' + (currentUrlIndex + 1) + ':', xhr.status, xhr.statusText);
