@@ -30,6 +30,7 @@
                 <field name = "output_margin" type = "text" label = "MOD_BEARSLIVESEARCH_OUTPUT_MARGIN" description = "MOD_BEARSLIVESEARCH_OUTPUT_MARGIN_DESC" default = "1em 0" />
                 <field name = "output_limit" type = "number" label = "MOD_BEARSLIVESEARCH_OUTPUT_LIMIT" description = "MOD_BEARSLIVESEARCH_OUTPUT_LIMIT_DESC" default = "300"
                        min = "10" max = "1000" />
+                <field name = "results_limit" type = "number" label = "MOD_BEARSLIVESEARCH_RESULTS_LIMIT" description = "MOD_BEARSLIVESEARCH_RESULTS_LIMIT_DESC" default = "10" min = "1" max = "100" />
             </fieldset>
             <fieldset name = "advanced">
                 <field

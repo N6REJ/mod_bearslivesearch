@@ -30,7 +30,7 @@
                 input.focus();
             }
 
-            function doSearch(query) {
+            function doSearch(query, page) {
                 if (xhr) xhr.abort();
                 if (!query.trim()) {
                     updateResults('');
@@ -50,10 +50,13 @@
                     }
                 }
 
-                // Use the standard AJAX URL for this module, including moduleId
+                // Use the standard AJAX URL for this module, including moduleId and page
                 var ajaxUrl = window.location.origin + '/index.php?option=com_ajax&module=bearslivesearch&method=search&format=raw&q=' + encodeURIComponent(query);
                 if (moduleId) {
                     ajaxUrl += '&moduleId=' + encodeURIComponent(moduleId);
+                }
+                if (page && page > 1) {
+                    ajaxUrl += '&page=' + encodeURIComponent(page);
                 }
 
                 xhr = new XMLHttpRequest();
@@ -82,14 +85,38 @@
                 e.preventDefault();
                 var query = input.value;
                 lastQuery = query;
-                doSearch(query);
+                doSearch(query, 1);
             });
 
             input.addEventListener('input', function() {
                 var query = input.value;
                 if (query !== lastQuery) {
                     lastQuery = query;
-                    doSearch(query);
+                    doSearch(query, 1);
+                }
+            });
+
+            // Pagination click handler (event delegation)
+            results.addEventListener('click', function(e) {
+                var target = e.target;
+                // Handle both <a> and <span> (for active/disabled)
+                if (target.tagName === 'A' && target.closest('.pagination')) {
+                    e.preventDefault();
+                    var href = target.getAttribute('href');
+                    var page = 1;
+                    // Parse start or limitstart from the href
+                    var match = href && href.match(/[?&](?:start|limitstart)=(\d+)/);
+                    if (match) {
+                        var start = parseInt(match[1], 10);
+                        // Get results per page from the DOM if possible, fallback to 10
+                        var perPage = 10;
+                        var perPageInput = module.querySelector('[name="results_limit"]');
+                        if (perPageInput && perPageInput.value) {
+                            perPage = parseInt(perPageInput.value, 10) || 10;
+                        }
+                        page = Math.floor(start / perPage) + 1;
+                    }
+                    doSearch(input.value, page);
                 }
             });
         });

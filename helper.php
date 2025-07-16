@@ -125,6 +125,26 @@ class ModBearslivesearchHelper
             return;
         }
 
+        // Get module params for output and results limit (works for AJAX too)
+        $outputLimit = 0;
+        $resultsLimit = 10;
+        $page = max(1, (int) (\Joomla\CMS\Factory::getApplication()->input->get('page', 1)));
+        try {
+            $moduleId = (int) (\Joomla\CMS\Factory::getApplication()->input->get('moduleId', 0) ?: \Joomla\CMS\Factory::getApplication()->input->get('module', 0));
+            if ($moduleId) {
+                $module = \Joomla\CMS\Helper\ModuleHelper::getModule('mod_bearslivesearch', '', $moduleId);
+                if ($module && isset($module->params)) {
+                    $modParams = new \Joomla\Registry\Registry($module->params);
+                    $outputLimit = (int) $modParams->get('output_limit');
+                    $resultsLimit = (int) $modParams->get('results_limit', 10);
+                }
+            }
+        } catch (\Throwable $e) {
+            $outputLimit = 0;
+            $resultsLimit = 10;
+        }
+        $offset = ($page - 1) * $resultsLimit;
+
         // Direct Finder index table query for live search
         try {
             // Check if the Finder component is installed and enabled
@@ -150,7 +170,7 @@ class ModBearslivesearchHelper
                 ->where('l.url NOT LIKE ' . $db->q('%404%'))
                 ->group('l.link_id')
                 ->order('l.title ASC')
-                ->setLimit(10);
+                ->setLimit($resultsLimit, $offset);
 
             $db->setQuery($queryObj);
             $results = $db->loadObjectList();
@@ -170,6 +190,7 @@ class ModBearslivesearchHelper
         try {
             // Get module params for desc_limit (works for AJAX too)
             $outputLimit = 0;
+            $resultsLimit = 10;
             try {
                 $moduleId = (int) (\Joomla\CMS\Factory::getApplication()->input->get('moduleId', 0) ?: \Joomla\CMS\Factory::getApplication()->input->get('module', 0));
                 if ($moduleId) {
@@ -177,13 +198,34 @@ class ModBearslivesearchHelper
                     if ($module && isset($module->params)) {
                         $modParams = new \Joomla\Registry\Registry($module->params);
                         $outputLimit = (int) $modParams->get('output_limit');
+                        $resultsLimit = (int) $modParams->get('results_limit', 10);
                     }
                 }
             } catch (\Throwable $e) {
                 $outputLimit = 0;
+                $resultsLimit = 10;
             }
 
-            $output = '<ul class="bearslivesearch-list" role="list">';
+            // Get total number of matches (without limit)
+            $countQuery = $db->getQuery(true)
+                ->select('COUNT(DISTINCT l.link_id)')
+                ->from($db->qn('#__finder_links', 'l'))
+                ->join('INNER', $db->qn('#__finder_links_terms', 'lt') . ' ON l.link_id = lt.link_id')
+                ->join('INNER', $db->qn('#__finder_terms', 't') . ' ON lt.term_id = t.term_id')
+                ->where('t.term LIKE ' . $db->q($searchLike))
+                ->where('l.state = 1')
+                ->where('l.title NOT LIKE ' . $db->q('%404%'))
+                ->where('l.url NOT LIKE ' . $db->q('%404%'));
+            $db->setQuery($countQuery);
+            $totalMatches = (int) $db->loadResult();
+
+            // Display summary above results
+            $shownResults = count($results);
+            $queryDisplay = htmlspecialchars($query, ENT_QUOTES, 'UTF-8');
+            $startResult = $offset + 1;
+            $endResult = $offset + $shownResults;
+            $output = '<div class="bearslivesearch-summary">Results ' . $startResult . '-' . $endResult . ' of ' . $totalMatches . ' for <strong>"' . $queryDisplay . '"</strong></div>';
+            $output .= '<ul class="bearslivesearch-list" role="list">';
 
             // Check if results is iterable
             if (empty($results)) {
@@ -305,7 +347,7 @@ class ModBearslivesearchHelper
                     // Add the item to the output - use concatenation in a try-catch block
                     try {
                         $itemOutput = '<li role="listitem">';
-                        $itemOutput .= '<a href="' . $link . '" class="bearslivesearch-title-link"><span class="bearslivesearch-title">' . ($index + 1) . '. ' . $title . '</span></a>';
+                        $itemOutput .= '<a href="' . $link . '" class="bearslivesearch-title-link"><span class="bearslivesearch-title">' . ($offset + $index + 1) . '. ' . $title . '</span></a>';
                         if (!empty($desc)) {
                             $itemOutput .= '<div class="bearslivesearch-result">' . $desc . '</div>';
                         }
@@ -326,6 +368,16 @@ class ModBearslivesearchHelper
             // Finalize the output
             try {
                 $output .= '</ul>';
+
+                // Joomla pagination
+                $totalPages = max(1, (int) ceil($totalMatches / $resultsLimit));
+                if ($totalPages > 1) {
+                    \Joomla\CMS\HTML\HTMLHelper::_('behavior.core');
+                    $pagination = new \JPagination($totalMatches, $offset, $resultsLimit);
+                    $paginationHtml = $pagination->getPagesLinks();
+                    $output .= $paginationHtml;
+                }
+
                 echo $output;
             } catch (\Throwable $t) {
                 // Log the error
