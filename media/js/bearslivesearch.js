@@ -21,12 +21,14 @@
             var xhr;
 
             function updateResults(html) {
-                results.innerHTML = html;
-                if (!html || !html.trim() || /role="status".*no results/i.test(html)) {
-                    results.classList.add('bearslivesearch-results--hidden');
+                if (!html || !html.trim()) {
+                    // Use the language string from the DOM or fallback
+                    var noResults = module.getAttribute('data-no-results') || 'No results found.';
+                    results.innerHTML = '<div class="bearslivesearch-no-results" role="status">' + noResults + '</div>';
                 } else {
-                    results.classList.remove('bearslivesearch-results--hidden');
+                    results.innerHTML = html;
                 }
+                results.classList.remove('bearslivesearch-results--hidden');
                 input.focus();
             }
 
