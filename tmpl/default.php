@@ -25,6 +25,62 @@ $moduleclass_sfx = htmlspecialchars($params->get('moduleclass_sfx', ''), ENT_QUO
         <button type="submit" aria-label="<?php echo Text::_('MOD_BEARSLIVESEARCH_SUBMIT'); ?>" class="bearslivesearch-submit">
             <span class="icon-search" aria-hidden="true"></span>
         </button>
+
+        <!-- Standard Joomla search criteria fields row -->
+        <div class="joomla-search-criteria" style="width:100%;clear:both;margin-top:1em;">
+            <div class="form-group">
+                <label for="<?php echo $moduleId; ?>-searchphrase">
+                    <?php echo Text::_('MOD_SEARCH_SEARCHFOR'); ?>
+                </label>
+                <select name="searchphrase" id="<?php echo $moduleId; ?>-searchphrase" class="form-control">
+                    <option value="anywords"><?php echo Text::_('MOD_SEARCH_ANYWORDS'); ?></option>
+                    <option value="allwords"><?php echo Text::_('MOD_SEARCH_ALLWORDS'); ?></option>
+                    <option value="exact"><?php echo Text::_('MOD_SEARCH_EXACTPHRASE'); ?></option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="<?php echo $moduleId; ?>-ordering">
+                    <?php echo Text::_('JGLOBAL_SORT_BY'); ?>
+                </label>
+                <select name="ordering" id="<?php echo $moduleId; ?>-ordering" class="form-control">
+                    <option value="newest"><?php echo Text::_('JGLOBAL_NEWEST_FIRST'); ?></option>
+                    <option value="oldest"><?php echo Text::_('JGLOBAL_OLDEST_FIRST'); ?></option>
+                    <option value="popular"><?php echo Text::_('JGLOBAL_MOST_POPULAR'); ?></option>
+                    <option value="alpha"><?php echo Text::_('JGLOBAL_ALPHABETICAL'); ?></option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Standard Joomla search filters row -->
+        <div class="joomla-search-filters" style="width:100%;clear:both;margin-top:1em;display:flex;gap:1em;flex-wrap:wrap;">
+            <div class="form-group">
+                <label for="<?php echo $moduleId; ?>-category">
+                    <?php echo Text::_('JCATEGORY'); ?>
+                </label>
+                <select name="category" id="<?php echo $moduleId; ?>-category" class="form-control">
+                    <option value=""><?php echo Text::_('JOPTION_SELECT_CATEGORY'); ?></option>
+                    <!-- Optionally populate with categories dynamically -->
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="<?php echo $moduleId; ?>-author">
+                    <?php echo Text::_('JAUTHOR'); ?>
+                </label>
+                <input type="text" name="author" id="<?php echo $moduleId; ?>-author" class="form-control" placeholder="<?php echo Text::_('JAUTHOR'); ?>" />
+            </div>
+            <div class="form-group">
+                <label for="<?php echo $moduleId; ?>-datefrom">
+                    <?php echo Text::_('JSEARCH_FILTER_DATE_FROM'); ?>
+                </label>
+                <input type="date" name="datefrom" id="<?php echo $moduleId; ?>-datefrom" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label for="<?php echo $moduleId; ?>-dateto">
+                    <?php echo Text::_('JSEARCH_FILTER_DATE_TO'); ?>
+                </label>
+                <input type="date" name="dateto" id="<?php echo $moduleId; ?>-dateto" class="form-control" />
+            </div>
+        </div>
     </form>
     <div class="bearslivesearch-results bearslivesearch-results--hidden" id="<?php echo $moduleId; ?>-results" aria-live="polite" aria-atomic="true"></div>
 </div>
