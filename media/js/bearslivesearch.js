@@ -21,6 +21,13 @@
             var xhr;
 
             function updateResults(html) {
+                // Reveal criteria/filter rows if hidden (for "after" mode)
+                var criteriaRows = module.querySelectorAll('.bearslivesearch-criteria-hidden');
+                if (criteriaRows.length) {
+                    criteriaRows.forEach(function(row) {
+                        row.classList.remove('bearslivesearch-criteria-hidden');
+                    });
+                }
                 if (!html || !html.trim()) {
                     // Use the language string from the DOM or fallback
                     var noResults = module.getAttribute('data-no-results') || 'No results found.';

@@ -40,6 +40,16 @@
   flex-wrap: wrap;
 }
 
+.bearslivesearch-fit-content {
+  width: fit-content;
+  min-width: 7em;
+  max-width: 100%;
+}
+
+.bearslivesearch-criteria-hidden {
+  display: none !important;
+}
+
 .bearslivesearch-form input[type="search"] {
   flex: 1 1 0%;
   width: 100%;

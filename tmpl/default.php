@@ -29,7 +29,7 @@ $moduleclass_sfx = htmlspecialchars($params->get('moduleclass_sfx', ''), ENT_QUO
         </div>
 
         <!-- Row 2: Search for criteria -->
-        <div class="bearslivesearch-row bearslivesearch-row-margin">
+        <div class="bearslivesearch-row bearslivesearch-row-margin<?php if ($params->get('show_criteria', 'always') === 'after') echo ' bearslivesearch-criteria-hidden'; ?>">
             <span><?php echo Text::_('MOD_SEARCH_SEARCHFOR'); ?>:</span>
             <label class="bearslivesearch-radio-label">
                 <input type="radio" name="searchphrase" value="anywords" checked />
@@ -45,21 +45,30 @@ $moduleclass_sfx = htmlspecialchars($params->get('moduleclass_sfx', ''), ENT_QUO
             </label>
         </div>
 
-        <!-- Row 3: Sort by -->
-        <div class="bearslivesearch-row bearslivesearch-row-margin">
+        <!-- Row 3: Sort by and Results per page -->
+        <div class="bearslivesearch-row bearslivesearch-row-margin<?php if ($params->get('show_criteria', 'always') === 'after') echo ' bearslivesearch-criteria-hidden'; ?>" style="display:flex;align-items:center;gap:1em;">
             <label for="<?php echo $moduleId; ?>-ordering">
                 <?php echo Text::_('JGLOBAL_SORT_BY'); ?>
             </label>
-            <select name="ordering" id="<?php echo $moduleId; ?>-ordering" class="form-control">
+            <select name="ordering" id="<?php echo $moduleId; ?>-ordering" class="form-control bearslivesearch-fit-content">
                 <option value="newest"><?php echo Text::_('JGLOBAL_NEWEST_FIRST'); ?></option>
                 <option value="oldest"><?php echo Text::_('JGLOBAL_OLDEST_FIRST'); ?></option>
                 <option value="popular"><?php echo Text::_('JGLOBAL_MOST_POPULAR'); ?></option>
                 <option value="alpha"><?php echo Text::_('JGLOBAL_ALPHABETICAL'); ?></option>
             </select>
+            <label for="<?php echo $moduleId; ?>-results_limit" style="margin-left:1em;">
+                <?php echo Text::_('MOD_BEARSLIVESEARCH_RESULTS_LIMIT', 'Results per page'); ?>
+            </label>
+            <select name="results_limit" id="<?php echo $moduleId; ?>-results_limit" class="form-control bearslivesearch-fit-content">
+                <option value="5">5</option>
+                <option value="10" selected>10</option>
+                <option value="20">20</option>
+                <option value="50">50</option>
+            </select>
         </div>
 
         <!-- Standard Joomla search filters row -->
-        <div class="joomla-search-filters">
+        <div class="joomla-search-filters<?php if ($params->get('show_criteria', 'always') === 'after') echo ' bearslivesearch-criteria-hidden'; ?>">
             <div class="form-group">
                 <label for="<?php echo $moduleId; ?>-category">
                     <?php echo Text::_('JCATEGORY'); ?>
