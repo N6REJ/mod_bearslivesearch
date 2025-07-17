@@ -25,6 +25,41 @@ $moduleclass_sfx = htmlspecialchars($params->get('moduleclass_sfx', ''), ENT_QUO
         <button type="submit" aria-label="<?php echo Text::_('MOD_BEARSLIVESEARCH_SUBMIT'); ?>" class="bearslivesearch-submit">
             <span class="icon-search" aria-hidden="true"></span>
         </button>
+        <fieldset class="phrases" style="margin-left:1em;">
+            <legend><?php echo Text::_('Search for:'); ?></legend>
+            <label class="radio"><input type="radio" name="searchphrase" value="all" checked>All words</label>
+            <label class="radio"><input type="radio" name="searchphrase" value="any">Any words</label>
+            <label class="radio"><input type="radio" name="searchphrase" value="exact">Exact Phrase</label>
+        </fieldset>
+        <fieldset class="ordering" style="margin-left:1em;">
+            <label for="ordering">Ordering:</label>
+            <select id="ordering" name="ordering" class="inputbox">
+                <option value="newest" selected>Newest First</option>
+                <option value="oldest">Oldest First</option>
+                <option value="popular">Most Popular</option>
+                <option value="alpha">Alphabetical</option>
+                <option value="category">Category</option>
+            </select>
+        </fieldset>
+        <fieldset class="only" style="margin-left:1em;">
+            <legend>Search Only:</legend>
+            <label class="checkbox"><input type="checkbox" name="areas[]" value="articles" checked>Articles</label>
+            <label class="checkbox"><input type="checkbox" name="areas[]" value="forum">Forum Posts</label>
+        </fieldset>
+        <?php
+        $defaultLimit = (int) $params->get('results_limit', 10);
+        $userLimit = isset($_GET['results_limit']) ? (int) $_GET['results_limit'] : null;
+        $selectedLimit = $userLimit ?: $defaultLimit;
+        $limitOptions = [5,10,15,20,25,30,50,100,0];
+        ?>
+        <fieldset class="form-limit" style="margin-left:1em;">
+            <label for="results_limit">Display #</label>
+            <select id="results_limit" name="results_limit" class="inputbox input-mini">
+                <?php foreach ($limitOptions as $opt): ?>
+                    <option value="<?php echo $opt; ?>"<?php if ($selectedLimit === $opt) echo ' selected'; ?>><?php echo $opt === 0 ? 'All' : $opt; ?></option>
+                <?php endforeach; ?>
+            </select>
+        </fieldset>
     </form>
     <div class="bearslivesearch-results bearslivesearch-results--hidden" id="<?php echo $moduleId; ?>-results" aria-live="polite" aria-atomic="true"></div>
 </div>
