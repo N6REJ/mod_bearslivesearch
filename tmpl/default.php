@@ -26,5 +26,5 @@ $moduleclass_sfx = htmlspecialchars($params->get('moduleclass_sfx', ''), ENT_QUO
             <span class="icon-search" aria-hidden="true"></span>
         </button>
     </form>
-    <div class="bearslivesearch-results bearslivesearch-results--hidden" id="<?php echo $moduleId; ?>-results" aria-live="polite" aria-atomic="true" tabindex="0"></div>
+    <div class="bearslivesearch-results bearslivesearch-results--hidden" id="<?php echo $moduleId; ?>-results" aria-live="polite" aria-atomic="true"></div>
 </div>
