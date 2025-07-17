@@ -1,6 +1,6 @@
 <?php
 /**
- * Bears AJAX Search (Joomla 5, no Finder, with Kunena support, PHP-side pagination)
+ * Bears AJAX Search (Joomla 5, no Finder, with Kunena support, PHP-side pagination, advanced filters)
  *
  * @version 2025.07.16.1300
  * @package Bears AJAX Search
@@ -37,52 +37,99 @@ class ModBearslivesearchHelper
             return;
         }
 
-        // Pagination
-        $resultsLimit = 10;
+        // Advanced filters
+        $searchphrase = $input->getString('searchphrase', 'all');
+        $ordering = $input->getString('ordering', 'newest');
+        $areas = $input->get('areas', [], 'array');
+        // Use module param as default for results_limit
+        $moduleId = (int) $input->get('moduleId', 0);
+        $moduleResultsLimit = 10;
+        if ($moduleId) {
+            $module = \Joomla\CMS\Helper\ModuleHelper::getModule('mod_bearslivesearch', '', $moduleId);
+            if ($module && isset($module->params)) {
+                $modParams = new \Joomla\Registry\Registry($module->params);
+                $moduleResultsLimit = (int) $modParams->get('results_limit', 10);
+            }
+        }
+        $resultsLimit = (int) $input->get('results_limit', $moduleResultsLimit);
+        if ($resultsLimit < 1) $resultsLimit = $moduleResultsLimit;
         $page = max(1, (int) $input->get('page', 1));
         $offset = ($page - 1) * $resultsLimit;
-        $maxFetch = 100; // Max results to fetch from each source for merging
+        $maxFetch = 200; // Max results to fetch from each source for merging
 
         $db = Factory::getDbo();
-        $searchLike = '%' . $db->escape($query, true) . '%';
         $allResults = [];
+        $searchLike = '%' . $db->escape($query, true) . '%';
+
+        // Determine which areas to search
+        $searchArticles = empty($areas) || in_array('articles', $areas);
+        $searchForum = empty($areas) || in_array('forum', $areas);
 
         // --- Joomla Articles ---
-        $queryObj = $db->getQuery(true)
-            ->select([
-                $db->qn('id'),
-                $db->qn('title'),
-                $db->qn('introtext'),
-                $db->qn('fulltext'),
-                $db->qn('alias'),
-                $db->qn('catid'),
-                $db->qn('created')
-            ])
-            ->from($db->qn('#__content'))
-            ->where('state = 1')
-            ->where('(' .
-                $db->qn('title') . ' LIKE ' . $db->q($searchLike) . ' OR ' .
-                $db->qn('introtext') . ' LIKE ' . $db->q($searchLike) . ' OR ' .
-                $db->qn('fulltext') . ' LIKE ' . $db->q($searchLike) .
-            ')')
-            ->order('created DESC')
-            ->setLimit($maxFetch);
-        try {
-            $db->setQuery($queryObj);
-            $articleResults = $db->loadObjectList();
-        } catch (Exception $e) {
-            Log::add('Article query error: ' . $e->getMessage() . ' | SQL: ' . $queryObj, Log::ERROR, 'mod_bearslivesearch');
-            echo '<div role="alert">Article search error: ' . htmlspecialchars($e->getMessage()) . '</div>';
-            return;
-        }
-        foreach ($articleResults as $item) {
-            $allResults[] = [
-                'type' => 'article',
-                'title' => $item->title,
-                'desc' => strip_tags($item->introtext ?: $item->fulltext),
-                'created' => $item->created,
-                'link' => 'index.php?option=com_content&view=article&id=' . (int)$item->id
+        if ($searchArticles) {
+            $where = [];
+            if ($searchphrase === 'exact') {
+                $where[] = $db->qn('title') . ' LIKE ' . $db->q($searchLike);
+                $where[] = $db->qn('introtext') . ' LIKE ' . $db->q($searchLike);
+                $where[] = $db->qn('fulltext') . ' LIKE ' . $db->q($searchLike);
+            } else {
+                // Split query into words for 'all' or 'any'
+                $words = preg_split('/\s+/', $query);
+                $wordConds = [];
+                foreach ($words as $word) {
+                    $wLike = '%' . $db->escape($word, true) . '%';
+                    $wordConds[] = '(' .
+                        $db->qn('title') . ' LIKE ' . $db->q($wLike) . ' OR ' .
+                        $db->qn('introtext') . ' LIKE ' . $db->q($wLike) . ' OR ' .
+                        $db->qn('fulltext') . ' LIKE ' . $db->q($wLike) .
+                    ')';
+                }
+                if ($searchphrase === 'all') {
+                    $where[] = implode(' AND ', $wordConds);
+                } else {
+                    $where[] = implode(' OR ', $wordConds);
+                }
+            }
+            $orderMap = [
+                'newest' => $db->qn('created') . ' DESC',
+                'oldest' => $db->qn('created') . ' ASC',
+                'alpha' => $db->qn('title') . ' ASC',
+                'category' => $db->qn('catid') . ' ASC',
+                'popular' => $db->qn('hits') . ' DESC',
             ];
+            $orderBy = isset($orderMap[$ordering]) ? $orderMap[$ordering] : $orderMap['newest'];
+            $queryObj = $db->getQuery(true)
+                ->select([
+                    $db->qn('id'),
+                    $db->qn('title'),
+                    $db->qn('introtext'),
+                    $db->qn('fulltext'),
+                    $db->qn('alias'),
+                    $db->qn('catid'),
+                    $db->qn('created')
+                ])
+                ->from($db->qn('#__content'))
+                ->where('state = 1')
+                ->where('(' . implode(' OR ', $where) . ')')
+                ->order($orderBy)
+                ->setLimit($maxFetch);
+            try {
+                $db->setQuery($queryObj);
+                $articleResults = $db->loadObjectList();
+            } catch (Exception $e) {
+                Log::add('Article query error: ' . $e->getMessage() . ' | SQL: ' . $queryObj, Log::ERROR, 'mod_bearslivesearch');
+                echo '<div role="alert">Article search error: ' . htmlspecialchars($e->getMessage()) . '</div>';
+                return;
+            }
+            foreach ($articleResults as $item) {
+                $allResults[] = [
+                    'type' => 'article',
+                    'title' => $item->title,
+                    'desc' => strip_tags($item->introtext ?: $item->fulltext),
+                    'created' => $item->created,
+                    'link' => 'index.php?option=com_content&view=article&id=' . (int)$item->id
+                ];
+            }
         }
 
         // --- Kunena Forum Posts (if installed) ---
@@ -90,13 +137,37 @@ class ModBearslivesearchHelper
         $kunenaTable = $db->replacePrefix('#__kunena_messages');
         $tables = $db->getTableList();
         $kunenaInstalled = in_array($kunenaTable, $tables);
-        if ($kunenaInstalled) {
+        if ($searchForum && $kunenaInstalled) {
+            $where = [];
+            if ($searchphrase === 'exact') {
+                $where[] = 'm.message LIKE ' . $db->q($searchLike);
+            } else {
+                $words = preg_split('/\s+/', $query);
+                $wordConds = [];
+                foreach ($words as $word) {
+                    $wLike = '%' . $db->escape($word, true) . '%';
+                    $wordConds[] = 'm.message LIKE ' . $db->q($wLike);
+                }
+                if ($searchphrase === 'all') {
+                    $where[] = implode(' AND ', $wordConds);
+                } else {
+                    $where[] = implode(' OR ', $wordConds);
+                }
+            }
+            $orderMap = [
+                'newest' => 'm.time DESC',
+                'oldest' => 'm.time ASC',
+                'alpha' => 't.subject ASC',
+                'category' => 't.catid ASC',
+                'popular' => 'm.hits DESC',
+            ];
+            $orderBy = isset($orderMap[$ordering]) ? $orderMap[$ordering] : $orderMap['newest'];
             $kunenaQuery = $db->getQuery(true)
                 ->select(['m.id', 'm.message', 'm.thread', 'm.userid', 'm.time', 't.subject', 't.catid'])
                 ->from($db->qn('#__kunena_messages', 'm'))
                 ->join('INNER', $db->qn('#__kunena_topics', 't') . ' ON m.thread = t.id')
-                ->where('m.message LIKE ' . $db->q($searchLike))
-                ->order('m.time DESC')
+                ->where(implode(' OR ', $where))
+                ->order($orderBy)
                 ->setLimit($maxFetch);
             $db->setQuery($kunenaQuery);
             $kunenaResults = $db->loadObjectList();
@@ -111,10 +182,17 @@ class ModBearslivesearchHelper
             }
         }
 
-        // Sort all results by created DESC
-        usort($allResults, function($a, $b) {
-            return strcmp($b['created'], $a['created']);
-        });
+        // Sort all results by created DESC (unless ordering is alpha/category/popular)
+        if (in_array($ordering, ['newest', 'oldest'])) {
+            usort($allResults, function($a, $b) use ($ordering) {
+                if ($ordering === 'newest') return strcmp($b['created'], $a['created']);
+                else return strcmp($a['created'], $b['created']);
+            });
+        } elseif ($ordering === 'alpha') {
+            usort($allResults, function($a, $b) {
+                return strcmp($a['title'], $b['title']);
+            });
+        }
 
         $totalMatches = count($allResults);
         $pagedResults = array_slice($allResults, $offset, $resultsLimit);
@@ -187,7 +265,7 @@ class ModBearslivesearchHelper
                 '/href="([^"]*start=(\d+)[^"]*)"/i',
                 function ($m) use ($ajaxBase) {
                     $pageStart = (int)$m[2];
-                    $pageNum = ($pageStart / 10) + 1; // 10 is resultsLimit
+                    $pageNum = ($pageStart / $resultsLimit) + 1;
                     return 'href="' . $ajaxBase . '&page=' . $pageNum . '"';
                 },
                 $paginationHtml
