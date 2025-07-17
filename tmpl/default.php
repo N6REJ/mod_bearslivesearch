@@ -30,14 +30,19 @@ $moduleclass_sfx = htmlspecialchars($params->get('moduleclass_sfx', ''), ENT_QUO
 
         <!-- Row 2: Search for criteria -->
         <div style="width:100%;clear:both;margin-top:1em;">
-            <label for="<?php echo $moduleId; ?>-searchphrase">
-                <?php echo Text::_('MOD_SEARCH_SEARCHFOR'); ?>
+            <span><?php echo Text::_('MOD_SEARCH_SEARCHFOR'); ?>:</span>
+            <label style="margin-left:1em;">
+                <input type="radio" name="searchphrase" value="anywords" checked />
+                <?php echo Text::_('MOD_SEARCH_ANYWORDS'); ?>
             </label>
-            <select name="searchphrase" id="<?php echo $moduleId; ?>-searchphrase" class="form-control">
-                <option value="anywords"><?php echo Text::_('MOD_SEARCH_ANYWORDS'); ?></option>
-                <option value="allwords"><?php echo Text::_('MOD_SEARCH_ALLWORDS'); ?></option>
-                <option value="exact"><?php echo Text::_('MOD_SEARCH_EXACTPHRASE'); ?></option>
-            </select>
+            <label style="margin-left:1em;">
+                <input type="radio" name="searchphrase" value="allwords" />
+                <?php echo Text::_('MOD_SEARCH_ALLWORDS'); ?>
+            </label>
+            <label style="margin-left:1em;">
+                <input type="radio" name="searchphrase" value="exact" />
+                <?php echo Text::_('MOD_SEARCH_EXACTPHRASE'); ?>
+            </label>
         </div>
 
         <!-- Row 3: Sort by -->
