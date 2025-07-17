@@ -42,6 +42,7 @@
             function doSearch(query, page) {
                 if (xhr) xhr.abort();
                 if (!query.trim()) {
+                    updateResults('');
                     // Hide and clear results when input is empty
                     results.innerHTML = '';
                     results.classList.add('bearslivesearch-results--hidden');
