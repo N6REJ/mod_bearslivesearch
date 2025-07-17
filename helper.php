@@ -44,6 +44,7 @@ class ModBearslivesearchHelper
         $maxFetch = 100; // Max results to fetch from each source for merging
 
         $db = Factory::getDbo();
+        // Use Joomla's quoting and escaping for LIKE and int filters
         $searchLike = '%' . $db->escape($query, true) . '%';
         $allResults = [];
 
@@ -66,16 +67,16 @@ class ModBearslivesearchHelper
                 $db->qn('fulltext') . ' LIKE ' . $db->q($searchLike) .
             ')')
             ->order('created DESC')
-            ->setLimit($maxFetch);
+            ->setLimit($resultsLimit, $offset);
         // Category filter
         $categoryId = (int) $input->get('category', 0);
-        if ($categoryId) {
-            $queryObj->where('catid = ' . $categoryId);
+        if ($categoryId > 0) {
+            $queryObj->where('catid = ' . (int)$categoryId);
         }
         // Author filter
         $authorId = (int) $input->get('author', 0);
-        if ($authorId) {
-            $queryObj->where('created_by = ' . $authorId);
+        if ($authorId > 0) {
+            $queryObj->where('created_by = ' . (int)$authorId);
         }
         try {
             $db->setQuery($queryObj);
@@ -109,17 +110,23 @@ class ModBearslivesearchHelper
                 ->where('m.hold = 0')
                 ->where('t.hold = 0')
                 ->order('m.time DESC')
-                ->setLimit($maxFetch);
-            $db->setQuery($kunenaQuery);
-            $kunenaResults = $db->loadObjectList();
-            foreach ($kunenaResults as $kitem) {
-                $allResults[] = [
-                    'type' => 'kunena',
-                    'title' => $kitem->subject,
-                    'desc' => strip_tags($kitem->message),
-                    'created' => date('Y-m-d H:i:s', (int)$kitem->time),
-                    'link' => 'index.php?option=com_kunena&view=topic&catid=' . (int)$kitem->catid . '&id=' . (int)$kitem->thread . '#msg' . (int)$kitem->id
-                ];
+                ->setLimit($resultsLimit, $offset);
+            try {
+                $db->setQuery($kunenaQuery);
+                $kunenaResults = $db->loadObjectList();
+                foreach ($kunenaResults as $kitem) {
+                    $allResults[] = [
+                        'type' => 'kunena',
+                        'title' => $kitem->subject,
+                        'desc' => strip_tags($kitem->message),
+                        'created' => date('Y-m-d H:i:s', (int)$kitem->time),
+                        'link' => 'index.php?option=com_kunena&view=topic&catid=' . (int)$kitem->catid . '&id=' . (int)$kitem->thread . '#msg' . (int)$kitem->id
+                    ];
+                }
+            } catch (Exception $e) {
+                Log::add('Kunena query error: ' . $e->getMessage() . ' | SQL: ' . $kunenaQuery, Log::ERROR, 'mod_bearslivesearch');
+                // Optionally show error to user
+                // echo '<div role="alert">Kunena search error: ' . htmlspecialchars($e->getMessage()) . '</div>';
             }
         }
 
