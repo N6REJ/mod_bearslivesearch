@@ -16,6 +16,30 @@
   flex-wrap: wrap;
 }
 
+.bearslivesearch-row {
+  width: 100%;
+  clear: both;
+}
+.bearslivesearch-row-flex {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+}
+.bearslivesearch-row-margin {
+  margin-top: 1em;
+}
+.bearslivesearch-radio-label {
+  margin-left: 1em;
+}
+.joomla-search-filters {
+  width: 100%;
+  clear: both;
+  margin-top: 1em;
+  display: flex;
+  gap: 1em;
+  flex-wrap: wrap;
+}
+
 .bearslivesearch-form input[type="search"] {
   flex: 1 1 0%;
   width: 100%;

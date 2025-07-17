@@ -27,4 +27,14 @@ $wa = $app->getDocument()->getWebAssetManager();
 $wa->registerAndUseStyle('mod_bearslivesearch', 'modules/mod_bearslivesearch/media/css/bearslivesearch.css');
 $wa->registerAndUseScript('mod_bearslivesearch', 'modules/mod_bearslivesearch/media/js/bearslivesearch.js', ['version' => 'auto'], ['defer' => true]);
 
-require ModuleHelper::getLayoutPath('mod_bearslivesearch', $params->get('layout', 'default'));
+// Fetch published article categories (robust method)
+use Joomla\CMS\Categories\Categories;
+$categories = [];
+$cats = Categories::getInstance('Content')->get('root')->getChildren();
+foreach ($cats as $cat) {
+    if ($cat->published) {
+        $categories[] = $cat;
+    }
+}
+
+require ModuleHelper::getLayoutPath('mod_bearslivesearch', $params->get('layout', 'default'), array('categories' => $categories));

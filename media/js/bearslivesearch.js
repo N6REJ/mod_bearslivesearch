@@ -42,6 +42,17 @@
                 // Show loading indicator
                 updateResults('<div class="bearslivesearch-loading" role="status">Searching...</div>');
 
+                // Serialize all form fields
+                var params = [];
+                var formData = new FormData(form);
+                formData.forEach(function(value, key) {
+                    if (value !== undefined && value !== null) {
+                        params.push(encodeURIComponent(key) + '=' + encodeURIComponent(value));
+                    }
+                });
+                if (page && page > 1) {
+                    params.push('page=' + encodeURIComponent(page));
+                }
                 // Get moduleId from the container's id attribute
                 var moduleContainer = form.closest('.bearslivesearch');
                 var moduleId = '';
@@ -51,15 +62,10 @@
                         moduleId = match[1];
                     }
                 }
-
-                // Use the standard AJAX URL for this module, including moduleId and page
-                var ajaxUrl = window.location.origin + '/index.php?option=com_ajax&module=bearslivesearch&method=search&format=raw&q=' + encodeURIComponent(query);
                 if (moduleId) {
-                    ajaxUrl += '&moduleId=' + encodeURIComponent(moduleId);
+                    params.push('moduleId=' + encodeURIComponent(moduleId));
                 }
-                if (page && page > 1) {
-                    ajaxUrl += '&page=' + encodeURIComponent(page);
-                }
+                var ajaxUrl = window.location.origin + '/index.php?option=com_ajax&module=bearslivesearch&method=search&format=raw&' + params.join('&');
 
                 xhr = new XMLHttpRequest();
                 xhr.open('GET', ajaxUrl, true);

@@ -67,6 +67,11 @@ class ModBearslivesearchHelper
             ')')
             ->order('created DESC')
             ->setLimit($maxFetch);
+        // Category filter
+        $categoryId = (int) $input->get('category', 0);
+        if ($categoryId) {
+            $queryObj->where('catid = ' . $categoryId);
+        }
         try {
             $db->setQuery($queryObj);
             $articleResults = $db->loadObjectList();

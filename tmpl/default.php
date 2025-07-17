@@ -21,7 +21,7 @@ $moduleclass_sfx = htmlspecialchars($params->get('moduleclass_sfx', ''), ENT_QUO
     <a href="#<?php echo $moduleId; ?>-results" class="visually-hidden visually-hidden-focusable skip-link" tabindex="0"><?php echo Text::_('MOD_BEARSLIVESEARCH_SKIP_TO_RESULTS', 'Skip to search results'); ?></a>
     <form class="bearslivesearch-form" style="margin: <?php echo $inputMargin; ?>;" role="search" aria-label="Site search" autocomplete="off">
         <label for="<?php echo $moduleId; ?>-input" class="visually-hidden"><?php echo Text::_('MOD_BEARSLIVESEARCH'); ?></label>
-        <div style="width:100%;clear:both;display:flex;align-items:center;gap:0.5em;">
+        <div class="bearslivesearch-row bearslivesearch-row-flex">
             <input type="search" id="<?php echo $moduleId; ?>-input" name="q" aria-label="<?php echo Text::_('MOD_BEARSLIVESEARCH'); ?>" placeholder="<?php echo Text::_('MOD_BEARSLIVESEARCH_PLACEHOLDER'); ?>" required />
             <button type="submit" aria-label="<?php echo Text::_('MOD_BEARSLIVESEARCH_SUBMIT'); ?>" class="bearslivesearch-submit">
                 <span class="icon-search" aria-hidden="true"></span>
@@ -29,24 +29,24 @@ $moduleclass_sfx = htmlspecialchars($params->get('moduleclass_sfx', ''), ENT_QUO
         </div>
 
         <!-- Row 2: Search for criteria -->
-        <div style="width:100%;clear:both;margin-top:1em;">
+        <div class="bearslivesearch-row bearslivesearch-row-margin">
             <span><?php echo Text::_('MOD_SEARCH_SEARCHFOR'); ?>:</span>
-            <label style="margin-left:1em;">
+            <label class="bearslivesearch-radio-label">
                 <input type="radio" name="searchphrase" value="anywords" checked />
                 <?php echo Text::_('MOD_SEARCH_ANYWORDS'); ?>
             </label>
-            <label style="margin-left:1em;">
+            <label class="bearslivesearch-radio-label">
                 <input type="radio" name="searchphrase" value="allwords" />
                 <?php echo Text::_('MOD_SEARCH_ALLWORDS'); ?>
             </label>
-            <label style="margin-left:1em;">
+            <label class="bearslivesearch-radio-label">
                 <input type="radio" name="searchphrase" value="exact" />
                 <?php echo Text::_('MOD_SEARCH_EXACTPHRASE'); ?>
             </label>
         </div>
 
         <!-- Row 3: Sort by -->
-        <div style="width:100%;clear:both;margin-top:1em;">
+        <div class="bearslivesearch-row bearslivesearch-row-margin">
             <label for="<?php echo $moduleId; ?>-ordering">
                 <?php echo Text::_('JGLOBAL_SORT_BY'); ?>
             </label>
@@ -59,14 +59,18 @@ $moduleclass_sfx = htmlspecialchars($params->get('moduleclass_sfx', ''), ENT_QUO
         </div>
 
         <!-- Standard Joomla search filters row -->
-        <div class="joomla-search-filters" style="width:100%;clear:both;margin-top:1em;display:flex;gap:1em;flex-wrap:wrap;">
+        <div class="joomla-search-filters">
             <div class="form-group">
                 <label for="<?php echo $moduleId; ?>-category">
                     <?php echo Text::_('JCATEGORY'); ?>
                 </label>
                 <select name="category" id="<?php echo $moduleId; ?>-category" class="form-control">
                     <option value=""><?php echo Text::_('JOPTION_SELECT_CATEGORY'); ?></option>
-                    <!-- Optionally populate with categories dynamically -->
+                    <?php if (!empty($categories)) : ?>
+                        <?php foreach ($categories as $cat) : ?>
+                            <option value="<?php echo (int)$cat->id; ?>"><?php echo htmlspecialchars($cat->title, ENT_QUOTES, 'UTF-8'); ?></option>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
                 </select>
             </div>
             <div class="form-group">
