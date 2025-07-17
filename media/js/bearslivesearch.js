@@ -50,23 +50,8 @@
                     }
                 }
 
-                // Collect advanced search filters
-                var searchphrase = form.querySelector('input[name="searchphrase"]:checked');
-                var ordering = form.querySelector('select[name="ordering"]');
-                var areas = form.querySelectorAll('input[name="areas[]"]:checked');
-                var resultsLimit = form.querySelector('select[name="results_limit"]');
-                var params = '';
-                if (searchphrase) params += '&searchphrase=' + encodeURIComponent(searchphrase.value);
-                if (ordering) params += '&ordering=' + encodeURIComponent(ordering.value);
-                if (areas && areas.length) {
-                    areas.forEach(function(area) {
-                        params += '&areas[]=' + encodeURIComponent(area.value);
-                    });
-                }
-                if (resultsLimit) params += '&results_limit=' + encodeURIComponent(resultsLimit.value);
-
                 // Use the standard AJAX URL for this module, including moduleId and page
-                var ajaxUrl = window.location.origin + '/index.php?option=com_ajax&module=bearslivesearch&method=search&format=raw&q=' + encodeURIComponent(query) + params;
+                var ajaxUrl = window.location.origin + '/index.php?option=com_ajax&module=bearslivesearch&method=search&format=raw&q=' + encodeURIComponent(query);
                 if (moduleId) {
                     ajaxUrl += '&moduleId=' + encodeURIComponent(moduleId);
                 }
