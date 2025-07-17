@@ -1,7 +1,19 @@
 .bearslivesearch {
-  width: 100%;
+  width: 52%;
   margin: 0 auto;
 }
+
+.bearslivesearch-float-left {
+  float: left;
+  }
+
+.bearslivesearch-float-right {
+  float: right;
+  }
+
+.bearslivesearch-float-none {
+  float: none;
+  }
 
 .bearslivesearch-form {
   display: flex;
@@ -16,6 +28,10 @@
   flex-wrap: wrap;
 }
 
+.bearslivesearch select, .bearslivesearch input {
+  padding: .25rem;
+  }
+
 .bearslivesearch-row {
   width: 100%;
   clear: both;
@@ -26,15 +42,15 @@
   gap: 0.5em;
 }
 .bearslivesearch-row-margin {
-  margin-top: 1em;
+  margin-top: .25em;
 }
 .bearslivesearch-radio-label {
-  margin-left: 1em;
+  margin-left: .5em;
 }
 .joomla-search-filters {
   width: 100%;
   clear: both;
-  margin-top: 1em;
+  margin-top: .25em;
   display: flex;
   gap: 1em;
   flex-wrap: wrap;
@@ -44,6 +60,7 @@
   width: fit-content;
   min-width: 7em;
   max-width: 100%;
+  padding: .25rem;
 }
 
 .bearslivesearch-criteria-hidden {
@@ -56,8 +73,8 @@
   border: none;
   outline: none;
   font-size: 1rem;
-  padding: 0.75rem 1rem;
-  border-radius: 2rem;
+  padding: 0.25rem .5rem;
+  border-radius: .5rem;
   background: transparent;
   min-width: 0;
   box-sizing: border-box;
@@ -85,7 +102,7 @@
   color: #fff;
   border: none;
   border-radius: 2rem;
-  padding: 0.5rem 1.25rem;
+  padding: 0.5rem 1rem;
   font-size: 1rem;
   cursor: pointer;
   transition: background 0.2s;
