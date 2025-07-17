@@ -106,6 +106,8 @@ class ModBearslivesearchHelper
                 ->from($db->qn('#__kunena_messages', 'm'))
                 ->join('INNER', $db->qn('#__kunena_topics', 't') . ' ON m.thread = t.id')
                 ->where('m.message LIKE ' . $db->q($searchLike))
+                ->where('m.hold = 0')
+                ->where('t.hold = 0')
                 ->order('m.time DESC')
                 ->setLimit($maxFetch);
             $db->setQuery($kunenaQuery);
