@@ -98,23 +98,25 @@
 
             // Pagination click handler (event delegation)
             results.addEventListener('click', function(e) {
-                var target = e.target;
-                // Handle both <a> and <span> (for active/disabled)
-                if (target.tagName === 'A' && target.closest('.pagination')) {
+                var anchor = e.target.closest('a');
+                if (anchor && results.contains(anchor)) {
                     e.preventDefault();
-                    var href = target.getAttribute('href');
+                    var href = anchor.getAttribute('href');
                     var page = 1;
-                    // Parse start or limitstart from the href
-                    var match = href && href.match(/[?&](?:start|limitstart)=(\d+)/);
+                    var match = href && href.match(/[?&]page=(\d+)/);
                     if (match) {
-                        var start = parseInt(match[1], 10);
-                        // Get results per page from the DOM if possible, fallback to 10
-                        var perPage = 10;
-                        var perPageInput = module.querySelector('[name="results_limit"]');
-                        if (perPageInput && perPageInput.value) {
-                            perPage = parseInt(perPageInput.value, 10) || 10;
+                        page = parseInt(match[1], 10);
+                    } else {
+                        match = href && href.match(/[?&](?:start|limitstart)=(\d+)/);
+                        if (match) {
+                            var start = parseInt(match[1], 10);
+                            var perPage = 10;
+                            var perPageInput = module.querySelector('[name="results_limit"]');
+                            if (perPageInput && perPageInput.value) {
+                                perPage = parseInt(perPageInput.value, 10) || 10;
+                            }
+                            page = Math.floor(start / perPage) + 1;
                         }
-                        page = Math.floor(start / perPage) + 1;
                     }
                     doSearch(input.value, page);
                 }
