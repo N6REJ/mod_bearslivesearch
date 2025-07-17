@@ -39,6 +39,8 @@ class ModBearslivesearchHelper
 
         // Pagination
         $resultsLimit = 10;
+        // Enforce hard max of 200 regardless of admin value
+        $resultsLimit = min(200, max(1, (int) $input->get('results_limit', $resultsLimit)));
         $page = max(1, (int) $input->get('page', 1));
         $offset = ($page - 1) * $resultsLimit;
         $maxFetch = 100; // Max results to fetch from each source for merging
