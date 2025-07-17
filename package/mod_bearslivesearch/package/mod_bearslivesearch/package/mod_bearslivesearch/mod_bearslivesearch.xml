@@ -7,7 +7,7 @@
     <creationDate>2025 July 16</creationDate>
     <copyright>Copyright (c) 2025 N6REJ</copyright>
     <license>GNU General Public License version 3 or later; see License.txt</license>
-    <version>2025.07.16.4</version>
+    <version>2025.07.16.2</version>
     <description>Bears Accessibility search module using Ajax.</description>
     <files>
         <filename module = "mod_bearslivesearch">mod_bearslivesearch.php</filename>
@@ -31,10 +31,6 @@
                 <field name = "output_limit" type = "number" label = "MOD_BEARSLIVESEARCH_OUTPUT_LIMIT" description = "MOD_BEARSLIVESEARCH_OUTPUT_LIMIT_DESC" default = "300"
                        min = "10" max = "1000" />
                 <field name = "results_limit" type = "number" label = "MOD_BEARSLIVESEARCH_RESULTS_LIMIT" description = "MOD_BEARSLIVESEARCH_RESULTS_LIMIT_DESC" default = "10" min = "1" max = "100" />
-                <field name="show_criteria" type="list" label="MOD_BEARSLIVESEARCH_SHOW_CRITERIA_LABEL" description="MOD_BEARSLIVESEARCH_SHOW_CRITERIA_DESC" default="always">
-                    <option value="always">MOD_BEARSLIVESEARCH_SHOW_CRITERIA_ALWAYS</option>
-                    <option value="after">MOD_BEARSLIVESEARCH_SHOW_CRITERIA_AFTER</option>
-                </field>
             </fieldset>
             <fieldset name = "advanced">
                 <field

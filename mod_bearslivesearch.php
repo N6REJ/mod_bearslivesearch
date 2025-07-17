@@ -2,12 +2,12 @@
 /**
  * Bears Live Search
  *
- * @version 2025.07.16.1255
+ * @version 2025.07.16.4
  * @package Bears Live Search
  * @author N6REJ
  * @email troy@hallhome.us
  * @website https://hallhome.us/software
- * @copyright Copyright (C) 2025 N6REJ
+ * @copyright Copyright (C) 2025 Troy Hall (N6REJ)
  * @license GNU General Public License version 3 or later; see License.txt
  * @since 2025.7.15
  */

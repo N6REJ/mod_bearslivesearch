@@ -2,12 +2,12 @@
 /**
  * Bears AJAX Search (Joomla 5, no Finder, with Kunena support, PHP-side pagination)
  *
- * @version 2025.07.16.1300
- * @package Bears AJAX Search
+ * @version 2025.07.16.4
+ * @package Bears Live Search
  * @author N6REJ
  * @email troy@hallhome.us
  * @website https://hallhome.us/software
- * @copyright Copyright (C) 2025 N6REJ
+ * @copyright Copyright (C) 2025 Troy Hall (N6REJ)
  * @license GNU General Public License version 3 or later; see License.txt
  * @since 2025.7.16
  */
@@ -23,7 +23,95 @@ use Joomla\CMS\Helper\ModuleHelper;
 class ModBearslivesearchHelper
 {
     /**
-     * AJAX method for search - search Joomla articles and Kunena forum posts (if present)
+     * Debug mode - set to true to enable debug output
+     */
+    private static $debug = true;
+
+    /**
+     * Test method to verify that the helper class is being called correctly
+     * 
+     * @return void Outputs test message
+     */
+    public static function test()
+    {
+        echo 'ModBearslivesearchHelper::test() method called successfully!';
+    }
+
+    /**
+     * AJAX method for test - required for Joomla's AJAX interface when using format=json
+     * 
+     * @return string Test message
+     */
+    public static function testAjax()
+    {
+        return 'ModBearslivesearchHelper::testAjax() method called successfully!';
+    }
+
+    /**
+     * AJAX method for search - required for Joomla's AJAX interface when using format=json
+     * 
+     * @return mixed Search results in a format compatible with Joomla's AJAX interface
+     */
+    public static function searchAjax()
+    {
+        try {
+            // Enable debug mode temporarily to capture any issues
+            $originalDebug = self::$debug;
+            self::$debug = true;
+
+            // Log PHP version and other environment info
+            \Joomla\CMS\Log\Log::add('PHP Version: 2025.07.16.4
+            \Joomla\CMS\Log\Log::add('Server: ' . $_SERVER['SERVER_SOFTWARE'], \Joomla\CMS\Log\Log::INFO, 'mod_bearslivesearch');
+
+            // Start output buffering to capture the output of the search method
+            if (!ob_start()) {
+                throw new \Exception('Failed to start output buffering');
+            }
+
+            // Call the search method
+            self::search();
+
+            // Get the buffered output
+            $output = ob_get_clean();
+            if ($output === false) {
+                throw new \Exception('Failed to get output buffer contents');
+            }
+
+            // Restore original debug setting
+            self::$debug = $originalDebug;
+
+            // Return the output as a string for Joomla's AJAX interface to handle
+            return $output;
+        } catch (\Exception $e) {
+            // Log the error with detailed information
+            \Joomla\CMS\Log\Log::add('Error in searchAjax: ' . $e->getMessage(), \Joomla\CMS\Log\Log::ERROR, 'mod_bearslivesearch');
+            \Joomla\CMS\Log\Log::add('Error trace: ' . $e->getTraceAsString(), \Joomla\CMS\Log\Log::ERROR, 'mod_bearslivesearch');
+
+            // Clean any remaining output buffer
+            while (ob_get_level() > 0) {
+                ob_end_clean();
+            }
+
+            // Return an error message that will be displayed to the user
+            return '<div role="alert">' . \Joomla\CMS\Language\Text::_('MOD_BEARSLIVESEARCH_SEARCH_ERROR') . 
+                   '<br>Error: ' . htmlspecialchars($e->getMessage()) . '</div>';
+        } catch (\Throwable $t) {
+            // Log the error (PHP 7+ can throw Throwable)
+            \Joomla\CMS\Log\Log::add('Fatal error in searchAjax: ' . $t->getMessage(), \Joomla\CMS\Log\Log::ERROR, 'mod_bearslivesearch');
+            \Joomla\CMS\Log\Log::add('Error trace: ' . $t->getTraceAsString(), \Joomla\CMS\Log\Log::ERROR, 'mod_bearslivesearch');
+
+            // Clean any remaining output buffer
+            while (ob_get_level() > 0) {
+                ob_end_clean();
+            }
+
+            // Return an error message that will be displayed to the user
+            return '<div role="alert">' . \Joomla\CMS\Language\Text::_('MOD_BEARSLIVESEARCH_SEARCH_ERROR') . 
+                   '<br>Fatal Error: ' . htmlspecialchars($t->getMessage()) . '</div>';
+        }
+    }
+
+    /**
      *
      * @return void Outputs search results directly
      */
