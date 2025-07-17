@@ -13,6 +13,7 @@
   box-shadow: 0 1px 4px rgba(0,0,0,0.06);
   padding: 0.25rem 0.5rem;
   border: 1px solid #e0e0e0;
+  flex-wrap: wrap;
 }
 
 .bearslivesearch-form input[type="search"] {

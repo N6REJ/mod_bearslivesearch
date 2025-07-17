@@ -21,34 +21,36 @@ $moduleclass_sfx = htmlspecialchars($params->get('moduleclass_sfx', ''), ENT_QUO
     <a href="#<?php echo $moduleId; ?>-results" class="visually-hidden visually-hidden-focusable skip-link" tabindex="0"><?php echo Text::_('MOD_BEARSLIVESEARCH_SKIP_TO_RESULTS', 'Skip to search results'); ?></a>
     <form class="bearslivesearch-form" style="margin: <?php echo $inputMargin; ?>;" role="search" aria-label="Site search" autocomplete="off">
         <label for="<?php echo $moduleId; ?>-input" class="visually-hidden"><?php echo Text::_('MOD_BEARSLIVESEARCH'); ?></label>
-        <input type="search" id="<?php echo $moduleId; ?>-input" name="q" aria-label="<?php echo Text::_('MOD_BEARSLIVESEARCH'); ?>" placeholder="<?php echo Text::_('MOD_BEARSLIVESEARCH_PLACEHOLDER'); ?>" required />
-        <button type="submit" aria-label="<?php echo Text::_('MOD_BEARSLIVESEARCH_SUBMIT'); ?>" class="bearslivesearch-submit">
-            <span class="icon-search" aria-hidden="true"></span>
-        </button>
+        <div style="width:100%;clear:both;display:flex;align-items:center;gap:0.5em;">
+            <input type="search" id="<?php echo $moduleId; ?>-input" name="q" aria-label="<?php echo Text::_('MOD_BEARSLIVESEARCH'); ?>" placeholder="<?php echo Text::_('MOD_BEARSLIVESEARCH_PLACEHOLDER'); ?>" required />
+            <button type="submit" aria-label="<?php echo Text::_('MOD_BEARSLIVESEARCH_SUBMIT'); ?>" class="bearslivesearch-submit">
+                <span class="icon-search" aria-hidden="true"></span>
+            </button>
+        </div>
 
-        <!-- Standard Joomla search criteria fields row -->
-        <div class="joomla-search-criteria" style="width:100%;clear:both;margin-top:1em;">
-            <div class="form-group">
-                <label for="<?php echo $moduleId; ?>-searchphrase">
-                    <?php echo Text::_('MOD_SEARCH_SEARCHFOR'); ?>
-                </label>
-                <select name="searchphrase" id="<?php echo $moduleId; ?>-searchphrase" class="form-control">
-                    <option value="anywords"><?php echo Text::_('MOD_SEARCH_ANYWORDS'); ?></option>
-                    <option value="allwords"><?php echo Text::_('MOD_SEARCH_ALLWORDS'); ?></option>
-                    <option value="exact"><?php echo Text::_('MOD_SEARCH_EXACTPHRASE'); ?></option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="<?php echo $moduleId; ?>-ordering">
-                    <?php echo Text::_('JGLOBAL_SORT_BY'); ?>
-                </label>
-                <select name="ordering" id="<?php echo $moduleId; ?>-ordering" class="form-control">
-                    <option value="newest"><?php echo Text::_('JGLOBAL_NEWEST_FIRST'); ?></option>
-                    <option value="oldest"><?php echo Text::_('JGLOBAL_OLDEST_FIRST'); ?></option>
-                    <option value="popular"><?php echo Text::_('JGLOBAL_MOST_POPULAR'); ?></option>
-                    <option value="alpha"><?php echo Text::_('JGLOBAL_ALPHABETICAL'); ?></option>
-                </select>
-            </div>
+        <!-- Row 2: Search for criteria -->
+        <div style="width:100%;clear:both;margin-top:1em;">
+            <label for="<?php echo $moduleId; ?>-searchphrase">
+                <?php echo Text::_('MOD_SEARCH_SEARCHFOR'); ?>
+            </label>
+            <select name="searchphrase" id="<?php echo $moduleId; ?>-searchphrase" class="form-control">
+                <option value="anywords"><?php echo Text::_('MOD_SEARCH_ANYWORDS'); ?></option>
+                <option value="allwords"><?php echo Text::_('MOD_SEARCH_ALLWORDS'); ?></option>
+                <option value="exact"><?php echo Text::_('MOD_SEARCH_EXACTPHRASE'); ?></option>
+            </select>
+        </div>
+
+        <!-- Row 3: Sort by -->
+        <div style="width:100%;clear:both;margin-top:1em;">
+            <label for="<?php echo $moduleId; ?>-ordering">
+                <?php echo Text::_('JGLOBAL_SORT_BY'); ?>
+            </label>
+            <select name="ordering" id="<?php echo $moduleId; ?>-ordering" class="form-control">
+                <option value="newest"><?php echo Text::_('JGLOBAL_NEWEST_FIRST'); ?></option>
+                <option value="oldest"><?php echo Text::_('JGLOBAL_OLDEST_FIRST'); ?></option>
+                <option value="popular"><?php echo Text::_('JGLOBAL_MOST_POPULAR'); ?></option>
+                <option value="alpha"><?php echo Text::_('JGLOBAL_ALPHABETICAL'); ?></option>
+            </select>
         </div>
 
         <!-- Standard Joomla search filters row -->
