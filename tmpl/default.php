@@ -77,7 +77,14 @@ $moduleclass_sfx = htmlspecialchars($params->get('moduleclass_sfx', ''), ENT_QUO
                 <label for="<?php echo $moduleId; ?>-author">
                     <?php echo Text::_('JAUTHOR'); ?>
                 </label>
-                <input type="text" name="author" id="<?php echo $moduleId; ?>-author" class="form-control" placeholder="<?php echo Text::_('JAUTHOR'); ?>" />
+                <select name="author" id="<?php echo $moduleId; ?>-author" class="form-control">
+                    <option value=""><?php echo Text::_('JOPTION_SELECT_AUTHOR'); ?></option>
+                    <?php if (!empty($authors)) : ?>
+                        <?php foreach ($authors as $author) : ?>
+                            <option value="<?php echo (int)$author->id; ?>"><?php echo htmlspecialchars($author->name, ENT_QUOTES, 'UTF-8'); ?></option>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </select>
             </div>
             <div class="form-group">
                 <label for="<?php echo $moduleId; ?>-datefrom">

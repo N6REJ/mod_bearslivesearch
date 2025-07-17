@@ -37,4 +37,38 @@ foreach ($cats as $cat) {
     }
 }
 
-require ModuleHelper::getLayoutPath('mod_bearslivesearch', $params->get('layout', 'default'), array('categories' => $categories));
+// Fetch authors with published articles
+$authors = [];
+try {
+    $db = \Joomla\CMS\Factory::getDbo();
+    $query = $db->getQuery(true)
+        ->select('created_by, COUNT(*) as num')
+        ->from($db->qn('#__content'))
+        ->where('state = 1')
+        ->group('created_by')
+        ->order('num DESC');
+    $db->setQuery($query);
+    $authorRows = $db->loadObjectList();
+    if ($authorRows) {
+        // Get user names
+        $userIds = array_map(function($row) { return (int)$row->created_by; }, $authorRows);
+        if ($userIds) {
+            $userQuery = $db->getQuery(true)
+                ->select('id, name')
+                ->from($db->qn('#__users'))
+                ->where('id IN (' . implode(',', $userIds) . ')');
+            $db->setQuery($userQuery);
+            $userList = $db->loadAssocList('id', 'name');
+            foreach ($authorRows as $row) {
+                if (!empty($userList[$row->created_by])) {
+                    $authors[] = (object)[
+                        'id' => (int)$row->created_by,
+                        'name' => $userList[$row->created_by]
+                    ];
+                }
+            }
+        }
+    }
+} catch (Exception $e) {}
+
+require ModuleHelper::getLayoutPath('mod_bearslivesearch', $params->get('layout', 'default'), array('categories' => $categories, 'authors' => $authors));

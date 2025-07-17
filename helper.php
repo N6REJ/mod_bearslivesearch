@@ -72,6 +72,11 @@ class ModBearslivesearchHelper
         if ($categoryId) {
             $queryObj->where('catid = ' . $categoryId);
         }
+        // Author filter
+        $authorId = (int) $input->get('author', 0);
+        if ($authorId) {
+            $queryObj->where('created_by = ' . $authorId);
+        }
         try {
             $db->setQuery($queryObj);
             $articleResults = $db->loadObjectList();
