@@ -33,3 +33,16 @@ jobs:
           github-token: ${{ secrets.GH_PAT }}
           extension-type: module
           extension-name: mod_bearslivesearch
+
+      - name: Commit changes
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          
+          if git diff --exit-code; then
+            echo "No changes to commit"
+          else
+            git add .
+            git commit -m "Update version to ${{ steps.package.outputs.version }} [skip ci]"
+            git push origin main
+          fi
