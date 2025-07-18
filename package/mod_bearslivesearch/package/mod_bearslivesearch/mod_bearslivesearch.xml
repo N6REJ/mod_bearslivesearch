@@ -7,14 +7,15 @@
     <creationDate>2025 July 18</creationDate>
     <copyright>Copyright (c) 2025 N6REJ</copyright>
     <license>GNU General Public License version 3 or later; see License.txt</license>
-    <version>2025.07.18.5</version>
+    <version>2025.07.18.8</version>
     <description>Bears Accessibility search module using Ajax.</description>
     <files>
         <filename module = "mod_bearslivesearch">mod_bearslivesearch.php</filename>
+        <filename>mod_bearslivesearch.xml</filename
         <filename>helper.php</filename>
         <filename>tmpl/default.php</filename>
-        <filename>media/js/bearslivesearch.js</filename>
-        <filename>media/css/bearslivesearch.css</filename>
+        <filename>License.txt</filename>
+        <folder>media</folder
     </files>
     <languages>
         <language tag = "en-GB">language/en-GB/en-GB.mod_bearslivesearch.ini</language>
