@@ -1,12 +1,6 @@
 name: Build Joomla Module
 
 on:
-  push:
-    tags:
-      - '*'
-    branches:
-      - main
-    types: [created]
   pull_request:
     types: [closed]
     branches: [main]
@@ -14,7 +8,7 @@ on:
 
 jobs:
   build_module:
-    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'pull_request' && github.event.pull_request.merged == true) || (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/'))
+    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'pull_request' && github.event.pull_request.merged == true)
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -31,8 +25,6 @@ jobs:
           copyright-holder: 'N6REJ'
           copyright-start-year: '2025'
           github-token: ${{ secrets.GH_PAT }}
-          extension-type: module
-          extension-name: mod_bearslivesearch
 
       - name: Commit changes
         run: |
