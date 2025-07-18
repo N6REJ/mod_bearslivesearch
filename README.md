@@ -1,34 +1,36 @@
-# Bears Live Search
+# Bears Live Search Module for Joomla
 
-Bears Live Search is an AJAX-powered, accessibility-first live search module for Joomla 5. It leverages the Joomla Finder (Smart Search) index for fast, relevant results and is designed to be fully accessible to all users, including those using assistive technologies.
+## What is Bears Live Search?
+Bears Live Search is a Joomla module that provides a fully responsive, fast, accessible, and user-friendly AJAX search experience for your website visitors. It uses Joomla's standard search engine and delivers live search results as users type, improving the search experience and accessibility for all users.
 
-## Features
-- **AJAX-powered live search**: Results update in real time as you type, with no page reloads.
-- **Finder (Smart Search) integration**: Uses Joomla's advanced Finder index for accurate, fast searching across your site content.
-- **Accessibility-first design**:
-  - Semantic HTML5 structure
-  - ARIA roles and attributes for screen readers
-  - aria-live updates for dynamic results
-  - aria-current and aria-labels on pagination controls
-  - Visible :focus styles for all interactive elements (input, button, links)
-  - Keyboard navigation support throughout
-  - "Skip to results" link for keyboard users
-- **Pagination**: Accessible pagination with ARIA support, including labels for First, Last, Next, and Previous, and aria-current for the current page.
-- **Customizable**: Easily adjust input and output margins via module parameters.
-- **Responsive design**: Works seamlessly on all devices and screen sizes.
-- **Error handling**: User-friendly error and status messages, including AJAX/network errors and empty results.
-- **Screen reader support**: All dynamic updates and navigation are announced to assistive technologies.
-- **No images required**: Purely text-based, but can be extended to support images with alt text.
+## What Does It Do?
+- Instantly displays search results as users type (AJAX-powered)
+- Offers accessible markup, including skip links for screen readers
+- Allows filtering by category, author, and date
+- Lets users sort results and choose results per page
+- Provides flexible positioning and styling options for seamless integration with your site design
+- Supports multiple modules per page
 
-## Installation
-1. Download the latest package from the releases.
-2. Install via the Joomla 5 Extension Manager.
-3. Configure the module as needed in the Joomla admin.
+## Module Settings Explained
+- **Input Form Margin**: Set the CSS margin for the search input form (default: `1em 0`).
+- **Output Form Margin**: Set the CSS margin for the search results output (default: `1em 0`).
+- **Results Character Limit**: Limit the number of characters shown for each result (default: `300`).
+- **Results Per Page**: Set how many results to display per search page (default: `10`).
+- **Show Search Criteria**: Choose when to display search criteria and filters (`Always` or `After search is started`).
+- **Position**: Float the module left, right, or center (center uses `none`).
+- **Margin**: CSS margin for the module container (default: `0 auto`).
+- **Module Class Suffix**: Add a custom CSS class suffix for further styling.
+- **Caching**: Enable or disable module caching for performance.
 
-## Usage
-- Publish the module in your desired template position.
-- Optionally adjust input/output margins and result limits in the module settings.
-- Users can search instantly, navigate results and pagination with keyboard, and benefit from full accessibility support.
+## How to Use
+1. Install the module via Joomla's Extension Manager.
+2. Publish the module in your desired template position.
+3. Configure the settings in the module options to fit your site's needs.
+4. Use the provided CSS classes (e.g., `.bearslivesearch`, `.bearslivesearch-float-left`, `.bearslivesearch-float-right`, `.bearslivesearch-float-none`) to style the module as needed.
 
-## License
-This project is licensed under the GNU General Public License v3.0 (GPL-3.0). See [License.txt](License.txt) for details.
+## Accessibility
+Bears Live Search is built with accessibility in mind, including skip links and ARIA attributes to ensure a great experience for all users.
+
+## Need Help?
+For more information, visit [https://hallhome.us/software](https://hallhome.us/software)
+For support, visit [issues](https://github.com/N6REJ/mod_bearslivesearch/issues)
