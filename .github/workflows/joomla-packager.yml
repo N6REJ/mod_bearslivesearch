@@ -19,7 +19,7 @@ jobs:
           fetch-depth: 0
           token: ${{ secrets.GH_PAT }}
       - name: Joomla Module Packager
-        uses: N6REJ/joomla-packager@2025.7.18
+        uses: N6REJ/joomla-packager@2025.7.19
         with:
           author: 'N6REJ'
           copyright-holder: 'N6REJ'
