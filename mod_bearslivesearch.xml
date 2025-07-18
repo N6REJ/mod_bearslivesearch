@@ -11,7 +11,7 @@
     <description>Bears Accessibility search module using Ajax.</description>
     <files>
         <filename module = "mod_bearslivesearch">mod_bearslivesearch.php</filename>
-        <filename>mod_bearslivesearch.xml</filename
+        <filename>mod_bearslivesearch.xml</filename>
         <filename>helper.php</filename>
         <filename>tmpl/default.php</filename>
         <filename>License.txt</filename>
