@@ -11,11 +11,11 @@
     <description>Bears Accessibility search module using Ajax.</description>
     <files>
         <filename module = "mod_bearslivesearch">mod_bearslivesearch.php</filename>
+        <filename>mod_bearslivesearch.xml</filename
         <filename>helper.php</filename>
         <filename>tmpl/default.php</filename>
         <filename>License.txt</filename>
-        <filename>media/js/bearslivesearch.js</filename>
-        <filename>media/css/bearslivesearch.css</filename>
+        <folder>media</folder
     </files>
     <languages>
         <language tag = "en-GB">language/en-GB/en-GB.mod_bearslivesearch.ini</language>
