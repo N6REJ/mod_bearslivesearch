@@ -2,8 +2,6 @@ build/package
 ├── CHANGELOG.md
 ├── License.txt
 ├── README.md
-├── build
-│   └── package
 ├── helper.php
 ├── language
 │   └── en-GB
@@ -41,4 +39,4 @@ build/package
 │   └── default.php
 └── updates.xml
 
-17 directories, 25 files
+15 directories, 25 files
