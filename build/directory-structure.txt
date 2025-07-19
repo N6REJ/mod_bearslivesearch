@@ -1,6 +1,7 @@
 build/package
 ├── CHANGELOG.md
 ├── License.txt
+├── README.md
 ├── build
 │   └── package
 ├── helper.php
@@ -18,7 +19,9 @@ build/package
 ├── package
 │   ├── directory-structure.txt
 │   └── mod_bearslivesearch
+│       ├── CHANGELOG.md
 │       ├── License.txt
+│       ├── README.md
 │       ├── helper.php
 │       ├── language
 │       │   └── en-GB
@@ -38,4 +41,4 @@ build/package
 │   └── default.php
 └── updates.xml
 
-17 directories, 22 files
+17 directories, 25 files
