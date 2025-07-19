@@ -5,10 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [2025.07.19.30] - 2025-07-19
+## [2025.07.19.31] - 2025-07-19
 
 ### Changed
 
-* Update version to  [skip ci] ([e1d6920](https://github.com/N6REJ/mod_bearslivesearch/commit/e1d6920))
 * Update version to  [skip ci] ([f6db441](https://github.com/N6REJ/mod_bearslivesearch/commit/f6db441))
+* Update version to  [skip ci] ([300d578](https://github.com/N6REJ/mod_bearslivesearch/commit/300d578))
 
