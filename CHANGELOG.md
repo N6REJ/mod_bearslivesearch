@@ -12,4 +12,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Update version to  [skip ci] ([77298f6](https://github.com/N6REJ/mod_bearslivesearch/commit/77298f6))
 * Update version to  [skip ci] ([0b7f7a5](https://github.com/N6REJ/mod_bearslivesearch/commit/0b7f7a5))
 * Update version to  [skip ci] ([0e908a2](https://github.com/N6REJ/mod_bearslivesearch/commit/0e908a2))
+* Update version to  [skip ci] ([39beff0](https://github.com/N6REJ/mod_bearslivesearch/commit/39beff0))
 
