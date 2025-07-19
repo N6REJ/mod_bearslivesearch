@@ -15,7 +15,7 @@
         <filename>helper.php</filename>
         <filename>tmpl/default.php</filename>
         <filename>License.txt</filename>
-        <folder>media</folder
+        <folder>media</folder>
     </files>
     <languages>
         <language tag = "en-GB">language/en-GB/en-GB.mod_bearslivesearch.ini</language>
