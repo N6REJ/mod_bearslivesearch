@@ -7,7 +7,7 @@
     <creationDate>2025 July 19</creationDate>
     <copyright>Copyright (c) 2025 N6REJ</copyright>
     <license>GNU General Public License version 3 or later; see License.txt</license>
-    <version>2025.07.19.27</version>
+    <version>2025.07.19.28</version>
     <description>Bears Accessibility search module using Ajax.</description>
     <files>
         <filename module = "mod_bearslivesearch">mod_bearslivesearch.php</filename>
