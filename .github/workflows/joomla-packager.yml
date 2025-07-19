@@ -24,8 +24,6 @@ jobs:
           author: 'N6REJ'
           copyright-holder: 'N6REJ'
           copyright-start-year: '2025'
-          extension-name: 'mod_bearslivesearch'
-          extension-xml: 'mod_bearslivesearch.xml'
           extension-type: 'module'
           github-token: ${{ secrets.GH_PAT }}
 
