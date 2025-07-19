@@ -1,7 +1,6 @@
 build/package
 ├── CHANGELOG.md
 ├── License.txt
-├── README.md
 ├── build
 │   └── package
 ├── helper.php
@@ -16,13 +15,10 @@ build/package
 │       └── bearslivesearch.js
 ├── mod_bearslivesearch.php
 ├── mod_bearslivesearch.xml
-├── mod_bearslivesearch.xml.bak
 ├── package
 │   ├── directory-structure.txt
 │   └── mod_bearslivesearch
-│       ├── CHANGELOG.md
 │       ├── License.txt
-│       ├── README.md
 │       ├── helper.php
 │       ├── language
 │       │   └── en-GB
@@ -35,7 +31,6 @@ build/package
 │       │       └── bearslivesearch.js
 │       ├── mod_bearslivesearch.php
 │       ├── mod_bearslivesearch.xml
-│       ├── mod_bearslivesearch.xml.bak
 │       ├── tmpl
 │       │   └── default.php
 │       └── updates.xml
@@ -43,4 +38,4 @@ build/package
 │   └── default.php
 └── updates.xml
 
-17 directories, 27 files
+17 directories, 22 files
