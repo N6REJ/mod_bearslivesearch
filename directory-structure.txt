@@ -1,4 +1,4 @@
-/home/runner/work/_temp/joomla-build-mod_bearslivesearch-2025.07.20.5
+/home/runner/work/_temp/joomla-build-mod_bearslivesearch-2025.07.20.6
 ├── CHANGELOG.md
 ├── License.txt
 ├── README.md
@@ -15,7 +15,7 @@
 │       └── bearslivesearch.js
 ├── mod_bearslivesearch.php
 ├── mod_bearslivesearch.xml
-├── mod_bearslivesearch_2025.07.20.5.zip
+├── mod_bearslivesearch_2025.07.20.6.zip
 ├── tmpl
 │   └── default.php
 └── updates.xml
