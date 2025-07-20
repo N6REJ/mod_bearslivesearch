@@ -1,5 +1,4 @@
-/home/runner/work/_temp/joomla-build-mod_bearslivesearch-2025.07.20.10
-├── CHANGELOG.md
+/home/runner/work/_temp/joomla-build-mod_bearslivesearch-2025.07.20.11
 ├── License.txt
 ├── README.md
 ├── directory-structure.txt
@@ -15,9 +14,8 @@
 │       └── bearslivesearch.js
 ├── mod_bearslivesearch.php
 ├── mod_bearslivesearch.xml
-├── mod_bearslivesearch_2025.07.20.10.zip
-├── tmpl
-│   └── default.php
-└── updates.xml
+├── mod_bearslivesearch_2025.07.20.11.zip
+└── tmpl
+    └── default.php
 
-7 directories, 14 files
+7 directories, 12 files
