@@ -5,10 +5,10 @@
     <description />
     <element>mod_bearslivesearch</element>
     <type />
-    <version>2025.07.21.4</version>
+    <version>2025.07.21.5</version>
     <infourl />
     <downloads>
-      <downloadurl type="full" format="zip">https://github.com/N6REJ/mod_bearslivesearch/releases/download/2025.07.21.4/mod_bearslivesearch_2025.07.21.4.zip</downloadurl>
+      <downloadurl type="full" format="zip">https://github.com/N6REJ/mod_bearslivesearch/releases/download/2025.07.21.5/mod_bearslivesearch_2025.07.21.5.zip</downloadurl>
     </downloads>
   </update>
 </updates>
