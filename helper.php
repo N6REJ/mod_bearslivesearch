@@ -29,10 +29,12 @@ class ModBearslivesearchHelper
      */
     public static function searchAjax()
     {
+
         $app = Factory::getApplication();
         $input = $app->input;
         $query = trim($input->getString('q', ''));
         if ($query === '') {
+            echo '<div class="bearslivesearch-debug">DEBUG: Empty query</div>';
             echo '<div role="status">' . Text::_('MOD_BEARSLIVESEARCH_EMPTY_QUERY') . '</div>';
             return;
         }
@@ -102,27 +104,91 @@ class ModBearslivesearchHelper
         $kunenaTable = $db->replacePrefix('#__kunena_messages');
         $tables = $db->getTableList();
         $kunenaInstalled = in_array($kunenaTable, $tables);
+        $kunenaHasMessage = false;
+        $kunenaHasSubject = false;
+        $kunenaTextTable = $db->replacePrefix('#__kunena_messages_text');
+        $kunenaTextHasMessage = false;
         if ($kunenaInstalled) {
-            $kunenaQuery = $db->getQuery(true)
-                ->select(['m.id', 'm.message', 'm.thread', 'm.userid', 'm.time', 't.subject', 't.catid'])
-                ->from($db->qn('#__kunena_messages', 'm'))
-                ->join('INNER', $db->qn('#__kunena_topics', 't') . ' ON m.thread = t.id')
-                ->where('m.message LIKE ' . $db->q($searchLike))
-                ->where('m.hold = 0')
-                ->where('t.hold = 0')
-                ->order('m.time DESC')
-                ->setLimit($maxFetch);
-            $db->setQuery($kunenaQuery);
-            $kunenaResults = $db->loadObjectList();
-            foreach ($kunenaResults as $kitem) {
-                $allResults[] = [
-                    'type' => 'kunena',
-                    'title' => $kitem->subject,
-                    'desc' => strip_tags($kitem->message),
-                    'created' => date('Y-m-d H:i:s', (int)$kitem->time),
-                    'link' => 'index.php?option=com_kunena&view=topic&catid=' . (int)$kitem->catid . '&id=' . (int)$kitem->thread . '#msg' . (int)$kitem->id
-                ];
+            // Check columns in kunena_messages
+            try {
+                $columns = $db->getTableColumns($kunenaTable);
+                $kunenaHasMessage = isset($columns['message']);
+                $kunenaHasSubject = isset($columns['subject']);
+            } catch (Exception $e) {
+                $kunenaHasMessage = false;
+                $kunenaHasSubject = false;
             }
+            // Check if kunena_messages_text table exists and has 'message' column
+            $tablesLower = array_map('strtolower', $tables);
+            if (in_array(strtolower($kunenaTextTable), $tablesLower)) {
+                try {
+                    $textColumns = $db->getTableColumns($kunenaTextTable);
+                    $kunenaTextHasMessage = isset($textColumns['message']);
+                } catch (Exception $e) {
+                    $kunenaTextHasMessage = false;
+                }
+            }
+        }
+        // Old schema: message column in kunena_messages
+        if ($kunenaInstalled && $kunenaHasMessage) {
+
+            try {
+                $kunenaQuery = $db->getQuery(true)
+                    ->select(['m.id', 'm.message', 'm.thread', 'm.userid', 'm.time', 't.subject', 't.catid'])
+                    ->from($db->qn('#__kunena_messages', 'm'))
+                    ->join('INNER', $db->qn('#__kunena_topics', 't') . ' ON m.thread = t.id')
+                    ->where('m.message LIKE ' . $db->q($searchLike))
+                    ->where('m.hold = 0')
+                    ->where('t.hold = 0')
+                    ->order('m.time DESC')
+                    ->setLimit($maxFetch);
+                $db->setQuery($kunenaQuery);
+                $kunenaResults = $db->loadObjectList();
+                foreach ($kunenaResults as $kitem) {
+                    $allResults[] = [
+                        'type' => 'kunena',
+                        'title' => $kitem->subject,
+                        'desc' => strip_tags($kitem->message),
+                        'created' => date('Y-m-d H:i:s', (int)$kitem->time),
+                        'link' => 'index.php?option=com_kunena&view=topic&catid=' . (int)$kitem->catid . '&id=' . (int)$kitem->thread . '#msg' . (int)$kitem->id
+                    ];
+                }
+            } catch (Exception $e) {
+
+            }
+        }
+        // Newer schema: message in kunena_messages_text, subject in kunena_messages
+        else if ($kunenaInstalled && !$kunenaHasMessage && $kunenaHasSubject && $kunenaTextHasMessage) {
+
+            try {
+                $kunenaQuery = $db->getQuery(true)
+                    ->select(['m.id', 'mt.message', 'm.thread', 'm.userid', 'm.time', 'm.subject', 't.catid'])
+                    ->from($db->qn('#__kunena_messages', 'm'))
+                    ->join('INNER', $db->qn('#__kunena_messages_text', 'mt') . ' ON m.id = mt.mesid')
+                    ->join('INNER', $db->qn('#__kunena_topics', 't') . ' ON m.thread = t.id')
+                    ->where('mt.message LIKE ' . $db->q($searchLike))
+                    ->where('m.hold = 0')
+                    ->where('t.hold = 0')
+                    ->order('m.time DESC')
+                    ->setLimit($maxFetch);
+                $db->setQuery($kunenaQuery);
+                $kunenaResults = $db->loadObjectList();
+                foreach ($kunenaResults as $kitem) {
+                    $allResults[] = [
+                        'type' => 'kunena',
+                        'title' => $kitem->subject,
+                        'desc' => strip_tags($kitem->message),
+                        'created' => date('Y-m-d H:i:s', (int)$kitem->time),
+                        'link' => 'index.php?option=com_kunena&view=topic&catid=' . (int)$kitem->catid . '&id=' . (int)$kitem->thread . '#msg' . (int)$kitem->id
+                    ];
+                }
+            } catch (Exception $e) {
+
+            }
+        }
+        // If neither schema is available, skip Kunena
+        else if ($kunenaInstalled) {
+
         }
 
         // Sort all results by created DESC

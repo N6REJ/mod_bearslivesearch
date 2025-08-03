@@ -52,6 +52,7 @@
   display: flex;
   align-items: center;
   gap: 0.5em;
+  height: 1.5rem;
 }
 .bearslivesearch-row-margin {
   margin-top: .25em;
@@ -113,8 +114,7 @@
   background: #0077cc;
   color: #fff;
   border: none;
-  border-radius: 2rem;
-  padding: 0.5rem 1rem;
+  border-radius: 1rem;
   font-size: 1rem;
   cursor: pointer;
   transition: background 0.2s;
