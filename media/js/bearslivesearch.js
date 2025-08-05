@@ -335,12 +335,24 @@
                     }
                 }
                 
-                // Remove all collected elements
+                // Remove all collected elements except footer
                 elementsToRemove.forEach(function(element) {
                     // Only remove if the element is still in the DOM (not already removed as a child)
                     if (element.parentElement) {
-                        console.log('Removing element after module:', element.tagName, element.id || element.className);
-                        element.remove();
+                        // Preserve footer elements
+                        var isFooter = element.id === 'footer' || 
+                                      element.tagName === 'FOOTER' ||
+                                      element.className.includes('footer') ||
+                                      element.closest('#footer') ||
+                                      element.closest('footer') ||
+                                      element.closest('[class*="footer"]');
+                        
+                        if (!isFooter) {
+                            console.log('Removing element after module:', element.tagName, element.id || element.className);
+                            element.remove();
+                        } else {
+                            console.log('Preserving footer element:', element.tagName, element.id || element.className);
+                        }
                     }
                 });
                 
