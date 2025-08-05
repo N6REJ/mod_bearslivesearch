@@ -51,11 +51,8 @@
                     results.innerHTML = '';
                     results.classList.add('bearslivesearch-results--hidden');
                     
-                    // If we're in separate page mode and transformed, restore original page
-                    if (searchMode === 'separate_page' && isTransformedOrSearchPage() && originalPageState) {
-                        // Simple approach: just reload the original URL
-                        window.location.href = originalPageState.url;
-                    }
+                    // Stay on search page instead of reverting to original URL
+                    // This prevents the unwanted behavior of going back when deleting characters
                     return;
                 }
 
