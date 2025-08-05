@@ -307,67 +307,44 @@
                 
                 console.log('Target module found:', targetModule);
                 
-                // CONSERVATIVE APPROACH: Only remove content that's clearly after the search module
-                var bodyChildren = Array.from(document.body.children);
-                var moduleAncestor = null;
+                // AGGRESSIVE APPROACH: Remove all content that comes after the search module in document order
+                // This handles multiple modules in the same position correctly
                 
-                // Find which top-level body child contains our module
-                bodyChildren.forEach(function(child) {
-                    if (child.contains(targetModule)) {
-                        moduleAncestor = child;
-                        console.log('Module ancestor found:', child.tagName, child.id || child.className);
-                    }
-                });
+                // Get all elements in the document
+                var allElements = Array.from(document.body.querySelectorAll('*'));
                 
-                if (!moduleAncestor) {
-                    console.error('Could not find module ancestor in body children');
+                // Find the index of our target module
+                var moduleIndex = allElements.indexOf(targetModule);
+                
+                if (moduleIndex === -1) {
+                    console.error('Could not find target module in document elements');
                     return;
                 }
                 
-                // Find the position of the module ancestor among body children
-                var moduleAncestorIndex = bodyChildren.indexOf(moduleAncestor);
+                console.log('Target module found at index:', moduleIndex, 'of', allElements.length, 'total elements');
                 
-                // Only remove body children that come AFTER the module ancestor
-                for (var i = moduleAncestorIndex + 1; i < bodyChildren.length; i++) {
-                    var child = bodyChildren[i];
-                    // Keep essential site elements even if they come after
-                    var keepElement = false;
+                // Collect all elements that come after the module and are not descendants of the module
+                var elementsToRemove = [];
+                
+                for (var i = moduleIndex + 1; i < allElements.length; i++) {
+                    var element = allElements[i];
                     
-                    if (child.tagName === 'HEADER' || 
-                        child.tagName === 'NAV' ||
-                        child.tagName === 'FOOTER' ||
-                        child.id === 'header' ||
-                        child.id === 'navigation' ||
-                        child.id === 'footer' ||
-                        child.className.includes('header') ||
-                        child.className.includes('nav') ||
-                        child.className.includes('footer') ||
-                        child.className.includes('menu') ||
-                        child.className.includes('skip-link')) {
-                        keepElement = true;
-                    }
-                    
-                    if (!keepElement) {
-                        console.log('Removing body child after module ancestor:', child.tagName, child.id || child.className);
-                        child.remove();
+                    // Don't remove elements that are inside the target module
+                    if (!targetModule.contains(element)) {
+                        elementsToRemove.push(element);
                     }
                 }
                 
-                // Within the module ancestor, only remove content that comes after the module
-                // Find the direct child of moduleAncestor that contains our module
-                var moduleDirectChild = targetModule;
-                while (moduleDirectChild.parentElement !== moduleAncestor) {
-                    moduleDirectChild = moduleDirectChild.parentElement;
-                }
+                // Remove all collected elements
+                elementsToRemove.forEach(function(element) {
+                    // Only remove if the element is still in the DOM (not already removed as a child)
+                    if (element.parentElement) {
+                        console.log('Removing element after module:', element.tagName, element.id || element.className);
+                        element.remove();
+                    }
+                });
                 
-                // Only remove siblings that come AFTER the module's container
-                var ancestorChildren = Array.from(moduleAncestor.children);
-                var moduleIndex = ancestorChildren.indexOf(moduleDirectChild);
-                
-                for (var i = moduleIndex + 1; i < ancestorChildren.length; i++) {
-                    console.log('Removing content after module within ancestor:', ancestorChildren[i].tagName, ancestorChildren[i].id || ancestorChildren[i].className);
-                    ancestorChildren[i].remove();
-                }
+                console.log('Removed', elementsToRemove.length, 'elements after the search module');
                 
                 // Transform the target module in place
                 targetModule.classList.add('bearslivesearch-search-page');
