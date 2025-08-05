@@ -15,6 +15,7 @@
         <filename>helper.php</filename>
         <filename>tmpl/default.php</filename>
         <filename>License.txt</filename>
+        <folder>fields</folder>
         <folder>media</folder>
     </files>
     <languages>
@@ -54,6 +55,14 @@
                     <option value="icon-search">MOD_BEARSLIVESEARCH_SEARCH_ICON_JOOMLA</option>
                     <option value="fas fa-search">MOD_BEARSLIVESEARCH_SEARCH_ICON_FONTAWESOME</option>
                 </field>
+                <field
+                    addfieldpath="/modules/mod_bearslivesearch/fields"
+                    name="end_position"
+                    type="endpositions"
+                    label="MOD_BEARSLIVESEARCH_END_POSITION_LABEL"
+                    description="MOD_BEARSLIVESEARCH_END_POSITION_DESC"
+                    default=""
+                />
             </fieldset>
             <fieldset name = "advanced">
                 <field

@@ -294,4 +294,50 @@ class ModBearslivesearchHelper
 
         return $html;
     }
+
+    /**
+     * AJAX method to get template positions for admin form
+     *
+     * @return void Outputs JSON response
+     */
+    public static function getTemplatePositionsAjax()
+    {
+        try {
+            $app = Factory::getApplication();
+            
+            // Only allow in admin
+            if (!$app->isClient('administrator')) {
+                echo json_encode(['success' => false, 'message' => 'Access denied']);
+                return;
+            }
+
+            $positions = [];
+            
+            // Get the current template
+            $template = $app->getTemplate();
+            
+            // Path to templateDetails.xml file
+            $templatePath = JPATH_THEMES . '/' . $template . '/templateDetails.xml';
+
+            if (file_exists($templatePath)) {
+                $xml = simplexml_load_file($templatePath);
+
+                if ($xml && isset($xml->positions->position)) {
+                    foreach ($xml->positions->position as $position) {
+                        $pos = trim((string)$position);
+                        if (!empty($pos)) {
+                            $positions[] = $pos;
+                        }
+                    }
+
+                    // Sort positions alphabetically
+                    sort($positions);
+                }
+            }
+
+            echo json_encode(['success' => true, 'data' => $positions]);
+        } catch (Exception $e) {
+            echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+        }
+    }
 }
