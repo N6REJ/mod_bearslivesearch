@@ -206,3 +206,85 @@
   margin-left: 0.5em;
   vertical-align: middle;
 }
+
+/* Search results page specific styling */
+.bearslivesearch-search-page {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.bearslivesearch-search-page h1 {
+  margin-bottom: 1.5rem;
+  color: #333;
+  font-size: 2rem;
+}
+
+.bearslivesearch-search-page .bearslivesearch-form {
+  margin-bottom: 2rem;
+}
+
+.bearslivesearch-search-page .bearslivesearch-results {
+  display: block !important;
+  margin-top: 0 !important;
+  padding: 1rem !important;
+  min-height: auto !important;
+  background: #fff;
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.bearslivesearch-search-page .bearslivesearch-results--hidden {
+  display: block !important;
+}
+
+/* Pagination styling for search results page */
+.bearslivesearch-search-page .bearslivesearch-pagination {
+  margin-top: 2rem;
+  text-align: center;
+}
+
+.bearslivesearch-search-page .bearslivesearch-pagination .pagination {
+  justify-content: center;
+}
+
+/* Summary styling */
+.bearslivesearch-search-page .bearslivesearch-summary {
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 0.5rem;
+  border-left: 4px solid #007bff;
+}
+
+/* Page transformation container */
+.bearslivesearch-page-container {
+  width: 100%;
+  margin-top: 2rem;
+  padding: 1rem;
+  background: #fff;
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.bearslivesearch-page-container .bearslivesearch-search-page {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+}
+
+/* Results container when placed outside module */
+.bearslivesearch-page-results {
+  width: 100%;
+  margin-top: 1rem;
+  padding: 1rem;
+  background: #fff;
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  display: block !important;
+}
+
+.bearslivesearch-page-results.bearslivesearch-results--hidden {
+  display: none !important;
+}

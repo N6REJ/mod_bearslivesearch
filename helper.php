@@ -195,56 +195,103 @@ class ModBearslivesearchHelper
         }
         $output .= '</ul>';
 
-        // Pagination (accessible)
+        // Pagination (accessible) - Joomla 5 compatible
         $totalPages = max(1, (int) ceil($totalMatches / $resultsLimit));
         if ($totalPages > 1) {
-            \Joomla\CMS\HTML\HTMLHelper::_('behavior.core');
-            $pagination = new \JPagination($totalMatches, $offset, $resultsLimit);
-            $paginationHtml = $pagination->getPagesLinks();
-            // Accessibility patch: add aria-current and aria-labels
-            $paginationHtml = preg_replace_callback(
-                '/<li[^>]*class="[^"]*active[^"]*"[^>]*>\s*<span[^>]*>(\d+)<\/span>\s*<\/li>/i',
-                function ($m) {
-                    return '<li class="active"><span aria-current="page">' . $m[1] . '</span></li>';
-                },
-                $paginationHtml
-            );
-            $paginationHtml = preg_replace_callback(
-                '/<a([^>]+)>(First|Last|Next|Previous)<\/a>/i',
-                function ($m) {
-                    $label = '';
-                    switch (strtolower($m[2])) {
-                        case 'first': $label = 'First page'; break;
-                        case 'last': $label = 'Last page'; break;
-                        case 'next': $label = 'Next page'; break;
-                        case 'previous': $label = 'Previous page'; break;
-                    }
-                    return '<a' . $m[1] . ' aria-label="' . $label . '">' . $m[2] . '</a>';
-                },
-                $paginationHtml
-            );
-            // Patch pagination links for AJAX: replace hrefs with correct AJAX endpoint and preserve query/moduleId
-            $moduleId = (int) $input->get('moduleId', 0);
-            $searchQuery = rawurlencode($query);
-            $ajaxBase = 'index.php?option=com_ajax&module=bearslivesearch&method=search&format=raw&q=' . $searchQuery;
-            if ($moduleId) {
-                $ajaxBase .= '&moduleId=' . $moduleId;
-            }
-            // Replace hrefs with AJAX URLs
-            $paginationHtml = preg_replace_callback(
-                '/href="([^"]*start=(\d+)[^"]*)"/i',
-                function ($m) use ($ajaxBase) {
-                    $pageStart = (int)$m[2];
-                    $pageNum = ($pageStart / 10) + 1; // 10 is resultsLimit
-                    return 'href="' . $ajaxBase . '&page=' . $pageNum . '"';
-                },
-                $paginationHtml
-            );
-            // Only return the results area content (not the whole template)
-            $output = '<div class="bearslivesearch-summary">Results ' . $startResult . '-' . $endResult . ' of ' . $totalMatches . ' for <strong>"' . $queryDisplay . '"</strong></div>'
-                . '<ul class="bearslivesearch-list" role="list">' . substr($output, strpos($output, '<li')) . '</ul>'
-                . '<nav class="bearslivesearch-pagination" aria-label="Pagination">' . $paginationHtml . '</nav>';
+            $paginationHtml = self::buildPagination($page, $totalPages, $query, $input);
+            $output .= '<nav class="bearslivesearch-pagination" aria-label="Pagination">' . $paginationHtml . '</nav>';
         }
         echo $output;
+    }
+
+    /**
+     * Build pagination HTML for Joomla 5 compatibility
+     *
+     * @param int $currentPage Current page number
+     * @param int $totalPages Total number of pages
+     * @param string $query Search query
+     * @param \Joomla\Input\Input $input Input object
+     * @return string Pagination HTML
+     */
+    private static function buildPagination($currentPage, $totalPages, $query, $input)
+    {
+        $moduleId = (int) $input->get('moduleId', 0);
+        $searchQuery = rawurlencode($query);
+        $ajaxBase = 'index.php?option=com_ajax&module=bearslivesearch&method=search&format=raw&q=' . $searchQuery;
+        if ($moduleId) {
+            $ajaxBase .= '&moduleId=' . $moduleId;
+        }
+
+        // Add other search parameters
+        $params = [];
+        $searchParams = ['searchphrase', 'ordering', 'results_limit', 'category', 'author', 'datefrom', 'dateto'];
+        foreach ($searchParams as $param) {
+            $value = $input->get($param, '');
+            if (!empty($value)) {
+                $params[] = $param . '=' . urlencode($value);
+            }
+        }
+        if (!empty($params)) {
+            $ajaxBase .= '&' . implode('&', $params);
+        }
+
+        $html = '<ul class="pagination">';
+
+        // Previous page
+        if ($currentPage > 1) {
+            $prevPage = $currentPage - 1;
+            $html .= '<li class="page-item">';
+            $html .= '<a class="page-link" href="' . $ajaxBase . '&page=' . $prevPage . '" aria-label="Previous page">Previous</a>';
+            $html .= '</li>';
+        }
+
+        // Page numbers
+        $startPage = max(1, $currentPage - 2);
+        $endPage = min($totalPages, $currentPage + 2);
+
+        // First page if not in range
+        if ($startPage > 1) {
+            $html .= '<li class="page-item">';
+            $html .= '<a class="page-link" href="' . $ajaxBase . '&page=1">1</a>';
+            $html .= '</li>';
+            if ($startPage > 2) {
+                $html .= '<li class="page-item disabled"><span class="page-link">...</span></li>';
+            }
+        }
+
+        // Page range
+        for ($i = $startPage; $i <= $endPage; $i++) {
+            if ($i == $currentPage) {
+                $html .= '<li class="page-item active">';
+                $html .= '<span class="page-link" aria-current="page">' . $i . '</span>';
+                $html .= '</li>';
+            } else {
+                $html .= '<li class="page-item">';
+                $html .= '<a class="page-link" href="' . $ajaxBase . '&page=' . $i . '">' . $i . '</a>';
+                $html .= '</li>';
+            }
+        }
+
+        // Last page if not in range
+        if ($endPage < $totalPages) {
+            if ($endPage < $totalPages - 1) {
+                $html .= '<li class="page-item disabled"><span class="page-link">...</span></li>';
+            }
+            $html .= '<li class="page-item">';
+            $html .= '<a class="page-link" href="' . $ajaxBase . '&page=' . $totalPages . '">' . $totalPages . '</a>';
+            $html .= '</li>';
+        }
+
+        // Next page
+        if ($currentPage < $totalPages) {
+            $nextPage = $currentPage + 1;
+            $html .= '<li class="page-item">';
+            $html .= '<a class="page-link" href="' . $ajaxBase . '&page=' . $nextPage . '" aria-label="Next page">Next</a>';
+            $html .= '</li>';
+        }
+
+        $html .= '</ul>';
+
+        return $html;
     }
 }

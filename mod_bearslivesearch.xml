@@ -34,6 +34,10 @@
                     <option value="always">MOD_BEARSLIVESEARCH_SHOW_CRITERIA_ALWAYS</option>
                     <option value="after">MOD_BEARSLIVESEARCH_SHOW_CRITERIA_AFTER</option>
                 </field>
+                <field name="search_mode" type="list" label="MOD_BEARSLIVESEARCH_SEARCH_MODE_LABEL" description="MOD_BEARSLIVESEARCH_SEARCH_MODE_DESC" default="inline">
+                    <option value="inline">MOD_BEARSLIVESEARCH_SEARCH_MODE_INLINE</option>
+                    <option value="separate_page">MOD_BEARSLIVESEARCH_SEARCH_MODE_SEPARATE_PAGE</option>
+                </field>
                 <field name="position" type="list" label="MOD_BEARSLIVESEARCH_POSITION_LABEL" description="MOD_BEARSLIVESEARCH_POSITION_DESC" default="none">
                     <option value="left">Left</option>
                     <option value="right">Right</option>

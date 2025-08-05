@@ -19,6 +19,7 @@
             var results = module.querySelector('.bearslivesearch-results');
             var lastQuery = '';
             var xhr;
+            var searchMode = module.getAttribute('data-search-mode') || 'inline';
 
             function updateResults(html) {
                 // Reveal criteria/filter rows if hidden (for "after" mode)
@@ -111,46 +112,272 @@
                 xhr.send();
             }
 
+            function createCompleteSearchPage(query, formData, originalModuleId, originalForm) {
+                // Clone the original form to preserve all styling and options
+                var clonedForm = originalForm.cloneNode(true);
+                
+                // Update the cloned form's input value
+                var clonedInput = clonedForm.querySelector('input[type="search"]');
+                if (clonedInput) {
+                    clonedInput.value = query;
+                }
+                
+                // Update form field values based on formData
+                var formElements = clonedForm.elements;
+                for (var i = 0; i < formElements.length; i++) {
+                    var element = formElements[i];
+                    var value = formData.get(element.name);
+                    if (value !== null) {
+                        if (element.type === 'radio' || element.type === 'checkbox') {
+                            element.checked = (element.value === value);
+                        } else {
+                            element.value = value;
+                        }
+                    }
+                }
+                
+                // Show all hidden criteria in the cloned form
+                var hiddenCriteria = clonedForm.querySelectorAll('.bearslivesearch-criteria-hidden');
+                hiddenCriteria.forEach(function(row) {
+                    row.classList.remove('bearslivesearch-criteria-hidden');
+                });
+                
+                var moduleId = originalModuleId + '-search-page';
+                
+                // Create container and add title + cloned form + results
+                var container = document.createElement('div');
+                container.className = 'bearslivesearch bearslivesearch-search-page';
+                container.id = moduleId;
+                
+                var title = document.createElement('h1');
+                title.textContent = 'Search Results';
+                title.style.marginBottom = '1.5rem';
+                container.appendChild(title);
+                
+                container.appendChild(clonedForm);
+                
+                var resultsDiv = document.createElement('div');
+                resultsDiv.className = 'bearslivesearch-results';
+                resultsDiv.id = moduleId + '-results';
+                resultsDiv.setAttribute('aria-live', 'polite');
+                resultsDiv.setAttribute('aria-atomic', 'true');
+                resultsDiv.innerHTML = '<div class="bearslivesearch-loading" role="status">Loading search results...</div>';
+                container.appendChild(resultsDiv);
+                
+                return container.outerHTML;
+            }
+
+            function transformPageToSearchResults(query) {
+                if (!query.trim()) return;
+                
+                // Serialize all form fields for URL
+                var params = [];
+                var formData = new FormData(form);
+                formData.forEach(function(value, key) {
+                    if (value !== undefined && value !== null && value.trim() !== '') {
+                        params.push(encodeURIComponent(key) + '=' + encodeURIComponent(value));
+                    }
+                });
+                
+                // Update URL without page reload
+                var newUrl = window.location.pathname;
+                if (params.length > 0) {
+                    newUrl += '?' + params.join('&');
+                }
+                history.pushState({searchMode: true}, 'Search Results', newUrl);
+                
+                // Transform the existing module and hide content below
+                transformPageContent(query, formData);
+            }
+            
+            function transformPageContent(query, formData) {
+                var moduleContainer = module.closest('.bearslivesearch');
+                
+                // Create a full-screen overlay that covers everything
+                var overlay = document.createElement('div');
+                overlay.className = 'bearslivesearch-fullscreen-overlay';
+                overlay.style.cssText = `
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100vw;
+                    height: 100vh;
+                    background: white;
+                    z-index: 9999;
+                    overflow-y: auto;
+                    padding: 2rem;
+                    box-sizing: border-box;
+                `;
+                
+                // Create the search page content
+                overlay.innerHTML = createCompleteSearchPage(query, formData, moduleContainer.id, form);
+                
+                // Add overlay to body
+                document.body.appendChild(overlay);
+                
+                // Find the results container in the overlay
+                results = overlay.querySelector('.bearslivesearch-results');
+                
+                // Mark as transformed
+                moduleContainer.setAttribute('data-transformed', 'true');
+                
+                // Update page title
+                document.title = 'Search Results - ' + document.title.replace(/^Search Results - /, '');
+                
+                // Store overlay reference for potential cleanup
+                window.bearsSearchOverlay = overlay;
+                
+                // Trigger search with current query
+                setTimeout(function() {
+                    doSearch(query, 1);
+                }, 100);
+            }
+
+            // Check if we're already transformed or should be treated as search results page
+            function isTransformedOrSearchPage() {
+                return module.closest('.bearslivesearch').hasAttribute('data-transformed') || 
+                       module.closest('.bearslivesearch').classList.contains('bearslivesearch-search-page') ||
+                       (results && !results.classList.contains('bearslivesearch-results--hidden') && window.location.search.indexOf('q=') !== -1);
+            }
+
             form.addEventListener('submit', function(e) {
                 e.preventDefault();
                 var query = input.value;
                 lastQuery = query;
-                doSearch(query, 1);
-            });
-
-            input.addEventListener('input', function() {
-                var query = input.value;
-                if (query !== lastQuery) {
-                    lastQuery = query;
+                
+                // If we're in separate page mode and NOT already transformed, transform the page
+                if (searchMode === 'separate_page' && !isTransformedOrSearchPage()) {
+                    transformPageToSearchResults(query);
+                } else {
+                    // Otherwise use AJAX (inline mode or already transformed)
                     doSearch(query, 1);
                 }
             });
 
-            // Pagination click handler (event delegation)
-            results.addEventListener('click', function(e) {
-                var anchor = e.target.closest('a');
-                if (anchor && results.contains(anchor)) {
-                    e.preventDefault();
-                    var href = anchor.getAttribute('href');
-                    var page = 1;
-                    var match = href && href.match(/[?&]page=(\d+)/);
-                    if (match) {
-                        page = parseInt(match[1], 10);
-                    } else {
-                        match = href && href.match(/[?&](?:start|limitstart)=(\d+)/);
-                        if (match) {
-                            var start = parseInt(match[1], 10);
-                            var perPage = 10;
-                            var perPageInput = module.querySelector('[name="results_limit"]');
-                            if (perPageInput && perPageInput.value) {
-                                perPage = parseInt(perPageInput.value, 10) || 10;
-                            }
-                            page = Math.floor(start / perPage) + 1;
-                        }
+            // Function to set up live search
+            function setupLiveSearch() {
+                input.addEventListener('input', function() {
+                    var query = input.value;
+                    if (query !== lastQuery) {
+                        lastQuery = query;
+                        doSearch(query, 1);
                     }
-                    doSearch(input.value, page);
+                });
+            }
+
+            // Function to set up pagination
+            function setupPagination() {
+                if (results) {
+                    results.addEventListener('click', function(e) {
+                        var anchor = e.target.closest('a');
+                        if (anchor && results.contains(anchor)) {
+                            e.preventDefault();
+                            var href = anchor.getAttribute('href');
+                            var page = 1;
+                            var match = href && href.match(/[?&]page=(\d+)/);
+                            if (match) {
+                                page = parseInt(match[1], 10);
+                            } else {
+                                match = href && href.match(/[?&](?:start|limitstart)=(\d+)/);
+                                if (match) {
+                                    var start = parseInt(match[1], 10);
+                                    var perPage = 10;
+                                    var perPageInput = module.querySelector('[name="results_limit"]');
+                                    if (perPageInput && perPageInput.value) {
+                                        perPage = parseInt(perPageInput.value, 10) || 10;
+                                    }
+                                    page = Math.floor(start / perPage) + 1;
+                                }
+                            }
+                            doSearch(input.value, page);
+                        }
+                    });
                 }
-            });
+            }
+
+            // Check if we're already on a search results URL and auto-transform
+            var urlParams = new URLSearchParams(window.location.search);
+            var queryFromUrl = urlParams.get('q');
+            
+            console.log('Search mode:', searchMode);
+            console.log('Query from URL:', queryFromUrl);
+            console.log('Module element:', module);
+            
+            if (queryFromUrl && queryFromUrl.trim()) {
+                console.log('Found search query in URL, auto-transforming...');
+                
+                // We're on a search results URL, auto-transform the page regardless of mode
+                input.value = queryFromUrl;
+                
+                // Set form values from URL
+                var searchphrase = urlParams.get('searchphrase') || 'anywords';
+                var ordering = urlParams.get('ordering') || 'newest';
+                var resultsLimit = urlParams.get('results_limit') || '10';
+                
+                // Set radio buttons
+                var searchphraseRadios = form.querySelectorAll('input[name="searchphrase"]');
+                searchphraseRadios.forEach(function(radio) {
+                    radio.checked = (radio.value === searchphrase);
+                });
+                
+                // Set select values
+                var orderingSelect = form.querySelector('select[name="ordering"]');
+                if (orderingSelect) orderingSelect.value = ordering;
+                
+                var limitSelect = form.querySelector('select[name="results_limit"]');
+                if (limitSelect) limitSelect.value = resultsLimit;
+                
+                // Set other form fields
+                ['category', 'author', 'datefrom', 'dateto'].forEach(function(fieldName) {
+                    var value = urlParams.get(fieldName);
+                    if (value) {
+                        var field = form.querySelector('[name="' + fieldName + '"]');
+                        if (field) field.value = value;
+                    }
+                });
+                
+                // Force separate page mode for URL-based searches
+                searchMode = 'separate_page';
+                
+                // Transform the page immediately
+                console.log('Calling transformPageToSearchResults...');
+                setTimeout(function() {
+                    transformPageToSearchResults(queryFromUrl);
+                }, 100);
+            }
+
+            // Set up live search and pagination based on mode
+            if (searchMode === 'inline' || isTransformedOrSearchPage()) {
+                setupLiveSearch();
+                setupPagination();
+            }
+
+            // Re-setup live search after transformation
+            var originalTransform = transformPageContent;
+            transformPageContent = function(query, formData) {
+                originalTransform.call(this, query, formData);
+                
+                // Update form and input references to the overlay search page
+                var overlay = window.bearsSearchOverlay;
+                if (overlay) {
+                    form = overlay.querySelector('.bearslivesearch-form');
+                    input = overlay.querySelector('input[type="search"]');
+                    
+                    // Set up event listeners for the new form in overlay
+                    if (form) {
+                        form.addEventListener('submit', function(e) {
+                            e.preventDefault();
+                            var query = input.value;
+                            lastQuery = query;
+                            doSearch(query, 1);
+                        });
+                    }
+                }
+                
+                // After transformation, set up live search
+                setupLiveSearch();
+                setupPagination();
+            };
         });
     });
 })();
