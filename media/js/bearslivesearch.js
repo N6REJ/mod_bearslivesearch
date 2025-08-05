@@ -342,7 +342,7 @@
                         // Preserve footer elements
                         var isFooter = element.id === 'footer' || 
                                       element.tagName === 'FOOTER' ||
-                                      element.className.includes('footer') ||
+                                      (element.className && typeof element.className === 'string' && element.className.includes('footer')) ||
                                       element.closest('#footer') ||
                                       element.closest('footer') ||
                                       element.closest('[class*="footer"]');
@@ -436,8 +436,10 @@
             function setupLiveSearch() {
                 input.addEventListener('input', function() {
                     var query = input.value;
+                    console.log('Input changed. Query:', query, 'Length:', query.length, 'Last query:', lastQuery);
                     if (query !== lastQuery) {
                         lastQuery = query;
+                        console.log('Triggering search for:', query);
                         doSearch(query, 1);
                     }
                 });
