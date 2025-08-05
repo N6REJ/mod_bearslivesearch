@@ -307,7 +307,7 @@
                 
                 console.log('Target module found:', targetModule);
                 
-                // NUCLEAR OPTION: Remove everything from body except header/nav and our module's container
+                // CONSERVATIVE APPROACH: Only remove content that's clearly after the search module
                 var bodyChildren = Array.from(document.body.children);
                 var moduleAncestor = null;
                 
@@ -324,53 +324,49 @@
                     return;
                 }
                 
-                // Remove ALL body children except:
-                // 1. The one containing our module
-                // 2. Header/navigation elements (keep site structure)
-                bodyChildren.forEach(function(child) {
-                    if (child !== moduleAncestor) {
-                        // Keep essential site elements
-                        var keepElement = false;
-                        
-                        // Keep header, nav, and other essential elements
-                        if (child.tagName === 'HEADER' || 
-                            child.tagName === 'NAV' ||
-                            child.id === 'header' ||
-                            child.id === 'navigation' ||
-                            child.className.includes('header') ||
-                            child.className.includes('nav') ||
-                            child.className.includes('menu') ||
-                            child.className.includes('skip-link')) {
-                            keepElement = true;
-                        }
-                        
-                        if (!keepElement) {
-                            console.log('Removing body child:', child.tagName, child.id || child.className);
-                            child.remove();
-                        }
-                    }
-                });
+                // Find the position of the module ancestor among body children
+                var moduleAncestorIndex = bodyChildren.indexOf(moduleAncestor);
                 
-                // Now clean up INSIDE the module ancestor - remove everything except our module
-                var ancestorChildren = Array.from(moduleAncestor.children);
-                ancestorChildren.forEach(function(child) {
-                    if (!child.contains(targetModule)) {
-                        console.log('Removing ancestor child:', child.tagName, child.id || child.className);
+                // Only remove body children that come AFTER the module ancestor
+                for (var i = moduleAncestorIndex + 1; i < bodyChildren.length; i++) {
+                    var child = bodyChildren[i];
+                    // Keep essential site elements even if they come after
+                    var keepElement = false;
+                    
+                    if (child.tagName === 'HEADER' || 
+                        child.tagName === 'NAV' ||
+                        child.tagName === 'FOOTER' ||
+                        child.id === 'header' ||
+                        child.id === 'navigation' ||
+                        child.id === 'footer' ||
+                        child.className.includes('header') ||
+                        child.className.includes('nav') ||
+                        child.className.includes('footer') ||
+                        child.className.includes('menu') ||
+                        child.className.includes('skip-link')) {
+                        keepElement = true;
+                    }
+                    
+                    if (!keepElement) {
+                        console.log('Removing body child after module ancestor:', child.tagName, child.id || child.className);
                         child.remove();
                     }
-                });
+                }
                 
-                // Walk up from target module and clean each level
-                var currentContainer = targetModule.parentElement;
-                while (currentContainer && currentContainer !== moduleAncestor) {
-                    var siblings = Array.from(currentContainer.children);
-                    siblings.forEach(function(sibling) {
-                        if (!sibling.contains(targetModule)) {
-                            console.log('Removing sibling:', sibling.tagName, sibling.id || sibling.className);
-                            sibling.remove();
-                        }
-                    });
-                    currentContainer = currentContainer.parentElement;
+                // Within the module ancestor, only remove content that comes after the module
+                // Find the direct child of moduleAncestor that contains our module
+                var moduleDirectChild = targetModule;
+                while (moduleDirectChild.parentElement !== moduleAncestor) {
+                    moduleDirectChild = moduleDirectChild.parentElement;
+                }
+                
+                // Only remove siblings that come AFTER the module's container
+                var ancestorChildren = Array.from(moduleAncestor.children);
+                var moduleIndex = ancestorChildren.indexOf(moduleDirectChild);
+                
+                for (var i = moduleIndex + 1; i < ancestorChildren.length; i++) {
+                    console.log('Removing content after module within ancestor:', ancestorChildren[i].tagName, ancestorChildren[i].id || ancestorChildren[i].className);
+                    ancestorChildren[i].remove();
                 }
                 
                 // Transform the target module in place
