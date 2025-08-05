@@ -27,8 +27,8 @@ $searchMode = $params->get('search_mode', 'inline');
 ?>
 <style>
 #<?php echo $moduleId; ?> .bearslivesearch-form {
-    border-radius: <?php echo $inputBorderRadius; ?>;
-    border: <?php echo $inputBorderSize; ?> solid <?php echo $inputBorderColor; ?>;
+    border-radius: <?php echo $inputBorderRadius; ?> !important;
+    border: <?php echo $inputBorderSize; ?> solid <?php echo $inputBorderColor; ?> !important;
 }
 </style>
 <div class="bearslivesearch bearslivesearch-module-<?php echo $module->id; ?><?php echo $moduleclass_sfx . $positionClass; ?>" id="<?php echo $moduleId; ?>" data-search-mode="<?php echo htmlspecialchars($searchMode, ENT_QUOTES, 'UTF-8'); ?>" data-module-id="<?php echo $module->id; ?>">

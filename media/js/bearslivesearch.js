@@ -113,17 +113,27 @@
             }
 
             function createCompleteSearchPage(query, formData, originalModuleId, originalForm) {
-                // Clone the original form to preserve all styling and options
-                var clonedForm = originalForm.cloneNode(true);
+                var moduleId = originalModuleId + '-search-page';
                 
-                // Update the cloned form's input value
-                var clonedInput = clonedForm.querySelector('input[type="search"]');
-                if (clonedInput) {
-                    clonedInput.value = query;
+                // Create container and add title
+                var container = document.createElement('div');
+                container.className = 'bearslivesearch bearslivesearch-search-page';
+                container.id = moduleId;
+                
+                var title = document.createElement('h1');
+                title.textContent = 'Search Results';
+                title.style.marginBottom = '1.5rem';
+                container.appendChild(title);
+                
+                // Move the original form (don't clone it)
+                // First, update the original form's values
+                var originalInput = originalForm.querySelector('input[type="search"]');
+                if (originalInput) {
+                    originalInput.value = query;
                 }
                 
                 // Update form field values based on formData
-                var formElements = clonedForm.elements;
+                var formElements = originalForm.elements;
                 for (var i = 0; i < formElements.length; i++) {
                     var element = formElements[i];
                     var value = formData.get(element.name);
@@ -136,25 +146,14 @@
                     }
                 }
                 
-                // Show all hidden criteria in the cloned form
-                var hiddenCriteria = clonedForm.querySelectorAll('.bearslivesearch-criteria-hidden');
+                // Show all hidden criteria in the original form
+                var hiddenCriteria = originalForm.querySelectorAll('.bearslivesearch-criteria-hidden');
                 hiddenCriteria.forEach(function(row) {
                     row.classList.remove('bearslivesearch-criteria-hidden');
                 });
                 
-                var moduleId = originalModuleId + '-search-page';
-                
-                // Create container and add title + cloned form + results
-                var container = document.createElement('div');
-                container.className = 'bearslivesearch bearslivesearch-search-page';
-                container.id = moduleId;
-                
-                var title = document.createElement('h1');
-                title.textContent = 'Search Results';
-                title.style.marginBottom = '1.5rem';
-                container.appendChild(title);
-                
-                container.appendChild(clonedForm);
+                // Move the original form to the container
+                container.appendChild(originalForm);
                 
                 var resultsDiv = document.createElement('div');
                 resultsDiv.className = 'bearslivesearch-results';
@@ -164,7 +163,7 @@
                 resultsDiv.innerHTML = '<div class="bearslivesearch-loading" role="status">Loading search results...</div>';
                 container.appendChild(resultsDiv);
                 
-                return container.outerHTML;
+                return container;
             }
 
             function transformPageToSearchResults(query) {
@@ -192,40 +191,131 @@
             
             function transformPageContent(query, formData) {
                 var moduleContainer = module.closest('.bearslivesearch');
+                var moduleId = moduleContainer.getAttribute('data-module-id');
                 
-                // Create a full-screen overlay that covers everything
-                var overlay = document.createElement('div');
-                overlay.className = 'bearslivesearch-fullscreen-overlay';
-                overlay.style.cssText = `
-                    position: fixed;
-                    top: 0;
-                    left: 0;
-                    width: 100vw;
-                    height: 100vh;
-                    background: white;
-                    z-index: 9999;
-                    overflow-y: auto;
-                    padding: 2rem;
-                    box-sizing: border-box;
-                `;
+                // Use the special class as our precise divider point
+                var moduleSelector = '.bearslivesearch-module-' + moduleId;
+                var targetModule = document.querySelector(moduleSelector);
                 
-                // Create the search page content
-                overlay.innerHTML = createCompleteSearchPage(query, formData, moduleContainer.id, form);
+                if (!targetModule) {
+                    console.error('Could not find module with selector:', moduleSelector);
+                    return;
+                }
                 
-                // Add overlay to body
-                document.body.appendChild(overlay);
+                console.log('Target module found:', targetModule);
                 
-                // Find the results container in the overlay
-                results = overlay.querySelector('.bearslivesearch-results');
+                // NUCLEAR OPTION: Remove everything from body except header/nav and our module's container
+                var bodyChildren = Array.from(document.body.children);
+                var moduleAncestor = null;
+                
+                // Find which top-level body child contains our module
+                bodyChildren.forEach(function(child) {
+                    if (child.contains(targetModule)) {
+                        moduleAncestor = child;
+                        console.log('Module ancestor found:', child.tagName, child.id || child.className);
+                    }
+                });
+                
+                if (!moduleAncestor) {
+                    console.error('Could not find module ancestor in body children');
+                    return;
+                }
+                
+                // Remove ALL body children except:
+                // 1. The one containing our module
+                // 2. Header/navigation elements (keep site structure)
+                bodyChildren.forEach(function(child) {
+                    if (child !== moduleAncestor) {
+                        // Keep essential site elements
+                        var keepElement = false;
+                        
+                        // Keep header, nav, and other essential elements
+                        if (child.tagName === 'HEADER' || 
+                            child.tagName === 'NAV' ||
+                            child.id === 'header' ||
+                            child.id === 'navigation' ||
+                            child.className.includes('header') ||
+                            child.className.includes('nav') ||
+                            child.className.includes('menu') ||
+                            child.className.includes('skip-link')) {
+                            keepElement = true;
+                        }
+                        
+                        if (!keepElement) {
+                            console.log('Removing body child:', child.tagName, child.id || child.className);
+                            child.remove();
+                        }
+                    }
+                });
+                
+                // Now clean up INSIDE the module ancestor - remove everything except our module
+                var ancestorChildren = Array.from(moduleAncestor.children);
+                ancestorChildren.forEach(function(child) {
+                    if (!child.contains(targetModule)) {
+                        console.log('Removing ancestor child:', child.tagName, child.id || child.className);
+                        child.remove();
+                    }
+                });
+                
+                // Walk up from target module and clean each level
+                var currentContainer = targetModule.parentElement;
+                while (currentContainer && currentContainer !== moduleAncestor) {
+                    var siblings = Array.from(currentContainer.children);
+                    siblings.forEach(function(sibling) {
+                        if (!sibling.contains(targetModule)) {
+                            console.log('Removing sibling:', sibling.tagName, sibling.id || sibling.className);
+                            sibling.remove();
+                        }
+                    });
+                    currentContainer = currentContainer.parentElement;
+                }
+                
+                // Transform the target module in place
+                targetModule.classList.add('bearslivesearch-search-page');
+                
+                // Update the original form's values
+                var originalInput = form.querySelector('input[type="search"]');
+                if (originalInput) {
+                    originalInput.value = query;
+                }
+                
+                // Update form field values based on formData
+                var formElements = form.elements;
+                for (var i = 0; i < formElements.length; i++) {
+                    var element = formElements[i];
+                    var value = formData.get(element.name);
+                    if (value !== null) {
+                        if (element.type === 'radio' || element.type === 'checkbox') {
+                            element.checked = (element.value === value);
+                        } else {
+                            element.value = value;
+                        }
+                    }
+                }
+                
+                // Show all hidden criteria in the original form
+                var hiddenCriteria = form.querySelectorAll('.bearslivesearch-criteria-hidden');
+                hiddenCriteria.forEach(function(row) {
+                    row.classList.remove('bearslivesearch-criteria-hidden');
+                });
+                
+                // Create results container and add it inside the target module (same container as form)
+                var resultsDiv = document.createElement('div');
+                resultsDiv.className = 'bearslivesearch-results bearslivesearch-page-results';
+                resultsDiv.id = targetModule.id + '-results';
+                resultsDiv.setAttribute('aria-live', 'polite');
+                resultsDiv.setAttribute('aria-atomic', 'true');
+                resultsDiv.innerHTML = '<div class="bearslivesearch-loading" role="status">Loading search results...</div>';
+                
+                // Insert results inside the target module (after the form)
+                targetModule.appendChild(resultsDiv);
+                results = resultsDiv;
                 
                 // Mark as transformed
-                moduleContainer.setAttribute('data-transformed', 'true');
+                targetModule.setAttribute('data-transformed', 'true');
                 
                 // Update page title
                 document.title = 'Search Results - ' + document.title.replace(/^Search Results - /, '');
-                
-                // Store overlay reference for potential cleanup
-                window.bearsSearchOverlay = overlay;
                 
                 // Trigger search with current query
                 setTimeout(function() {

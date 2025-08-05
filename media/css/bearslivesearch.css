@@ -35,8 +35,24 @@
   background: #fff;
   box-shadow: 0 1px 4px rgba(0,0,0,0.06);
   padding: 0.25rem 0 0.25rem 0.5rem;
-  border: 1px solid;
   flex-wrap: wrap;
+  border: none !important; /* Override any inherited borders */
+}
+
+/* Remove border from parent .card element when it contains Bears Live Search */
+.card:has(.bearslivesearch) {
+  border: none !important;
+}
+
+/* Fallback for browsers that don't support :has() */
+.card .bearslivesearch {
+  margin: -1px; /* Negative margin to hide parent border */
+}
+.card .bearslivesearch:first-child {
+  margin-top: -1px;
+}
+.card .bearslivesearch:last-child {
+  margin-bottom: -1px;
 }
 
 .bearslivesearch select, .bearslivesearch input {
