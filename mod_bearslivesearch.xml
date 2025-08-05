@@ -42,6 +42,14 @@
                 <field name="margin" type="text" label="MOD_BEARSLIVESEARCH_MARGIN_LABEL" description="MOD_BEARSLIVESEARCH_MARGIN_DESC" default="0 auto" />
                 <field name = "input_margin" type = "text" label = "MOD_BEARSLIVESEARCH_INPUT_MARGIN" description = "MOD_BEARSLIVESEARCH_INPUT_MARGIN_DESC" default = "1em 0" />
                 <field name = "output_margin" type = "text" label = "MOD_BEARSLIVESEARCH_OUTPUT_MARGIN" description = "MOD_BEARSLIVESEARCH_OUTPUT_MARGIN_DESC" default = "1em 0" />
+                <field name = "border_radius" type = "text" label = "MOD_BEARSLIVESEARCH_INPUT_BORDER_RADIUS" description = "MOD_BEARSLIVESEARCH_INPUT_BORDER_RADIUS_DESC" default = "0" />
+                <field name = "border_size" type = "text" label = "MOD_BEARSLIVESEARCH_INPUT_BORDER_SIZE" description = "MOD_BEARSLIVESEARCH_INPUT_BORDER_SIZE_DESC" default = "1px" />
+                <field name = "border_color" type = "color" label = "MOD_BEARSLIVESEARCH_INPUT_BORDER_COLOR" description = "MOD_BEARSLIVESEARCH_INPUT_BORDER_COLOR_DESC" default = "#e0e0e0" />
+                <field name = "search_icon" type = "list" label = "MOD_BEARSLIVESEARCH_SEARCH_ICON" description = "MOD_BEARSLIVESEARCH_SEARCH_ICON_DESC" default = "icon-search">
+                    <option value="">MOD_BEARSLIVESEARCH_SEARCH_ICON_NONE</option>
+                    <option value="icon-search">MOD_BEARSLIVESEARCH_SEARCH_ICON_JOOMLA</option>
+                    <option value="fas fa-search">MOD_BEARSLIVESEARCH_SEARCH_ICON_FONTAWESOME</option>
+                </field>
             </fieldset>
             <fieldset name = "advanced">
                 <field

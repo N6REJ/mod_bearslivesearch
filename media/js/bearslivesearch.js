@@ -75,7 +75,19 @@
                 if (moduleId) {
                     params.push('moduleId=' + encodeURIComponent(moduleId));
                 }
-                var ajaxUrl = window.location.origin + '/index.php?option=com_ajax&module=bearslivesearch&method=search&format=raw&' + params.join('&');
+                // Build AJAX URL more robustly for different environments
+                var baseUrl = window.location.origin;
+                var pathname = window.location.pathname;
+                var joomlaRoot = '';
+                
+                // Detect if Joomla is in a subdirectory
+                if (pathname !== '/' && pathname.indexOf('/index.php') === -1) {
+                    var pathParts = pathname.split('/');
+                    pathParts.pop(); // Remove current page
+                    joomlaRoot = pathParts.join('/');
+                }
+                
+                var ajaxUrl = baseUrl + joomlaRoot + '/index.php?option=com_ajax&module=bearslivesearch&method=search&format=raw&' + params.join('&');
 
                 xhr = new XMLHttpRequest();
                 xhr.open('GET', ajaxUrl, true);

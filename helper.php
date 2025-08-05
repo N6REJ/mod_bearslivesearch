@@ -29,13 +29,21 @@ class ModBearslivesearchHelper
      */
     public static function searchAjax()
     {
-
-        $app = Factory::getApplication();
-        $input = $app->input;
-        $query = trim($input->getString('q', ''));
-        if ($query === '') {
-            echo '<div class="bearslivesearch-debug">DEBUG: Empty query</div>';
-            echo '<div role="status">' . Text::_('MOD_BEARSLIVESEARCH_EMPTY_QUERY') . '</div>';
+        try {
+            $app = Factory::getApplication();
+            $input = $app->input;
+            $query = trim($input->getString('q', ''));
+            
+            // Debug logging
+            Log::add('AJAX Search called with query: ' . $query, Log::INFO, 'mod_bearslivesearch');
+            
+            if ($query === '') {
+                echo '<div role="status">' . Text::_('MOD_BEARSLIVESEARCH_EMPTY_QUERY') . '</div>';
+                return;
+            }
+        } catch (Exception $e) {
+            Log::add('AJAX Search initialization error: ' . $e->getMessage(), Log::ERROR, 'mod_bearslivesearch');
+            echo '<div role="alert">Search initialization error: ' . htmlspecialchars($e->getMessage()) . '</div>';
             return;
         }
 
@@ -100,95 +108,55 @@ class ModBearslivesearchHelper
         }
 
         // --- Kunena Forum Posts (if installed) ---
-        $db = Factory::getDbo();
         $kunenaTable = $db->replacePrefix('#__kunena_messages');
         $tables = $db->getTableList();
         $kunenaInstalled = in_array($kunenaTable, $tables);
-        $kunenaHasMessage = false;
-        $kunenaHasSubject = false;
-        $kunenaTextTable = $db->replacePrefix('#__kunena_messages_text');
-        $kunenaTextHasMessage = false;
         if ($kunenaInstalled) {
-            // Check columns in kunena_messages
             try {
-                $columns = $db->getTableColumns($kunenaTable);
-                $kunenaHasMessage = isset($columns['message']);
-                $kunenaHasSubject = isset($columns['subject']);
-            } catch (Exception $e) {
-                $kunenaHasMessage = false;
-                $kunenaHasSubject = false;
-            }
-            // Check if kunena_messages_text table exists and has 'message' column
-            $tablesLower = array_map('strtolower', $tables);
-            if (in_array(strtolower($kunenaTextTable), $tablesLower)) {
-                try {
-                    $textColumns = $db->getTableColumns($kunenaTextTable);
-                    $kunenaTextHasMessage = isset($textColumns['message']);
-                } catch (Exception $e) {
-                    $kunenaTextHasMessage = false;
+                // Check what columns exist in the kunena_messages table
+                $columns = $db->getTableColumns('#__kunena_messages');
+                $messageColumn = '';
+                
+                // Different Kunena versions use different column names for message content
+                if (isset($columns['message'])) {
+                    $messageColumn = 'message';
+                } elseif (isset($columns['mesage'])) {
+                    $messageColumn = 'mesage'; // Some versions have this typo
+                } elseif (isset($columns['text'])) {
+                    $messageColumn = 'text';
+                } elseif (isset($columns['content'])) {
+                    $messageColumn = 'content';
                 }
-            }
-        }
-        // Old schema: message column in kunena_messages
-        if ($kunenaInstalled && $kunenaHasMessage) {
-
-            try {
-                $kunenaQuery = $db->getQuery(true)
-                    ->select(['m.id', 'm.message', 'm.thread', 'm.userid', 'm.time', 't.subject', 't.catid'])
-                    ->from($db->qn('#__kunena_messages', 'm'))
-                    ->join('INNER', $db->qn('#__kunena_topics', 't') . ' ON m.thread = t.id')
-                    ->where('m.message LIKE ' . $db->q($searchLike))
-                    ->where('m.hold = 0')
-                    ->where('t.hold = 0')
-                    ->order('m.time DESC')
-                    ->setLimit($maxFetch);
-                $db->setQuery($kunenaQuery);
-                $kunenaResults = $db->loadObjectList();
-                foreach ($kunenaResults as $kitem) {
-                    $allResults[] = [
-                        'type' => 'kunena',
-                        'title' => $kitem->subject,
-                        'desc' => strip_tags($kitem->message),
-                        'created' => date('Y-m-d H:i:s', (int)$kitem->time),
-                        'link' => 'index.php?option=com_kunena&view=topic&catid=' . (int)$kitem->catid . '&id=' . (int)$kitem->thread . '#msg' . (int)$kitem->id
-                    ];
+                
+                if ($messageColumn) {
+                    $kunenaQuery = $db->getQuery(true)
+                        ->select(['m.id', 'm.' . $messageColumn, 'm.thread', 'm.userid', 'm.time', 't.subject', 't.catid'])
+                        ->from($db->qn('#__kunena_messages', 'm'))
+                        ->join('INNER', $db->qn('#__kunena_topics', 't') . ' ON m.thread = t.id')
+                        ->where('m.' . $messageColumn . ' LIKE ' . $db->q($searchLike))
+                        ->where('m.hold = 0')
+                        ->where('t.hold = 0')
+                        ->order('m.time DESC')
+                        ->setLimit($maxFetch);
+                    $db->setQuery($kunenaQuery);
+                    $kunenaResults = $db->loadObjectList();
+                    foreach ($kunenaResults as $kitem) {
+                        $messageContent = $kitem->{$messageColumn} ?? '';
+                        $allResults[] = [
+                            'type' => 'kunena',
+                            'title' => $kitem->subject,
+                            'desc' => strip_tags($messageContent),
+                            'created' => date('Y-m-d H:i:s', (int)$kitem->time),
+                            'link' => 'index.php?option=com_kunena&view=topic&catid=' . (int)$kitem->catid . '&id=' . (int)$kitem->thread . '#msg' . (int)$kitem->id
+                        ];
+                    }
+                } else {
+                    Log::add('Kunena message column not found. Available columns: ' . implode(', ', array_keys($columns)), Log::WARNING, 'mod_bearslivesearch');
                 }
             } catch (Exception $e) {
-
+                Log::add('Kunena query error: ' . $e->getMessage(), Log::WARNING, 'mod_bearslivesearch');
+                // Continue without Kunena results if there's an error
             }
-        }
-        // Newer schema: message in kunena_messages_text, subject in kunena_messages
-        else if ($kunenaInstalled && !$kunenaHasMessage && $kunenaHasSubject && $kunenaTextHasMessage) {
-
-            try {
-                $kunenaQuery = $db->getQuery(true)
-                    ->select(['m.id', 'mt.message', 'm.thread', 'm.userid', 'm.time', 'm.subject', 't.catid'])
-                    ->from($db->qn('#__kunena_messages', 'm'))
-                    ->join('INNER', $db->qn('#__kunena_messages_text', 'mt') . ' ON m.id = mt.mesid')
-                    ->join('INNER', $db->qn('#__kunena_topics', 't') . ' ON m.thread = t.id')
-                    ->where('mt.message LIKE ' . $db->q($searchLike))
-                    ->where('m.hold = 0')
-                    ->where('t.hold = 0')
-                    ->order('m.time DESC')
-                    ->setLimit($maxFetch);
-                $db->setQuery($kunenaQuery);
-                $kunenaResults = $db->loadObjectList();
-                foreach ($kunenaResults as $kitem) {
-                    $allResults[] = [
-                        'type' => 'kunena',
-                        'title' => $kitem->subject,
-                        'desc' => strip_tags($kitem->message),
-                        'created' => date('Y-m-d H:i:s', (int)$kitem->time),
-                        'link' => 'index.php?option=com_kunena&view=topic&catid=' . (int)$kitem->catid . '&id=' . (int)$kitem->thread . '#msg' . (int)$kitem->id
-                    ];
-                }
-            } catch (Exception $e) {
-
-            }
-        }
-        // If neither schema is available, skip Kunena
-        else if ($kunenaInstalled) {
-
         }
 
         // Sort all results by created DESC

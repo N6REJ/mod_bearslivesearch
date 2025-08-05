@@ -18,7 +18,18 @@ $outputMargin = htmlspecialchars($params->get('output_margin', '1em 0'), ENT_QUO
 $moduleclass_sfx = htmlspecialchars($params->get('moduleclass_sfx', ''), ENT_QUOTES, 'UTF-8');
 $position = $params->get('position', 'none');
 $positionClass = ' bearslivesearch-float-' . $position;
+$inputBorderRadius = htmlspecialchars($params->get('border_radius'), ENT_QUOTES, 'UTF-8');
+$inputBorderSize = htmlspecialchars($params->get('border_size'), ENT_QUOTES, 'UTF-8');
+$inputBorderColor = htmlspecialchars($params->get('border_color'), ENT_QUOTES, 'UTF-8');
+$searchIconClass = $params->get('search_icon');
+$searchIcon = !empty($searchIconClass) ? '<span class="' . htmlspecialchars($searchIconClass, ENT_QUOTES, 'UTF-8') . '" aria-hidden="true"></span>' : '';
 ?>
+<style>
+#<?php echo $moduleId; ?> .bearslivesearch-form {
+    border-radius: <?php echo $inputBorderRadius; ?>;
+    border: <?php echo $inputBorderSize; ?> solid <?php echo $inputBorderColor; ?>;
+}
+</style>
 <div class="bearslivesearch<?php echo $moduleclass_sfx . $positionClass; ?>" id="<?php echo $moduleId; ?>">
     <a href="#<?php echo $moduleId; ?>-results" class="visually-hidden visually-hidden-focusable skip-link" tabindex="0"><?php echo Text::_('MOD_BEARSLIVESEARCH_SKIP_TO_RESULTS', 'Skip to search results'); ?></a>
     <form class="bearslivesearch-form" style="margin: <?php echo $inputMargin; ?>;" role="search" aria-label="Site search" autocomplete="off">
@@ -26,7 +37,7 @@ $positionClass = ' bearslivesearch-float-' . $position;
         <div class="bearslivesearch-row bearslivesearch-row-flex">
             <input type="search" id="<?php echo $moduleId; ?>-input" name="q" aria-label="<?php echo Text::_('MOD_BEARSLIVESEARCH'); ?>" placeholder="<?php echo Text::_('MOD_BEARSLIVESEARCH_PLACEHOLDER'); ?>" required />
             <button type="submit" aria-label="<?php echo Text::_('MOD_BEARSLIVESEARCH_SUBMIT'); ?>" class="bearslivesearch-submit">
-                <span class="icon-search" aria-hidden="true"></span>
+                <?php echo $searchIcon; ?>
             </button>
         </div>
 
