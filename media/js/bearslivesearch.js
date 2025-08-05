@@ -20,6 +20,8 @@
             var lastQuery = '';
             var xhr;
             var searchMode = module.getAttribute('data-search-mode') || 'inline';
+            var originalPageState = null; // Store original page state for restoration
+            var isRestoring = false; // Flag to prevent re-transformation during restoration
 
             function updateResults(html) {
                 // Reveal criteria/filter rows if hidden (for "after" mode)
@@ -47,7 +49,19 @@
                     // Hide and clear results when input is empty
                     results.innerHTML = '';
                     results.classList.add('bearslivesearch-results--hidden');
+                    
+                    // If we're in separate page mode and transformed, restore original page
+                    if (searchMode === 'separate_page' && isTransformedOrSearchPage() && originalPageState) {
+                        // Simple approach: just reload the original URL
+                        window.location.href = originalPageState.url;
+                    }
                     return;
+                }
+
+                // If we're in separate page mode and not yet transformed, transform the page first
+                if (searchMode === 'separate_page' && !isTransformedOrSearchPage()) {
+                    transformPageToSearchResults(query);
+                    return; // transformPageToSearchResults will trigger the search
                 }
 
                 // Show loading indicator
@@ -166,8 +180,97 @@
                 return container;
             }
 
+            function storeOriginalPageState() {
+                if (originalPageState) return; // Already stored
+                
+                console.log('Storing original page state...');
+                
+                // Store a more comprehensive snapshot
+                originalPageState = {
+                    title: document.title,
+                    url: window.location.href,
+                    bodyHTML: document.body.innerHTML, // Store complete HTML
+                    bodyAttributes: Array.from(document.body.attributes).map(function(attr) {
+                        return { name: attr.name, value: attr.value };
+                    }),
+                    documentHTML: document.documentElement.outerHTML // Backup: entire document
+                };
+                
+                console.log('Original page state stored');
+            }
+            
+            function restoreOriginalPageState() {
+                if (!originalPageState || isRestoring) return;
+                
+                console.log('Restoring original page state...');
+                isRestoring = true;
+                
+                // First, restore the URL to prevent re-transformation
+                document.title = originalPageState.title;
+                history.replaceState(null, originalPageState.title, originalPageState.url);
+                
+                // Method 1: Try restoring body innerHTML (most reliable)
+                try {
+                    document.body.innerHTML = originalPageState.bodyHTML;
+                    
+                    // Restore body attributes
+                    originalPageState.bodyAttributes.forEach(function(attr) {
+                        document.body.setAttribute(attr.name, attr.value);
+                    });
+                    
+                    console.log('Page restored using innerHTML method');
+                } catch (e) {
+                    console.error('Failed to restore using innerHTML:', e);
+                    
+                    // Fallback: reload the original URL
+                    window.location.href = originalPageState.url;
+                    return;
+                }
+                
+                // Clear the stored state
+                var originalUrl = originalPageState.url;
+                originalPageState = null;
+                
+                // Re-initialize the module since we restored the original DOM
+                setTimeout(function() {
+                    // Re-initialize all modules since DOM was restored
+                    var restoredModules = document.querySelectorAll('.bearslivesearch');
+                    restoredModules.forEach(function(restoredModule) {
+                        var moduleId = restoredModule.getAttribute('data-module-id');
+                        if (moduleId === module.getAttribute('data-module-id')) {
+                            // Update references to restored elements
+                            module = restoredModule;
+                            form = module.querySelector('.bearslivesearch-form');
+                            input = form.querySelector('input[type="search"]');
+                            results = module.querySelector('.bearslivesearch-results');
+                            
+                            // Clear the input BEFORE setting up event listeners
+                            input.value = '';
+                            lastQuery = '';
+                            
+                            // Re-setup event listeners for this specific module
+                            setupLiveSearch();
+                            setupPagination();
+                            
+                            // Focus the input
+                            input.focus();
+                            
+                            console.log('Module re-initialized after restoration');
+                            
+                            // Clear the restoration flag after a delay
+                            setTimeout(function() {
+                                isRestoring = false;
+                            }, 500);
+                        }
+                    });
+                }, 100);
+            }
+
             function transformPageToSearchResults(query) {
                 if (!query.trim()) return;
+                
+                // Store original page state before transformation
+                storeOriginalPageState();
                 
                 // Serialize all form fields for URL
                 var params = [];
@@ -436,11 +539,10 @@
                 }, 100);
             }
 
-            // Set up live search and pagination based on mode
-            if (searchMode === 'inline' || isTransformedOrSearchPage()) {
-                setupLiveSearch();
-                setupPagination();
-            }
+            // Set up live search and pagination for all modes
+            // This enables search-as-you-type functionality even in separate page mode
+            setupLiveSearch();
+            setupPagination();
 
             // Re-setup live search after transformation
             var originalTransform = transformPageContent;
