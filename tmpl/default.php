@@ -24,6 +24,7 @@ $inputBorderColor = htmlspecialchars($params->get('border_color'), ENT_QUOTES, '
 $searchIconClass = $params->get('search_icon');
 $searchIcon = !empty($searchIconClass) ? '<span class="' . htmlspecialchars($searchIconClass, ENT_QUOTES, 'UTF-8') . '" aria-hidden="true"></span>' : '';
 $searchMode = $params->get('search_mode', 'inline');
+$endPosition = $params->get('end_position', '');
 ?>
 <style>
 #<?php echo $moduleId; ?> .bearslivesearch-form {
@@ -31,7 +32,7 @@ $searchMode = $params->get('search_mode', 'inline');
     border: <?php echo $inputBorderSize; ?> solid <?php echo $inputBorderColor; ?> !important;
 }
 </style>
-<div class="bearslivesearch bearslivesearch-module-<?php echo $module->id; ?><?php echo $moduleclass_sfx . $positionClass; ?>" id="<?php echo $moduleId; ?>" data-search-mode="<?php echo htmlspecialchars($searchMode, ENT_QUOTES, 'UTF-8'); ?>" data-module-id="<?php echo $module->id; ?>">
+<div class="bearslivesearch bearslivesearch-module-<?php echo $module->id; ?><?php echo $moduleclass_sfx . $positionClass; ?>" id="<?php echo $moduleId; ?>" data-search-mode="<?php echo htmlspecialchars($searchMode, ENT_QUOTES, 'UTF-8'); ?>" data-module-id="<?php echo $module->id; ?>" data-end-position="<?php echo htmlspecialchars($endPosition, ENT_QUOTES, 'UTF-8'); ?>">
     <a href="#<?php echo $moduleId; ?>-results" class="visually-hidden visually-hidden-focusable skip-link" tabindex="0"><?php echo Text::_('MOD_BEARSLIVESEARCH_SKIP_TO_RESULTS', 'Skip to search results'); ?></a>
     <form class="bearslivesearch-form" style="margin: <?php echo $inputMargin; ?>;" role="search" aria-label="Site search" autocomplete="off">
         <label for="<?php echo $moduleId; ?>-input" class="visually-hidden"><?php echo Text::_('MOD_BEARSLIVESEARCH'); ?></label>

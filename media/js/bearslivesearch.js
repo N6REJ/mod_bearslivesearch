@@ -20,6 +20,7 @@
             var lastQuery = '';
             var xhr;
             var searchMode = module.getAttribute('data-search-mode') || 'inline';
+            var endPosition = module.getAttribute('data-end-position') || '';
             var originalPageState = null; // Store original page state for restoration
             var isRestoring = false; // Flag to prevent re-transformation during restoration
 
@@ -335,23 +336,49 @@
                     }
                 }
                 
-                // Remove all collected elements except footer
+                // Find the end position element if configured
+                var endPositionElement = null;
+                if (endPosition && endPosition.trim() !== '') {
+                    // Look for the end position element
+                    endPositionElement = document.getElementById(endPosition) ||
+                                       document.querySelector('.' + endPosition) ||
+                                       document.querySelector('[class*="' + endPosition + '"]');
+                }
+                
+                // If no end position configured or found, default to footer
+                if (!endPositionElement) {
+                    endPositionElement = document.getElementById('footer') ||
+                                       document.querySelector('footer') ||
+                                       document.querySelector('[class*="footer"]');
+                }
+                
+                // Remove elements between the module and the end position
                 elementsToRemove.forEach(function(element) {
                     // Only remove if the element is still in the DOM (not already removed as a child)
                     if (element.parentElement) {
-                        // Preserve footer elements
-                        var isFooter = element.id === 'footer' || 
-                                      element.tagName === 'FOOTER' ||
-                                      (element.className && typeof element.className === 'string' && element.className.includes('footer')) ||
-                                      element.closest('#footer') ||
-                                      element.closest('footer') ||
-                                      element.closest('[class*="footer"]');
+                        var shouldRemove = true;
                         
-                        if (!isFooter) {
+                        // If we found an end position element, preserve it and everything after it
+                        if (endPositionElement) {
+                            // Check if this element is the end position element or comes after it
+                            var elementIndex = allElements.indexOf(element);
+                            var endPositionIndex = allElements.indexOf(endPositionElement);
+                            
+                            if (endPositionIndex !== -1 && elementIndex >= endPositionIndex) {
+                                shouldRemove = false; // Preserve this element and everything after end position
+                            }
+                            
+                            // Also preserve if this element contains the end position element
+                            if (element.contains(endPositionElement)) {
+                                shouldRemove = false;
+                            }
+                        }
+                        
+                        if (shouldRemove) {
                             console.log('Removing element after module:', element.tagName, element.id || element.className);
                             element.remove();
                         } else {
-                            console.log('Preserving footer element:', element.tagName, element.id || element.className);
+                            console.log('Preserving element at/after end position:', element.tagName, element.id || element.className);
                         }
                     }
                 });
