@@ -5,14 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [2025.08.05] - 2025-08-05
+## [2025.08.06] - 2025-08-06
 
 ### Changed
 
-* Update version to  [skip ci] ([e8bd76f](https://github.com/N6REJ/mod_bearslivesearch/commit/e8bd76f))
-* fix: improve Kunena forum search compatibility with different database schemas ([c5b3561](https://github.com/N6REJ/mod_bearslivesearch/commit/c5b3561))
-* Merge branch 'main' into kunena-search-fix ([95d491f](https://github.com/N6REJ/mod_bearslivesearch/commit/95d491f))
-* Merge pull request #8 from N6REJ/kunena-search-fix ([f568766](https://github.com/N6REJ/mod_bearslivesearch/commit/f568766))
 * Update version to  [skip ci] ([2ee6613](https://github.com/N6REJ/mod_bearslivesearch/commit/2ee6613))
 * added border fields added better icon styling added option for icon style. ([560a3ad](https://github.com/N6REJ/mod_bearslivesearch/commit/560a3ad))
 * Partial fix.  now clears the page when in seperate page mode. ([6d8dafd](https://github.com/N6REJ/mod_bearslivesearch/commit/6d8dafd))
@@ -25,4 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * correctly finds template positions ([8ad99a5](https://github.com/N6REJ/mod_bearslivesearch/commit/8ad99a5))
 * preserves end position ([28a3353](https://github.com/N6REJ/mod_bearslivesearch/commit/28a3353))
 * doesn't revert to calling url on emptying search input ([d7f7bdc](https://github.com/N6REJ/mod_bearslivesearch/commit/d7f7bdc))
+* Update version to  [skip ci] ([09611cb](https://github.com/N6REJ/mod_bearslivesearch/commit/09611cb))
+* better css styling to be more responsive ([f25c743](https://github.com/N6REJ/mod_bearslivesearch/commit/f25c743))
+* Merge remote-tracking branch 'origin/main' ([8045c93](https://github.com/N6REJ/mod_bearslivesearch/commit/8045c93))
 
