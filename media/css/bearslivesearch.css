@@ -10,46 +10,13 @@
  * @since 2025.7.15
  */
 
-.bearslivesearch:not(.bearslivesearch-float-left):not(.bearslivesearch-float-right) {
-  margin: 0 auto;
-  width: var(--bearslivesearch-width, 50%);
-  max-width: var(--bearslivesearch-max-width, 50%);
-  min-width: var(--bearslivesearch-min-width, 20rem);
+.bearslivesearch {
+  width: 100%;
   box-sizing: border-box;
 }
 
-.bearslivesearch-float-left {
-  float: left !important;
-  margin: 0 !important;
-  width: var(--bearslivesearch-width, 50%) !important;
-  max-width: var(--bearslivesearch-max-width, 50%) !important;
-  min-width: var(--bearslivesearch-min-width, 20rem) !important;
-  box-sizing: border-box !important;
-  clear: both !important;
-}
-
-.bearslivesearch-float-right {
-  float: right !important;
-  margin: 0 !important;
-  width: var(--bearslivesearch-width, 50%) !important;
-  max-width: var(--bearslivesearch-max-width, 50%) !important;
-  min-width: var(--bearslivesearch-min-width, 20rem) !important;
-  box-sizing: border-box !important;
-  clear: both !important;
-}
-
-.bearslivesearch-float-none {
-  float: none !important;
-  margin: 0 auto !important;
-  width: var(--bearslivesearch-width, 50%) !important;
-  max-width: var(--bearslivesearch-max-width, 50%) !important;
-  min-width: var(--bearslivesearch-min-width, 20rem) !important;
-  box-sizing: border-box !important;
-  clear: both !important;
-}
-
-
 .bearslivesearch-form {
+  width: var(--bearslivesearch-width, 50%);
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -57,7 +24,37 @@
   box-shadow: 0 1px 4px rgba(0,0,0,0.06);
   padding-left: .5rem;
   flex-wrap: wrap;
-  border: none !important; /* Override any inherited borders */
+  border: none;
+  box-sizing: border-box;
+}
+
+.bearslivesearch:not(.bearslivesearch-float-left):not(.bearslivesearch-float-right) .bearslivesearch-form {
+  margin: 0 auto;
+}
+
+.bearslivesearch-float-left .bearslivesearch-form {
+  float: left;
+  margin-left: 0;
+}
+
+.bearslivesearch-float-right .bearslivesearch-form {
+  float: right;
+  margin-right: 0;
+}
+
+.bearslivesearch-float-none .bearslivesearch-form {
+  margin: 0 auto;
+}
+
+.bearslivesearch-row {
+  width: 100%;
+  clear: both;
+  box-sizing: border-box;
+}
+
+.bearslivesearch-results {
+  width: 100%;
+  box-sizing: border-box;
 }
 
 /* Remove border from parent .card element when it contains Bears Live Search */
@@ -67,7 +64,7 @@
 
 /* Fallback for browsers that don't support :has() */
 .card .bearslivesearch {
-  margin: -1px; /* Negative margin to hide parent border */
+  margin: -1px;
 }
 .card .bearslivesearch:first-child {
   margin-top: -1px;
@@ -78,11 +75,6 @@
 
 .bearslivesearch select, .bearslivesearch input {
   padding: .25rem;
-  }
-
-.bearslivesearch-row {
-  width: 100%;
-  clear: both;
 }
 .bearslivesearch-row-flex {
   display: flex;

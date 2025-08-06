@@ -15,8 +15,7 @@ use Joomla\CMS\Language\Text;
 $moduleId = 'bearslivesearch-' . $module->id;
 $inputMargin = htmlspecialchars($params->get('input_margin', '1em 0'), ENT_QUOTES, 'UTF-8');
 $outputMargin = htmlspecialchars($params->get('output_margin', '1em 0'), ENT_QUOTES, 'UTF-8');
-$maxWidth = htmlspecialchars($params->get('max_width', '50%'), ENT_QUOTES, 'UTF-8');
-$minWidth = htmlspecialchars($params->get('min_width', '20rem'), ENT_QUOTES, 'UTF-8');
+$width = htmlspecialchars($params->get('width', '50%'), ENT_QUOTES, 'UTF-8');
 $moduleclass_sfx = htmlspecialchars($params->get('moduleclass_sfx', ''), ENT_QUOTES, 'UTF-8');
 $position = $params->get('position', 'none');
 $positionClass = ' bearslivesearch-float-' . $position;
@@ -30,76 +29,57 @@ $searchMode = $params->get('search_mode', 'inline');
 $endPosition = $params->get('end_position', '');
 ?>
 <style>
-#<?php echo $moduleId; ?> {
-    --bearslivesearch-width: <?php echo $maxWidth; ?>;
-    --bearslivesearch-max-width: <?php echo $maxWidth; ?>;
-    --bearslivesearch-min-width: <?php echo $minWidth; ?>;
-}
-#<?php echo $moduleId; ?>.bearslivesearch.bearslivesearch-module-<?php echo $module->id; ?>.bearslivesearch-float-left,
-#<?php echo $moduleId; ?>.bearslivesearch.bearslivesearch-module-<?php echo $module->id; ?>.bearslivesearch-float-right,
-#<?php echo $moduleId; ?>.bearslivesearch.bearslivesearch-module-<?php echo $module->id; ?>.bearslivesearch-float-none {
-    width: <?php echo $maxWidth; ?> !important;
-    max-width: <?php echo $maxWidth; ?> !important;
-    min-width: <?php echo $minWidth; ?> !important;
-    box-sizing: border-box !important;
-    display: block !important;
-}
-#<?php echo $moduleId; ?>.bearslivesearch-float-left {
-    float: left !important;
-    margin: 0 !important;
-}
-#<?php echo $moduleId; ?>.bearslivesearch-float-right {
-    float: right !important;
-    margin: 0 !important;
-}
-#<?php echo $moduleId; ?>.bearslivesearch-float-none {
-    float: none !important;
-    margin: 0 auto !important;
-}
+/* Form container settings */
 #<?php echo $moduleId; ?> .bearslivesearch-form {
     border-radius: <?php echo $inputBorderRadius; ?> !important;
     border: <?php echo $inputBorderSize; ?> solid <?php echo $inputBorderColor; ?> !important;
+    box-sizing: border-box !important;
+    margin: <?php echo $inputMargin; ?> !important;
+    width: <?php echo $width; ?> !important;
+}
+
+/* Form positioning */
+#<?php echo $moduleId; ?>.bearslivesearch-float-left .bearslivesearch-form {
+    float: left !important;
+    margin-left: 0 !important;
+}
+#<?php echo $moduleId; ?>.bearslivesearch-float-right .bearslivesearch-form {
+    float: right !important;
+    margin-right: 0 !important;
+}
+#<?php echo $moduleId; ?>.bearslivesearch-float-none .bearslivesearch-form {
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+/* Rows within form use full width of form */
+#<?php echo $moduleId; ?> .bearslivesearch-row {
+    width: 100% !important;
+    box-sizing: border-box !important;
+    clear: both !important;
+}
+
+/* Results container - always 100% width */
+#<?php echo $moduleId; ?> .bearslivesearch-results {
+    width: 100% !important;
+    margin: <?php echo $outputMargin; ?> !important;
+    box-sizing: border-box !important;
+}
+
+/* Module container - no width constraints */
+#<?php echo $moduleId; ?> {
     width: 100% !important;
     box-sizing: border-box !important;
 }
-#<?php echo $moduleId; ?> .bearslivesearch-results {
-    margin: <?php echo $outputMargin; ?> !important;
-}
 </style>
 <script>
-// JavaScript to ensure width constraints are applied
+// JavaScript for search functionality only - CSS handles all styling
 document.addEventListener('DOMContentLoaded', function() {
     var element = document.getElementById('<?php echo $moduleId; ?>');
     if (element) {
-        var searchMode = element.getAttribute('data-search-mode');
-        
-        // Only apply width constraints in inline mode, not separate page mode
-        if (searchMode !== 'separate_page') {
-            // Apply width constraints for inline mode
-            element.style.setProperty('width', '<?php echo $maxWidth; ?>', 'important');
-            element.style.setProperty('max-width', '<?php echo $maxWidth; ?>', 'important');
-            element.style.setProperty('min-width', '<?php echo $minWidth; ?>', 'important');
-            element.style.setProperty('box-sizing', 'border-box', 'important');
-            
-            // Apply float positioning
-            if (element.classList.contains('bearslivesearch-float-left')) {
-                element.style.setProperty('float', 'left', 'important');
-                element.style.setProperty('margin', '0', 'important');
-            } else if (element.classList.contains('bearslivesearch-float-right')) {
-                element.style.setProperty('float', 'right', 'important');
-                element.style.setProperty('margin', '0', 'important');
-            } else {
-                element.style.setProperty('float', 'none', 'important');
-                element.style.setProperty('margin', '0 auto', 'important');
-            }
-        } else {
-            // In separate page mode, ensure full width for search page containers
-            element.style.setProperty('width', '100%', 'important');
-            element.style.setProperty('max-width', '1200px', 'important');
-            element.style.setProperty('min-width', 'auto', 'important');
-            element.style.setProperty('margin', '0 auto', 'important');
-            element.style.setProperty('float', 'none', 'important');
-        }
+        // Only handle search functionality here
+        // All width and positioning is handled by CSS
+        console.log('Bears Live Search module initialized: <?php echo $moduleId; ?>');
     }
 });
 </script>

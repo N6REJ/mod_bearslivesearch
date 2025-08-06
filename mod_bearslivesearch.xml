@@ -47,8 +47,7 @@
                 <field name="margin" type="text" label="MOD_BEARSLIVESEARCH_MARGIN_LABEL" description="MOD_BEARSLIVESEARCH_MARGIN_DESC" default="0 auto" />
                 <field name = "input_margin" type = "text" label = "MOD_BEARSLIVESEARCH_INPUT_MARGIN" description = "MOD_BEARSLIVESEARCH_INPUT_MARGIN_DESC" default = "1em 0" />
                 <field name = "output_margin" type = "text" label = "MOD_BEARSLIVESEARCH_OUTPUT_MARGIN" description = "MOD_BEARSLIVESEARCH_OUTPUT_MARGIN_DESC" default = "1em 0" />
-                <field name = "max_width" type = "text" label = "MOD_BEARSLIVESEARCH_MAX_WIDTH" description = "MOD_BEARSLIVESEARCH_MAX_WIDTH_DESC" default = "50%" />
-                <field name = "min_width" type = "text" label = "MOD_BEARSLIVESEARCH_MIN_WIDTH" description = "MOD_BEARSLIVESEARCH_MIN_WIDTH_DESC" default = "20rem" />
+                <field name = "width" type = "text" label = "MOD_BEARSLIVESEARCH_WIDTH" description = "MOD_BEARSLIVESEARCH_WIDTH_DESC" default = "50%" />
                 <field name = "border_radius" type = "text" label = "MOD_BEARSLIVESEARCH_INPUT_BORDER_RADIUS" description = "MOD_BEARSLIVESEARCH_INPUT_BORDER_RADIUS_DESC" default = "0" />
                 <field name = "border_size" type = "text" label = "MOD_BEARSLIVESEARCH_INPUT_BORDER_SIZE" description = "MOD_BEARSLIVESEARCH_INPUT_BORDER_SIZE_DESC" default = "1px" />
                 <field name = "border_color" type = "color" label = "MOD_BEARSLIVESEARCH_INPUT_BORDER_COLOR" description = "MOD_BEARSLIVESEARCH_INPUT_BORDER_COLOR_DESC" default = "#e0e0e0" />

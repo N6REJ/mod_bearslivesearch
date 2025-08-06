@@ -21,8 +21,7 @@ use Joomla\CMS\HTML\HTMLHelper;
 // Load module params
 $inputMargin = $params->get('input_margin', '1em 0');
 $outputMargin = $params->get('output_margin', '1em 0');
-$maxWidth = $params->get('max_width', '50%');
-$minWidth = $params->get('min_width', '20rem');
+$width = $params->get('width', '50%');
 
 // Add CSS and JS
 $wa = $app->getDocument()->getWebAssetManager();
