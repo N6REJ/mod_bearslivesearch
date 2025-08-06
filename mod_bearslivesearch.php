@@ -2,7 +2,7 @@
 /**
  * Bears Live Search
  *
- * @version 2025.08.06.2
+ * @version 2025.08.06.3
  * @package Bears Live Search
  * @author N6REJ
  * @email troy@hallhome.us
