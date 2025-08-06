@@ -340,4 +340,29 @@ class ModBearslivesearchHelper
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);
         }
     }
+
+
+    /**
+     * Main AJAX handler method for Joomla 5
+     *
+     * @return void Outputs response directly
+     */
+    public static function getAjax()
+    {
+        $app = Factory::getApplication();
+        $input = $app->input;
+        $method = $input->get('method', '');
+        
+        switch ($method) {
+            case 'search':
+                self::searchAjax();
+                break;
+            case 'getTemplatePositions':
+                self::getTemplatePositionsAjax();
+                break;
+            default:
+                echo json_encode(['error' => 'Invalid method']);
+                break;
+        }
+    }
 }
