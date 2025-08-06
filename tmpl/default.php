@@ -20,10 +20,10 @@ $moduleclass_sfx = htmlspecialchars($params->get('moduleclass_sfx', ''), ENT_QUO
 $position = $params->get('position', 'none');
 $positionClass = ' bearslivesearch-float-' . $position;
 
-$inputBorderRadius = htmlspecialchars($params->get('border_radius'), ENT_QUOTES, 'UTF-8');
-$inputBorderSize = htmlspecialchars($params->get('border_size'), ENT_QUOTES, 'UTF-8');
-$inputBorderColor = htmlspecialchars($params->get('border_color'), ENT_QUOTES, 'UTF-8');
-$accentBorderColor = htmlspecialchars($params->get('accent_border_color'), ENT_QUOTES, 'UTF-8');
+$inputBorderRadius = htmlspecialchars($params->get('border_radius', '0'), ENT_QUOTES, 'UTF-8');
+$inputBorderSize = htmlspecialchars($params->get('border_size', '1px'), ENT_QUOTES, 'UTF-8');
+$inputBorderColor = htmlspecialchars($params->get('border_color', '#e0e0e0'), ENT_QUOTES, 'UTF-8');
+$accentBorderColor = htmlspecialchars($params->get('accent_border_color', '#007bff'), ENT_QUOTES, 'UTF-8');
 $searchIconClass = $params->get('search_icon');
 $searchIcon = !empty($searchIconClass) ? '<span class="' . htmlspecialchars($searchIconClass, ENT_QUOTES, 'UTF-8') . '" aria-hidden="true"></span>' : '';
 $searchMode = $params->get('search_mode', 'inline');

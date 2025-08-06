@@ -88,19 +88,22 @@
                 if (moduleId) {
                     params.push('moduleId=' + encodeURIComponent(moduleId));
                 }
-                // Build AJAX URL more robustly for different environments
-                var baseUrl = window.location.origin;
-                var pathname = window.location.pathname;
-                var joomlaRoot = '';
+                // Build AJAX URL using a more reliable method
+                var ajaxUrl = '';
                 
-                // Detect if Joomla is in a subdirectory
-                if (pathname !== '/' && pathname.indexOf('/index.php') === -1) {
-                    var pathParts = pathname.split('/');
-                    pathParts.pop(); // Remove current page
-                    joomlaRoot = pathParts.join('/');
+                // Method 1: Try to use the base tag if available (most reliable)
+                var baseTag = document.querySelector('base[href]');
+                if (baseTag) {
+                    var baseHref = baseTag.getAttribute('href');
+                    if (baseHref.endsWith('/')) {
+                        baseHref = baseHref.slice(0, -1);
+                    }
+                    ajaxUrl = baseHref + '/index.php?option=com_ajax&module=bearslivesearch&method=search&format=raw&' + params.join('&');
+                } else {
+                    // Method 2: Use relative URL (works regardless of Joomla installation path)
+                    // This will resolve relative to the current page's location
+                    ajaxUrl = './index.php?option=com_ajax&module=bearslivesearch&method=search&format=raw&' + params.join('&');
                 }
-                
-                var ajaxUrl = baseUrl + joomlaRoot + '/index.php?option=com_ajax&module=bearslivesearch&method=search&format=raw&' + params.join('&');
 
                 xhr = new XMLHttpRequest();
                 xhr.open('GET', ajaxUrl, true);
