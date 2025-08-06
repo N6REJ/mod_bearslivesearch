@@ -23,12 +23,18 @@ $positionClass = ' bearslivesearch-float-' . $position;
 $inputBorderRadius = htmlspecialchars($params->get('border_radius'), ENT_QUOTES, 'UTF-8');
 $inputBorderSize = htmlspecialchars($params->get('border_size'), ENT_QUOTES, 'UTF-8');
 $inputBorderColor = htmlspecialchars($params->get('border_color'), ENT_QUOTES, 'UTF-8');
+$accentBorderColor = htmlspecialchars($params->get('accent_border_color'), ENT_QUOTES, 'UTF-8');
 $searchIconClass = $params->get('search_icon');
 $searchIcon = !empty($searchIconClass) ? '<span class="' . htmlspecialchars($searchIconClass, ENT_QUOTES, 'UTF-8') . '" aria-hidden="true"></span>' : '';
 $searchMode = $params->get('search_mode', 'inline');
 $endPosition = $params->get('end_position', '');
 ?>
 <style>
+/* Set CSS custom properties */
+#<?php echo $moduleId; ?> {
+    --bearslivesearch-accent-border-color: <?php echo $accentBorderColor; ?>;
+}
+
 /* Form container settings */
 #<?php echo $moduleId; ?> .bearslivesearch-form {
     border-radius: <?php echo $inputBorderRadius; ?> !important;
@@ -63,12 +69,6 @@ $endPosition = $params->get('end_position', '');
 #<?php echo $moduleId; ?> .bearslivesearch-results {
     width: 100% !important;
     margin: <?php echo $outputMargin; ?> !important;
-    box-sizing: border-box !important;
-}
-
-/* Module container - no width constraints */
-#<?php echo $moduleId; ?> {
-    width: 100% !important;
     box-sizing: border-box !important;
 }
 </style>

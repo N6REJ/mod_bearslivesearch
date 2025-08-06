@@ -51,6 +51,7 @@
                 <field name = "border_radius" type = "text" label = "MOD_BEARSLIVESEARCH_INPUT_BORDER_RADIUS" description = "MOD_BEARSLIVESEARCH_INPUT_BORDER_RADIUS_DESC" default = "0" />
                 <field name = "border_size" type = "text" label = "MOD_BEARSLIVESEARCH_INPUT_BORDER_SIZE" description = "MOD_BEARSLIVESEARCH_INPUT_BORDER_SIZE_DESC" default = "1px" />
                 <field name = "border_color" type = "color" label = "MOD_BEARSLIVESEARCH_INPUT_BORDER_COLOR" description = "MOD_BEARSLIVESEARCH_INPUT_BORDER_COLOR_DESC" default = "#e0e0e0" />
+                <field name = "accent_border_color" type = "color" label = "MOD_BEARSLIVESEARCH_ACCENT_BORDER_COLOR" description = "MOD_BEARSLIVESEARCH_ACCENT_BORDER_COLOR_DESC" default = "#007bff" />
                 <field name = "search_icon" type = "list" label = "MOD_BEARSLIVESEARCH_SEARCH_ICON" description = "MOD_BEARSLIVESEARCH_SEARCH_ICON_DESC" default = "icon-search">
                     <option value="">MOD_BEARSLIVESEARCH_SEARCH_ICON_NONE</option>
                     <option value="icon-search">MOD_BEARSLIVESEARCH_SEARCH_ICON_JOOMLA</option>

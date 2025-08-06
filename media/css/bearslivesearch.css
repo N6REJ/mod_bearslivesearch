@@ -286,7 +286,7 @@
   padding: 1rem;
   background: #f8f9fa;
   border-radius: 0.5rem;
-  border-left: 4px solid #007bff;
+  border-left: 4px solid var(--bearslivesearch-accent-border-color, #007bff);
 }
 
 /* Page transformation container */
