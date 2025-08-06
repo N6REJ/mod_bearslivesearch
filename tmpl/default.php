@@ -15,9 +15,12 @@ use Joomla\CMS\Language\Text;
 $moduleId = 'bearslivesearch-' . $module->id;
 $inputMargin = htmlspecialchars($params->get('input_margin', '1em 0'), ENT_QUOTES, 'UTF-8');
 $outputMargin = htmlspecialchars($params->get('output_margin', '1em 0'), ENT_QUOTES, 'UTF-8');
+$maxWidth = htmlspecialchars($params->get('max_width', '50%'), ENT_QUOTES, 'UTF-8');
+$minWidth = htmlspecialchars($params->get('min_width', '20rem'), ENT_QUOTES, 'UTF-8');
 $moduleclass_sfx = htmlspecialchars($params->get('moduleclass_sfx', ''), ENT_QUOTES, 'UTF-8');
 $position = $params->get('position', 'none');
 $positionClass = ' bearslivesearch-float-' . $position;
+
 $inputBorderRadius = htmlspecialchars($params->get('border_radius'), ENT_QUOTES, 'UTF-8');
 $inputBorderSize = htmlspecialchars($params->get('border_size'), ENT_QUOTES, 'UTF-8');
 $inputBorderColor = htmlspecialchars($params->get('border_color'), ENT_QUOTES, 'UTF-8');
@@ -27,12 +30,68 @@ $searchMode = $params->get('search_mode', 'inline');
 $endPosition = $params->get('end_position', '');
 ?>
 <style>
+#<?php echo $moduleId; ?> {
+    --bearslivesearch-width: <?php echo $maxWidth; ?>;
+    --bearslivesearch-max-width: <?php echo $maxWidth; ?>;
+    --bearslivesearch-min-width: <?php echo $minWidth; ?>;
+}
+#<?php echo $moduleId; ?>.bearslivesearch.bearslivesearch-module-<?php echo $module->id; ?>.bearslivesearch-float-left,
+#<?php echo $moduleId; ?>.bearslivesearch.bearslivesearch-module-<?php echo $module->id; ?>.bearslivesearch-float-right,
+#<?php echo $moduleId; ?>.bearslivesearch.bearslivesearch-module-<?php echo $module->id; ?>.bearslivesearch-float-none {
+    width: <?php echo $maxWidth; ?> !important;
+    max-width: <?php echo $maxWidth; ?> !important;
+    min-width: <?php echo $minWidth; ?> !important;
+    box-sizing: border-box !important;
+    display: block !important;
+}
+#<?php echo $moduleId; ?>.bearslivesearch-float-left {
+    float: left !important;
+    margin: 0 !important;
+}
+#<?php echo $moduleId; ?>.bearslivesearch-float-right {
+    float: right !important;
+    margin: 0 !important;
+}
+#<?php echo $moduleId; ?>.bearslivesearch-float-none {
+    float: none !important;
+    margin: 0 auto !important;
+}
 #<?php echo $moduleId; ?> .bearslivesearch-form {
     border-radius: <?php echo $inputBorderRadius; ?> !important;
     border: <?php echo $inputBorderSize; ?> solid <?php echo $inputBorderColor; ?> !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+#<?php echo $moduleId; ?> .bearslivesearch-results {
+    margin: <?php echo $outputMargin; ?> !important;
 }
 </style>
-<div class="bearslivesearch bearslivesearch-module-<?php echo $module->id; ?><?php echo $moduleclass_sfx . $positionClass; ?>" id="<?php echo $moduleId; ?>" data-search-mode="<?php echo htmlspecialchars($searchMode, ENT_QUOTES, 'UTF-8'); ?>" data-module-id="<?php echo $module->id; ?>" data-end-position="<?php echo htmlspecialchars($endPosition, ENT_QUOTES, 'UTF-8'); ?>">
+<script>
+// JavaScript to ensure width constraints are applied
+document.addEventListener('DOMContentLoaded', function() {
+    var element = document.getElementById('<?php echo $moduleId; ?>');
+    if (element) {
+        // Apply width constraints
+        element.style.setProperty('width', '<?php echo $maxWidth; ?>', 'important');
+        element.style.setProperty('max-width', '<?php echo $maxWidth; ?>', 'important');
+        element.style.setProperty('min-width', '<?php echo $minWidth; ?>', 'important');
+        element.style.setProperty('box-sizing', 'border-box', 'important');
+        
+        // Apply float positioning
+        if (element.classList.contains('bearslivesearch-float-left')) {
+            element.style.setProperty('float', 'left', 'important');
+            element.style.setProperty('margin', '0', 'important');
+        } else if (element.classList.contains('bearslivesearch-float-right')) {
+            element.style.setProperty('float', 'right', 'important');
+            element.style.setProperty('margin', '0', 'important');
+        } else {
+            element.style.setProperty('float', 'none', 'important');
+            element.style.setProperty('margin', '0 auto', 'important');
+        }
+    }
+});
+</script>
+<div class="bearslivesearch bearslivesearch-module-<?php echo $module->id; ?><?php echo $moduleclass_sfx ? ' ' . $moduleclass_sfx : ''; ?><?php echo $positionClass; ?>" id="<?php echo $moduleId; ?>" data-search-mode="<?php echo htmlspecialchars($searchMode, ENT_QUOTES, 'UTF-8'); ?>" data-module-id="<?php echo $module->id; ?>" data-end-position="<?php echo htmlspecialchars($endPosition, ENT_QUOTES, 'UTF-8'); ?>">
     <a href="#<?php echo $moduleId; ?>-results" class="visually-hidden visually-hidden-focusable skip-link" tabindex="0"><?php echo Text::_('MOD_BEARSLIVESEARCH_SKIP_TO_RESULTS', 'Skip to search results'); ?></a>
     <form class="bearslivesearch-form" style="margin: <?php echo $inputMargin; ?>;" role="search" aria-label="Site search" autocomplete="off">
         <label for="<?php echo $moduleId; ?>-input" class="visually-hidden"><?php echo Text::_('MOD_BEARSLIVESEARCH'); ?></label>

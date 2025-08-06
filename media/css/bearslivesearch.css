@@ -10,28 +10,49 @@
  * @since 2025.7.15
  */
 
-.bearslivesearch {
-  width: 60%;
+.bearslivesearch:not(.bearslivesearch-float-left):not(.bearslivesearch-float-right) {
   margin: 0 auto;
+  width: var(--bearslivesearch-width, 50%);
+  max-width: var(--bearslivesearch-max-width, 50%);
+  min-width: var(--bearslivesearch-min-width, 20rem);
+  box-sizing: border-box;
 }
 
 .bearslivesearch-float-left {
-  float: left;
-  }
+  float: left !important;
+  margin: 0 !important;
+  width: var(--bearslivesearch-width, 50%) !important;
+  max-width: var(--bearslivesearch-max-width, 50%) !important;
+  min-width: var(--bearslivesearch-min-width, 20rem) !important;
+  box-sizing: border-box !important;
+  clear: both !important;
+}
 
 .bearslivesearch-float-right {
-  float: right;
-  }
+  float: right !important;
+  margin: 0 !important;
+  width: var(--bearslivesearch-width, 50%) !important;
+  max-width: var(--bearslivesearch-max-width, 50%) !important;
+  min-width: var(--bearslivesearch-min-width, 20rem) !important;
+  box-sizing: border-box !important;
+  clear: both !important;
+}
 
 .bearslivesearch-float-none {
-  float: none;
-  }
+  float: none !important;
+  margin: 0 auto !important;
+  width: var(--bearslivesearch-width, 50%) !important;
+  max-width: var(--bearslivesearch-max-width, 50%) !important;
+  min-width: var(--bearslivesearch-min-width, 20rem) !important;
+  box-sizing: border-box !important;
+  clear: both !important;
+}
+
 
 .bearslivesearch-form {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  width: 100%;
   background: #fff;
   box-shadow: 0 1px 4px rgba(0,0,0,0.06);
   padding-left: .5rem;
