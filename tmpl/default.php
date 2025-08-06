@@ -71,22 +71,34 @@ $endPosition = $params->get('end_position', '');
 document.addEventListener('DOMContentLoaded', function() {
     var element = document.getElementById('<?php echo $moduleId; ?>');
     if (element) {
-        // Apply width constraints
-        element.style.setProperty('width', '<?php echo $maxWidth; ?>', 'important');
-        element.style.setProperty('max-width', '<?php echo $maxWidth; ?>', 'important');
-        element.style.setProperty('min-width', '<?php echo $minWidth; ?>', 'important');
-        element.style.setProperty('box-sizing', 'border-box', 'important');
+        var searchMode = element.getAttribute('data-search-mode');
         
-        // Apply float positioning
-        if (element.classList.contains('bearslivesearch-float-left')) {
-            element.style.setProperty('float', 'left', 'important');
-            element.style.setProperty('margin', '0', 'important');
-        } else if (element.classList.contains('bearslivesearch-float-right')) {
-            element.style.setProperty('float', 'right', 'important');
-            element.style.setProperty('margin', '0', 'important');
+        // Only apply width constraints in inline mode, not separate page mode
+        if (searchMode !== 'separate_page') {
+            // Apply width constraints for inline mode
+            element.style.setProperty('width', '<?php echo $maxWidth; ?>', 'important');
+            element.style.setProperty('max-width', '<?php echo $maxWidth; ?>', 'important');
+            element.style.setProperty('min-width', '<?php echo $minWidth; ?>', 'important');
+            element.style.setProperty('box-sizing', 'border-box', 'important');
+            
+            // Apply float positioning
+            if (element.classList.contains('bearslivesearch-float-left')) {
+                element.style.setProperty('float', 'left', 'important');
+                element.style.setProperty('margin', '0', 'important');
+            } else if (element.classList.contains('bearslivesearch-float-right')) {
+                element.style.setProperty('float', 'right', 'important');
+                element.style.setProperty('margin', '0', 'important');
+            } else {
+                element.style.setProperty('float', 'none', 'important');
+                element.style.setProperty('margin', '0 auto', 'important');
+            }
         } else {
-            element.style.setProperty('float', 'none', 'important');
+            // In separate page mode, ensure full width for search page containers
+            element.style.setProperty('width', '100%', 'important');
+            element.style.setProperty('max-width', '1200px', 'important');
+            element.style.setProperty('min-width', 'auto', 'important');
             element.style.setProperty('margin', '0 auto', 'important');
+            element.style.setProperty('float', 'none', 'important');
         }
     }
 });

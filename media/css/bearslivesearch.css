@@ -248,9 +248,12 @@
 
 /* Search results page specific styling */
 .bearslivesearch-search-page {
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
+  width: 100% !important;
+  max-width: 1200px !important;
+  margin: 0 auto !important;
+  min-width: auto !important;
+  float: none !important;
+  box-sizing: border-box !important;
 }
 
 .bearslivesearch-search-page h1 {
@@ -271,6 +274,9 @@
   background: #fff;
   border-radius: 0.5rem;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: auto !important;
 }
 
 .bearslivesearch-search-page .bearslivesearch-results--hidden {
