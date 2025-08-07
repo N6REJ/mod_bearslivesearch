@@ -88,22 +88,37 @@
                 if (moduleId) {
                     params.push('moduleId=' + encodeURIComponent(moduleId));
                 }
-                // Build AJAX URL using a more reliable method
+                // Build AJAX URL using the PHP-provided base URL (most reliable)
                 var ajaxUrl = '';
+                var moduleContainer = form.closest('.bearslivesearch');
+                var baseUrl = moduleContainer.getAttribute('data-base-url');
                 
-                // Method 1: Try to use the base tag if available (most reliable)
-                var baseTag = document.querySelector('base[href]');
-                if (baseTag) {
-                    var baseHref = baseTag.getAttribute('href');
-                    if (baseHref.endsWith('/')) {
-                        baseHref = baseHref.slice(0, -1);
+                if (baseUrl) {
+                    // Use the base URL provided by PHP (most reliable)
+                    if (baseUrl.endsWith('/')) {
+                        baseUrl = baseUrl.slice(0, -1);
                     }
-                    ajaxUrl = baseHref + '/index.php?option=com_ajax&module=bearslivesearch&method=search&format=raw&' + params.join('&');
+                    ajaxUrl = baseUrl + '/index.php?option=com_ajax&module=bearslivesearch&method=search&format=raw&' + params.join('&');
+                    console.log('Using PHP-provided base URL:', baseUrl);
                 } else {
-                    // Method 2: Use relative URL (works regardless of Joomla installation path)
-                    // This will resolve relative to the current page's location
-                    ajaxUrl = './index.php?option=com_ajax&module=bearslivesearch&method=search&format=raw&' + params.join('&');
+                    // Fallback 1: Try to use the base tag if available
+                    var baseTag = document.querySelector('base[href]');
+                    if (baseTag) {
+                        var baseHref = baseTag.getAttribute('href');
+                        if (baseHref.endsWith('/')) {
+                            baseHref = baseHref.slice(0, -1);
+                        }
+                        ajaxUrl = baseHref + '/index.php?option=com_ajax&module=bearslivesearch&method=search&format=raw&' + params.join('&');
+                        console.log('Using base tag URL:', baseHref);
+                    } else {
+                        // Fallback 2: Use root URL (most common case)
+                        var origin = window.location.origin;
+                        ajaxUrl = origin + '/index.php?option=com_ajax&module=bearslivesearch&method=search&format=raw&' + params.join('&');
+                        console.log('Using root URL fallback:', origin);
+                    }
                 }
+                
+                console.log('Final AJAX URL:', ajaxUrl);
 
                 xhr = new XMLHttpRequest();
                 xhr.open('GET', ajaxUrl, true);

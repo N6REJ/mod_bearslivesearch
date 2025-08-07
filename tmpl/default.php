@@ -11,8 +11,10 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Uri\Uri;
 
 $moduleId = 'bearslivesearch-' . $module->id;
+$baseUrl = Uri::base();
 $inputMargin = htmlspecialchars($params->get('input_margin', '1em 0'), ENT_QUOTES, 'UTF-8');
 $outputMargin = htmlspecialchars($params->get('output_margin', '1em 0'), ENT_QUOTES, 'UTF-8');
 $width = htmlspecialchars($params->get('width', '50%'), ENT_QUOTES, 'UTF-8');
@@ -83,7 +85,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 </script>
-<div class="bearslivesearch bearslivesearch-module-<?php echo $module->id; ?><?php echo $moduleclass_sfx ? ' ' . $moduleclass_sfx : ''; ?><?php echo $positionClass; ?>" id="<?php echo $moduleId; ?>" data-search-mode="<?php echo htmlspecialchars($searchMode, ENT_QUOTES, 'UTF-8'); ?>" data-module-id="<?php echo $module->id; ?>" data-end-position="<?php echo htmlspecialchars($endPosition, ENT_QUOTES, 'UTF-8'); ?>">
+<div class="bearslivesearch bearslivesearch-module-<?php echo $module->id; ?><?php echo $moduleclass_sfx ? ' ' . $moduleclass_sfx : ''; ?><?php echo $positionClass; ?>" id="<?php echo $moduleId; ?>" data-search-mode="<?php echo htmlspecialchars($searchMode, ENT_QUOTES, 'UTF-8'); ?>" data-module-id="<?php echo $module->id; ?>" data-end-position="<?php echo htmlspecialchars($endPosition, ENT_QUOTES, 'UTF-8'); ?>" data-base-url="<?php echo htmlspecialchars($baseUrl, ENT_QUOTES, 'UTF-8'); ?>">
     <a href="#<?php echo $moduleId; ?>-results" class="visually-hidden visually-hidden-focusable skip-link" tabindex="0"><?php echo Text::_('MOD_BEARSLIVESEARCH_SKIP_TO_RESULTS', 'Skip to search results'); ?></a>
     <form class="bearslivesearch-form" style="margin: <?php echo $inputMargin; ?>;" role="search" aria-label="Site search" autocomplete="off">
         <label for="<?php echo $moduleId; ?>-input" class="visually-hidden"><?php echo Text::_('MOD_BEARSLIVESEARCH'); ?></label>
