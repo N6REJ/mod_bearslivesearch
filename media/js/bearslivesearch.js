@@ -492,36 +492,27 @@
                 if (results) {
                     results.addEventListener('click', function(e) {
                         var anchor = e.target.closest('a');
-                        if (!anchor) return;
-
-                        // Only intercept pagination links, not result links
-                        var href = anchor.getAttribute('href') || '';
-                        var isPagination = !!(anchor.closest('.bearslivesearch-pagination') ||
-                                              anchor.classList.contains('page-link') ||
-                                              /[?&](?:page|start|limitstart)=/.test(href));
-                        if (!isPagination) {
-                            // Allow normal navigation for result links (will honor target="_blank")
-                            return;
-                        }
-
-                        e.preventDefault();
-                        var page = 1;
-                        var match = href && href.match(/[?&]page=(\d+)/);
-                        if (match) {
-                            page = parseInt(match[1], 10);
-                        } else {
-                            match = href && href.match(/[?&](?:start|limitstart)=(\d+)/);
+                        if (anchor && results.contains(anchor)) {
+                            e.preventDefault();
+                            var href = anchor.getAttribute('href');
+                            var page = 1;
+                            var match = href && href.match(/[?&]page=(\d+)/);
                             if (match) {
-                                var start = parseInt(match[1], 10);
-                                var perPage = 10;
-                                var perPageInput = module.querySelector('[name="results_limit"]');
-                                if (perPageInput && perPageInput.value) {
-                                    perPage = parseInt(perPageInput.value, 10) || 10;
+                                page = parseInt(match[1], 10);
+                            } else {
+                                match = href && href.match(/[?&](?:start|limitstart)=(\d+)/);
+                                if (match) {
+                                    var start = parseInt(match[1], 10);
+                                    var perPage = 10;
+                                    var perPageInput = module.querySelector('[name="results_limit"]');
+                                    if (perPageInput && perPageInput.value) {
+                                        perPage = parseInt(perPageInput.value, 10) || 10;
+                                    }
+                                    page = Math.floor(start / perPage) + 1;
                                 }
-                                page = Math.floor(start / perPage) + 1;
                             }
+                            doSearch(input.value, page);
                         }
-                        doSearch(input.value, page);
                     });
                 }
             }

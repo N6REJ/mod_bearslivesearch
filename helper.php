@@ -2,7 +2,7 @@
 /**
  * Bears AJAX Search (Joomla 5, no Finder, with Kunena support, PHP-side pagination)
  *
- * @version 2025.08.07.2
+ * @version 2025.08.22.1
  * @package Bears AJAX Search
  * @author N6REJ
  * @email troy@hallhome.us
@@ -183,8 +183,7 @@ class ModBearslivesearchHelper
             $desc = htmlspecialchars(mb_substr($item['desc'], 0, 200), ENT_QUOTES, 'UTF-8');
             $link = \Joomla\CMS\Router\Route::_($item['link']);
             $output .= '<li role="listitem">';
-
-			$output .= '<a href="' . $link . '" class="bearslivesearch-title-link" target="_blank" rel="noopener noreferrer"><span class="bearslivesearch-title">' . ($offset + $i + 1) . '. ' . $title;
+            $output .= '<a href="' . $link . '" class="bearslivesearch-title-link"><span class="bearslivesearch-title">' . ($offset + $i + 1) . '. ' . $title;
             if ($item['type'] === 'kunena') {
                 $output .= ' <span class="forum-label">[Forum Post]</span>';
             }
