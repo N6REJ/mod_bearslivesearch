@@ -474,27 +474,43 @@
                 if (results) {
                     results.addEventListener('click', function(e) {
                         var anchor = e.target.closest('a');
-                        if (anchor && results.contains(anchor)) {
-                            e.preventDefault();
-                            var href = anchor.getAttribute('href');
-                            var page = 1;
-                            var match = href && href.match(/[?&]page=(\d+)/);
-                            if (match) {
-                                page = parseInt(match[1], 10);
-                            } else {
-                                match = href && href.match(/[?&](?:start|limitstart)=(\d+)/);
-                                if (match) {
-                                    var start = parseInt(match[1], 10);
-                                    var perPage = 10;
-                                    var perPageInput = module.querySelector('[name="results_limit"]');
-                                    if (perPageInput && perPageInput.value) {
-                                        perPage = parseInt(perPageInput.value, 10) || 10;
-                                    }
-                                    page = Math.floor(start / perPage) + 1;
-                                }
-                            }
-                            doSearch(input.value, page);
+                        if (!anchor || !results.contains(anchor)) {
+                            return;
                         }
+
+                        // Allow default behavior for non-left clicks or when modifier keys are used
+                        if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) {
+                            return;
+                        }
+
+                        var href = anchor.getAttribute('href') || '';
+                        var isPagination = /[?&](?:page|start|limitstart)=\d+/.test(href) || !!anchor.closest('.pagination') || anchor.hasAttribute('data-page');
+
+                        if (!isPagination) {
+                            // Not a pagination link; allow normal navigation
+                            return;
+                        }
+
+                        // Handle pagination via AJAX
+                        e.preventDefault();
+
+                        var page = 1;
+                        var match = href && href.match(/[?&]page=(\d+)/);
+                        if (match) {
+                            page = parseInt(match[1], 10);
+                        } else {
+                            match = href && href.match(/[?&](?:start|limitstart)=(\d+)/);
+                            if (match) {
+                                var start = parseInt(match[1], 10);
+                                var perPage = 10;
+                                var perPageInput = module.querySelector('[name="results_limit"]');
+                                if (perPageInput && perPageInput.value) {
+                                    perPage = parseInt(perPageInput.value, 10) || 10;
+                                }
+                                page = Math.floor(start / perPage) + 1;
+                            }
+                        }
+                        doSearch(input.value, page);
                     });
                 }
             }
