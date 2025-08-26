@@ -4,10 +4,10 @@
     <author>N6REJ</author>
     <authorEmail>troy@hallhome.us</authorEmail>
     <authorUrl>https://hallhome.us/software</authorUrl>
-    <creationDate>2025 August 07</creationDate>
+    <creationDate>2025 August 23</creationDate>
     <copyright>Copyright (C) 2025 N6REJ</copyright>
     <license>GNU General Public License version 3 or later; see License.txt</license>
-    <version>2025.08.07.2</version>
+    <version>2025.08.23</version>
     <description>Bears Accessibility search module using Ajax.</description>
     <files>
         <filename module = "mod_bearslivesearch">mod_bearslivesearch.php</filename>
