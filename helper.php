@@ -41,6 +41,7 @@ class ModBearslivesearchHelper
             $hiddenCategories = $input->get('hidden_categories', [], 'array');
             $hiddenCategories = array_values(array_filter(array_map('intval', (array) $hiddenCategories), function($v){ return $v > 0; }));
             $ordering = $input->getString('ordering', 'newest');
+            $searchPhrase = strtolower($input->getString('searchphrase', 'exact'));
             
             // Debug logging
             Log::add('AJAX Search called with query: ' . $query . ' | datefrom=' . $dateFrom . ' | dateto=' . $dateTo, Log::INFO, 'mod_bearslivesearch');
@@ -97,13 +98,35 @@ class ModBearslivesearchHelper
                 $db->qn('hits')
             ])
             ->from($db->qn('#__content'))
-            ->where('state = 1')
-            ->where('(' .
-                $db->qn('title') . ' LIKE ' . $db->q($searchLike) . ' OR ' .
-                $db->qn('introtext') . ' LIKE ' . $db->q($searchLike) . ' OR ' .
-                $db->qn('fulltext') . ' LIKE ' . $db->q($searchLike) .
-            ')')
-            ->order('created DESC');
+            ->where('state = 1');
+
+        // Text search conditions according to searchPhrase
+        if ($query !== '') {
+            if ($searchPhrase === 'anywords' || $searchPhrase === 'allwords') {
+                $terms = preg_split('/\s+/', $query, -1, PREG_SPLIT_NO_EMPTY);
+                $termConds = [];
+                foreach ((array) $terms as $t) {
+                    $likeTerm = '%' . $db->escape($t, true) . '%';
+                    $termConds[] = '(' .
+                        $db->qn('title') . ' LIKE ' . $db->q($likeTerm) . ' OR ' .
+                        $db->qn('introtext') . ' LIKE ' . $db->q($likeTerm) . ' OR ' .
+                        $db->qn('fulltext') . ' LIKE ' . $db->q($likeTerm) .
+                    ')';
+                }
+                if (!empty($termConds)) {
+                    $glue = ($searchPhrase === 'allwords') ? ' AND ' : ' OR ';
+                    $queryObj->where('(' . implode($glue, $termConds) . ')');
+                }
+            } else { // exact
+                $queryObj->where('(' .
+                    $db->qn('title') . ' LIKE ' . $db->q($searchLike) . ' OR ' .
+                    $db->qn('introtext') . ' LIKE ' . $db->q($searchLike) . ' OR ' .
+                    $db->qn('fulltext') . ' LIKE ' . $db->q($searchLike) .
+                ')');
+            }
+        }
+
+        $queryObj->order('created DESC');
 
         // Category filter
         $categoryId = (int) $input->get('category', 0);
@@ -175,10 +198,34 @@ class ModBearslivesearchHelper
                         ->select(['m.id', 'm.' . $messageColumn, 'm.thread', 'm.userid', 'm.time', 't.subject', 't.catid'])
                         ->from($db->qn('#__kunena_messages', 'm'))
                         ->join('INNER', $db->qn('#__kunena_topics', 't') . ' ON m.thread = t.id')
-                        ->where('m.' . $messageColumn . ' LIKE ' . $db->q($searchLike))
                         ->where('m.hold = 0')
-                        ->where('t.hold = 0')
-                        ->order('m.time DESC');
+                        ->where('t.hold = 0');
+
+                    // Text search for Kunena according to searchPhrase
+                    if ($query !== '') {
+                        if ($searchPhrase === 'anywords' || $searchPhrase === 'allwords') {
+                            $terms = preg_split('/\s+/', $query, -1, PREG_SPLIT_NO_EMPTY);
+                            $termConds = [];
+                            foreach ((array) $terms as $t) {
+                                $likeTerm = '%' . $db->escape($t, true) . '%';
+                                $termConds[] = '(' .
+                                    'm.' . $messageColumn . ' LIKE ' . $db->q($likeTerm) . ' OR ' .
+                                    't.subject LIKE ' . $db->q($likeTerm) .
+                                ')';
+                            }
+                            if (!empty($termConds)) {
+                                $glue = ($searchPhrase === 'allwords') ? ' AND ' : ' OR ';
+                                $kunenaQuery->where('(' . implode($glue, $termConds) . ')');
+                            }
+                        } else { // exact
+                            $kunenaQuery->where('(' .
+                                'm.' . $messageColumn . ' LIKE ' . $db->q($searchLike) . ' OR ' .
+                                't.subject LIKE ' . $db->q($searchLike) .
+                            ')');
+                        }
+                    }
+
+                    $kunenaQuery->order('m.time DESC');
 
 
                     if (!empty($kunenaFromTs)) {

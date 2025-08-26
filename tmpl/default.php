@@ -109,7 +109,7 @@ document.addEventListener('DOMContentLoaded', function() {
         <div class="bearslivesearch-row bearslivesearch-row-margin<?php if ($params->get('show_criteria', 'always') === 'after') echo ' bearslivesearch-criteria-hidden'; ?>">
             <span><?php echo Text::_('MOD_SEARCH_SEARCHFOR'); ?>:</span>
             <label class="bearslivesearch-radio-label">
-                <input type="radio" name="searchphrase" value="anywords" checked />
+                <input type="radio" name="searchphrase" value="anywords" />
                 <?php echo Text::_('MOD_SEARCH_ANYWORDS'); ?>
             </label>
             <label class="bearslivesearch-radio-label">
@@ -117,7 +117,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <?php echo Text::_('MOD_SEARCH_ALLWORDS'); ?>
             </label>
             <label class="bearslivesearch-radio-label">
-                <input type="radio" name="searchphrase" value="exact" />
+                <input type="radio" name="searchphrase" value="exact" checked />
                 <?php echo Text::_('MOD_SEARCH_EXACTPHRASE'); ?>
             </label>
         </div>

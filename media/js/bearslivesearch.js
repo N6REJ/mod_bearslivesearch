@@ -71,6 +71,23 @@
                 }
             }
 
+            // Ensure default search phrase is 'exact' unless URL explicitly sets it
+            function enforceDefaultSearchPhrase() {
+                try {
+                    if (!form) return;
+                    var urlParams = new URLSearchParams(window.location.search);
+                    if (urlParams.has('searchphrase')) return; // respect URL if provided
+                    var radios = form.querySelectorAll('input[name="searchphrase"]');
+                    var exactRadio = form.querySelector('input[name="searchphrase"][value="exact"]');
+                    if (!radios || !radios.length || !exactRadio) return;
+                    // Force exact as the only checked on initial load
+                    radios.forEach(function(r){ r.checked = (r === exactRadio); });
+                } catch (e) { /* noop */ }
+            }
+
+            // Also enforce after full window load to override late scripts/autofill
+            try { window.addEventListener('load', enforceDefaultSearchPhrase); } catch (e) {}
+
             function updateResults(html) {
                 // Ensure results container exists
                 if (!results || !module.contains(results)) {
@@ -103,8 +120,34 @@
                 input && input.focus();
             }
 
+            // Update browser URL to reflect current search criteria (non-destructive history)
+            function updateBrowserUrl(formData, page) {
+                try {
+                    var params = [];
+                    // Only include non-empty values
+                    formData.forEach(function(value, key) {
+                        if (value !== undefined && value !== null && String(value).trim() !== '') {
+                            params.push(encodeURIComponent(key) + '=' + encodeURIComponent(value));
+                        }
+                    });
+                    if (page && page > 1) {
+                        params.push('page=' + encodeURIComponent(page));
+                    }
+                    var newUrl = window.location.pathname + (params.length ? ('?' + params.join('&')) : '');
+                    // Use replaceState to avoid stacking history entries on every keystroke
+                    history.replaceState(history.state, document.title, newUrl);
+                } catch (e) {
+                    // No-op if history API unavailable
+                }
+            }
+
             function doSearch(query, page, allowEmpty) {
                 if (xhr) xhr.abort();
+
+                // Serialize current form fields upfront for URL updates
+                var formData = new FormData(form);
+                updateBrowserUrl(formData, page);
+
                 if (!query || !query.trim()) {
                     if (!allowEmpty) {
                         updateResults('');
@@ -129,9 +172,8 @@
                 // Show loading indicator
                 updateResults('<div class="bearslivesearch-loading" role="status">Searching...</div>');
 
-                // Serialize all form fields
+                // Serialize all form fields for AJAX (include empties, backend can decide)
                 var params = [];
-                var formData = new FormData(form);
                 formData.forEach(function(value, key) {
                     if (value !== undefined && value !== null) {
                         params.push(encodeURIComponent(key) + '=' + encodeURIComponent(value));
@@ -154,7 +196,6 @@
                 }
                 // Build AJAX URL using the PHP-provided base URL (most reliable)
                 var ajaxUrl = '';
-                var moduleContainer = form.closest('.bearslivesearch');
                 var baseUrl = moduleContainer.getAttribute('data-base-url');
                 
                 if (baseUrl) {
@@ -329,6 +370,7 @@
                             lastQuery = '';
                             
                             // Re-setup event listeners for this specific module
+                            enforceDefaultSearchPhrase();
                             captureDefaultFilters();
                             setupLiveSearch();
                             setupPagination();
@@ -624,7 +666,7 @@
                 input.value = queryFromUrl;
                 
                 // Set form values from URL
-                var searchphrase = urlParams.get('searchphrase') || 'anywords';
+                var searchphrase = urlParams.get('searchphrase') || 'exact';
                 var ordering = urlParams.get('ordering') || 'newest';
                 var resultsLimit = urlParams.get('results_limit') || '10';
                 
@@ -676,6 +718,7 @@
 
             // Set up live search and pagination for all modes
             // This enables search-as-you-type functionality even in separate page mode
+            enforceDefaultSearchPhrase();
             captureDefaultFilters();
             setupLiveSearch();
             setupPagination();
@@ -704,6 +747,7 @@
                 }
                 
                 // After transformation, set up live search
+                enforceDefaultSearchPhrase();
                 captureDefaultFilters();
                 setupLiveSearch();
                 setupPagination();
