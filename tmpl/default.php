@@ -137,7 +137,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         <!-- Standard Joomla search filters row -->
         <div class="joomla-search-filters<?php if ($params->get('show_criteria', 'always') === 'after') echo ' bearslivesearch-criteria-hidden'; ?>">
-            <div class="form-group">
+            <div class="form-group category">
                 <label for="<?php echo $moduleId; ?>-category">
                     <?php echo Text::_('JCATEGORY'); ?>
                 </label>
@@ -150,7 +150,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <?php endif; ?>
                 </select>
             </div>
-            <div class="form-group">
+            <div class="form-group author">
                 <label for="<?php echo $moduleId; ?>-author">
                     <?php echo Text::_('JAUTHOR'); ?>
                 </label>
@@ -163,7 +163,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <?php endif; ?>
                 </select>
             </div>
-            <div class="form-group">
+            <div class="form-group dates">
                 <label for="<?php echo $moduleId; ?>-datefrom">
                     <?php echo Text::_('JSEARCH_FILTER_DATE_FROM'); ?>
                 </label>
