@@ -615,7 +615,7 @@
                             return;
                         }
 
-                        // Allow default for non-left clicks or with modifier keys (new tab/window)
+                        // Allow default behavior for non-left clicks or when modifier keys are used
                         if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) {
                             return;
                         }
@@ -625,11 +625,13 @@
 
                         // If it's a normal result link, allow default navigation
                         if (!isPagination) {
+                            // Not a pagination link; allow normal navigation
                             return;
                         }
 
                         // Handle pagination via AJAX
                         e.preventDefault();
+
                         var page = 1;
                         var match = href && href.match(/[?&]page=(\d+)/);
                         if (match) {
