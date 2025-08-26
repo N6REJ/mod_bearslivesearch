@@ -88,6 +88,15 @@ document.addEventListener('DOMContentLoaded', function() {
 <div class="bearslivesearch bearslivesearch-module-<?php echo $module->id; ?><?php echo $moduleclass_sfx ? ' ' . $moduleclass_sfx : ''; ?><?php echo $positionClass; ?>" id="<?php echo $moduleId; ?>" data-search-mode="<?php echo htmlspecialchars($searchMode, ENT_QUOTES, 'UTF-8'); ?>" data-module-id="<?php echo $module->id; ?>" data-end-position="<?php echo htmlspecialchars($endPosition, ENT_QUOTES, 'UTF-8'); ?>" data-base-url="<?php echo htmlspecialchars($baseUrl, ENT_QUOTES, 'UTF-8'); ?>">
     <a href="#<?php echo $moduleId; ?>-results" class="visually-hidden visually-hidden-focusable skip-link" tabindex="0"><?php echo Text::_('MOD_BEARSLIVESEARCH_SKIP_TO_RESULTS', 'Skip to search results'); ?></a>
     <form class="bearslivesearch-form" style="margin: <?php echo $inputMargin; ?>;" role="search" aria-label="Site search" autocomplete="off">
+        <?php
+        $hiddenCats = (array) $params->get('hidden_categories', []);
+        foreach ($hiddenCats as $hid) {
+            $hid = (int) $hid;
+            if ($hid > 0) {
+                echo '<input type="hidden" name="hidden_categories[]" value="' . $hid . '" />';
+            }
+        }
+        ?>
         <label for="<?php echo $moduleId; ?>-input" class="visually-hidden"><?php echo Text::_('MOD_BEARSLIVESEARCH'); ?></label>
         <div class="bearslivesearch-row bearslivesearch-row-flex">
             <input type="search" id="<?php echo $moduleId; ?>-input" name="q" aria-label="<?php echo Text::_('MOD_BEARSLIVESEARCH'); ?>" placeholder="<?php echo Text::_('MOD_BEARSLIVESEARCH_PLACEHOLDER'); ?>" required />

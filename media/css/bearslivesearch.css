@@ -16,7 +16,6 @@
 }
 
 .bearslivesearch-form {
-  width: var(--bearslivesearch-width, 50%);
   display: flex;
   align-items: center;
   gap: 0.5rem;

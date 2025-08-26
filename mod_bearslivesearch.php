@@ -28,13 +28,41 @@ $wa = $app->getDocument()->getWebAssetManager();
 $wa->registerAndUseStyle('mod_bearslivesearch', 'modules/mod_bearslivesearch/media/css/bearslivesearch.css');
 $wa->registerAndUseScript('mod_bearslivesearch', 'modules/mod_bearslivesearch/media/js/bearslivesearch.js', ['version' => 'auto'], ['defer' => true]);
 
-// Fetch published article categories (robust method)
+// Fetch published article categories (full nested tree, like admin)
 use Joomla\CMS\Categories\Categories;
 $categories = [];
-$cats = Categories::getInstance('Content')->get('root')->getChildren();
-foreach ($cats as $cat) {
-    if ($cat->published) {
-        $categories[] = $cat;
+try {
+    $root = Categories::getInstance('Content')->get('root');
+    $stack = [];
+    $pushChildren = function($node) use (&$categories, &$pushChildren) {
+        $children = $node->getChildren();
+        if (!$children) return;
+        foreach ($children as $child) {
+            // Only include published categories
+            if (!empty($child->published)) {
+                // Compute indent based on level (root is level 1)
+                $level = isset($child->level) ? max(0, (int)$child->level - 1) : 0;
+                $indent = $level > 0 ? str_repeat('— ', $level) : '';
+                // Copy minimal fields expected by template
+                $categories[] = (object) [
+                    'id' => (int) $child->id,
+                    'title' => $indent . $child->title
+                ];
+                // Recurse
+                $pushChildren($child);
+            }
+        }
+    };
+    if ($root) {
+        $pushChildren($root);
+    }
+} catch (\Throwable $e) {
+    // Fallback to previous behavior if categories API fails
+    $cats = Categories::getInstance('Content')->get('root')->getChildren();
+    foreach ($cats as $cat) {
+        if (!empty($cat->published)) {
+            $categories[] = (object) ['id' => (int)$cat->id, 'title' => $cat->title];
+        }
     }
 }
 

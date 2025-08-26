@@ -37,6 +37,10 @@ class ModBearslivesearchHelper
             $dateTo = trim($input->getString('dateto', ''));
             $categoryCheck = (int) $input->get('category', 0);
             $authorCheck = (int) $input->get('author', 0);
+            // Hidden categories can arrive as an array of ints
+            $hiddenCategories = $input->get('hidden_categories', [], 'array');
+            $hiddenCategories = array_values(array_filter(array_map('intval', (array) $hiddenCategories), function($v){ return $v > 0; }));
+            $ordering = $input->getString('ordering', 'newest');
             
             // Debug logging
             Log::add('AJAX Search called with query: ' . $query . ' | datefrom=' . $dateFrom . ' | dateto=' . $dateTo, Log::INFO, 'mod_bearslivesearch');
@@ -62,6 +66,21 @@ class ModBearslivesearchHelper
 
 
         $db = Factory::getDbo();
+        // Determine default 'hidden' categories for com_content
+        $defaultHiddenCategories = [];
+        try {
+            $catQ = $db->getQuery(true)
+                ->select($db->qn('id'))
+                ->from($db->qn('#__categories'))
+                ->where($db->qn('extension') . ' = ' . $db->q('com_content'))
+                ->where('(LOWER(' . $db->qn('title') . ') = ' . $db->q('hidden') . ' OR ' . $db->qn('alias') . ' = ' . $db->q('hidden') . ')');
+            $db->setQuery($catQ);
+            $defaultHiddenCategories = array_map('intval', (array) $db->loadColumn());
+        } catch (Exception $e) {
+            Log::add('Default hidden categories lookup failed: ' . $e->getMessage(), Log::WARNING, 'mod_bearslivesearch');
+        }
+        $effectiveHiddenCategories = array_values(array_unique(array_merge($hiddenCategories, $defaultHiddenCategories)));
+
         $searchLike = '%' . $db->escape($query, true) . '%';
         $allResults = [];
 
@@ -74,7 +93,8 @@ class ModBearslivesearchHelper
                 $db->qn('fulltext'),
                 $db->qn('alias'),
                 $db->qn('catid'),
-                $db->qn('created')
+                $db->qn('created'),
+                $db->qn('hits')
             ])
             ->from($db->qn('#__content'))
             ->where('state = 1')
@@ -89,6 +109,10 @@ class ModBearslivesearchHelper
         $categoryId = (int) $input->get('category', 0);
         if ($categoryId) {
             $queryObj->where('catid = ' . $categoryId);
+        }
+        // Exclude hidden categories (module-configured + default "hidden")
+        if (!empty($effectiveHiddenCategories)) {
+            $queryObj->where('catid NOT IN (' . implode(',', $effectiveHiddenCategories) . ')');
         }
         // Author filter
         $authorId = (int) $input->get('author', 0);
@@ -116,6 +140,7 @@ class ModBearslivesearchHelper
                 'title' => $item->title,
                 'desc' => strip_tags($item->introtext ?: $item->fulltext),
                 'created' => $item->created,
+                'hits' => (int)($item->hits ?? 0),
                 'link' => 'index.php?option=com_content&view=article&id=' . (int)$item->id
             ];
         }
@@ -172,6 +197,7 @@ class ModBearslivesearchHelper
                             'title' => $kitem->subject,
                             'desc' => strip_tags($messageContent),
                             'created' => date('Y-m-d H:i:s', (int)$kitem->time),
+                            'hits' => 0,
                             'link' => 'index.php?option=com_kunena&view=topic&catid=' . (int)$kitem->catid . '&id=' . (int)$kitem->thread . '#msg' . (int)$kitem->id
                         ];
                     }
@@ -184,9 +210,30 @@ class ModBearslivesearchHelper
             }
         }
 
-        // Sort all results by created DESC
-        usort($allResults, function($a, $b) {
-            return strcmp($b['created'], $a['created']);
+        // Sort results per requested ordering
+        $ordering = in_array($ordering, ['newest','oldest','popular','alpha'], true) ? $ordering : 'newest';
+        usort($allResults, function($a, $b) use ($ordering) {
+            $aTitle = $a['title'] ?? '';
+            $bTitle = $b['title'] ?? '';
+            $aHits = isset($a['hits']) ? (int)$a['hits'] : 0;
+            $bHits = isset($b['hits']) ? (int)$b['hits'] : 0;
+            $aTime = isset($a['created']) ? strtotime($a['created']) : 0;
+            $bTime = isset($b['created']) ? strtotime($b['created']) : 0;
+            switch ($ordering) {
+                case 'alpha':
+                    $cmp = strcasecmp($aTitle, $bTitle);
+                    if ($cmp !== 0) return $cmp;
+                    // tie-breaker: newest first
+                    return $bTime <=> $aTime;
+                case 'popular':
+                    if ($bHits !== $aHits) return $bHits <=> $aHits; // desc
+                    return $bTime <=> $aTime; // tie: newest first
+                case 'oldest':
+                    return $aTime <=> $bTime; // asc
+                case 'newest':
+                default:
+                    return $bTime <=> $aTime; // desc
+            }
         });
 
         $totalMatches = count($allResults);
@@ -259,6 +306,33 @@ class ModBearslivesearchHelper
             if (!empty($value)) {
                 $params[] = $param . '=' . urlencode($value);
             }
+        }
+        // Preserve hidden categories across pagination
+        $hidCatsForPage = $input->get('hidden_categories', [], 'array');
+        foreach ((array)$hidCatsForPage as $hid) {
+            $hid = (int)$hid;
+            if ($hid > 0) {
+                $params[] = 'hidden_categories[]=' . $hid;
+            }
+        }
+        // Also include default 'hidden' categories by title/alias so pagination preserves them
+        try {
+            $db = Factory::getDbo();
+            $catQ = $db->getQuery(true)
+                ->select($db->qn('id'))
+                ->from($db->qn('#__categories'))
+                ->where($db->qn('extension') . ' = ' . $db->q('com_content'))
+                ->where('(LOWER(' . $db->qn('title') . ') = ' . $db->q('hidden') . ' OR ' . $db->qn('alias') . ' = ' . $db->q('hidden') . ')');
+            $db->setQuery($catQ);
+            $defaultHiddenCategories = array_map('intval', (array) $db->loadColumn());
+            $presentHidden = array_map('intval', (array) $hidCatsForPage);
+            foreach ($defaultHiddenCategories as $hid) {
+                if ($hid > 0 && !in_array($hid, $presentHidden, true)) {
+                    $params[] = 'hidden_categories[]=' . $hid;
+                }
+            }
+        } catch (Exception $e) {
+            // ignore pagination enrichment errors
         }
         if (!empty($params)) {
             $ajaxBase .= '&' . implode('&', $params);

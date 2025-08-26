@@ -65,6 +65,15 @@
                     description="MOD_BEARSLIVESEARCH_END_POSITION_DESC"
                     default=""
                 />
+                <field
+                    name="hidden_categories"
+                    type="category"
+                    extension="com_content"
+                    multiple="true"
+                    label="Hidden Categories"
+                    description="Select content categories to exclude from search results"
+                    class="form-select"
+                />
             </fieldset>
             <fieldset name = "advanced">
                 <field
