@@ -33,11 +33,17 @@ class ModBearslivesearchHelper
             $app = Factory::getApplication();
             $input = $app->input;
             $query = trim($input->getString('q', ''));
+            $dateFrom = trim($input->getString('datefrom', ''));
+            $dateTo = trim($input->getString('dateto', ''));
+            $categoryCheck = (int) $input->get('category', 0);
+            $authorCheck = (int) $input->get('author', 0);
             
             // Debug logging
-            Log::add('AJAX Search called with query: ' . $query, Log::INFO, 'mod_bearslivesearch');
+            Log::add('AJAX Search called with query: ' . $query . ' | datefrom=' . $dateFrom . ' | dateto=' . $dateTo, Log::INFO, 'mod_bearslivesearch');
             
-            if ($query === '') {
+            // Allow search to proceed if any filter is present, even with empty query
+            $hasAnyFilter = ($query !== '' || $dateFrom !== '' || $dateTo !== '' || $categoryCheck || $authorCheck);
+            if (!$hasAnyFilter) {
                 echo '<div role="status">' . Text::_('MOD_BEARSLIVESEARCH_EMPTY_QUERY') . '</div>';
                 return;
             }
@@ -53,7 +59,7 @@ class ModBearslivesearchHelper
         $resultsLimit = min(200, max(1, (int) $input->get('results_limit', $resultsLimit)));
         $page = max(1, (int) $input->get('page', 1));
         $offset = ($page - 1) * $resultsLimit;
-        $maxFetch = 100; // Max results to fetch from each source for merging
+
 
         $db = Factory::getDbo();
         $searchLike = '%' . $db->escape($query, true) . '%';
@@ -77,8 +83,8 @@ class ModBearslivesearchHelper
                 $db->qn('introtext') . ' LIKE ' . $db->q($searchLike) . ' OR ' .
                 $db->qn('fulltext') . ' LIKE ' . $db->q($searchLike) .
             ')')
-            ->order('created DESC')
-            ->setLimit($maxFetch);
+            ->order('created DESC');
+
         // Category filter
         $categoryId = (int) $input->get('category', 0);
         if ($categoryId) {
@@ -88,6 +94,13 @@ class ModBearslivesearchHelper
         $authorId = (int) $input->get('author', 0);
         if ($authorId) {
             $queryObj->where('created_by = ' . $authorId);
+        }
+        // Date filters (Joomla articles use DATETIME in 'created')
+        if (!empty($dateFrom)) {
+            $queryObj->where($db->qn('created') . ' >= ' . $db->q($dateFrom . ' 00:00:00'));
+        }
+        if (!empty($dateTo)) {
+            $queryObj->where($db->qn('created') . ' <= ' . $db->q($dateTo . ' 23:59:59'));
         }
         try {
             $db->setQuery($queryObj);
@@ -129,6 +142,10 @@ class ModBearslivesearchHelper
                 }
                 
                 if ($messageColumn) {
+                    // Convert date filters to timestamps for Kunena 'time' column
+                    $kunenaFromTs = !empty($dateFrom) ? strtotime($dateFrom . ' 00:00:00') : null;
+                    $kunenaToTs = !empty($dateTo) ? strtotime($dateTo . ' 23:59:59') : null;
+
                     $kunenaQuery = $db->getQuery(true)
                         ->select(['m.id', 'm.' . $messageColumn, 'm.thread', 'm.userid', 'm.time', 't.subject', 't.catid'])
                         ->from($db->qn('#__kunena_messages', 'm'))
@@ -136,8 +153,16 @@ class ModBearslivesearchHelper
                         ->where('m.' . $messageColumn . ' LIKE ' . $db->q($searchLike))
                         ->where('m.hold = 0')
                         ->where('t.hold = 0')
-                        ->order('m.time DESC')
-                        ->setLimit($maxFetch);
+                        ->order('m.time DESC');
+
+
+                    if (!empty($kunenaFromTs)) {
+                        $kunenaQuery->where('m.time >= ' . (int)$kunenaFromTs);
+                    }
+                    if (!empty($kunenaToTs)) {
+                        $kunenaQuery->where('m.time <= ' . (int)$kunenaToTs);
+                    }
+
                     $db->setQuery($kunenaQuery);
                     $kunenaResults = $db->loadObjectList();
                     foreach ($kunenaResults as $kitem) {
@@ -176,7 +201,11 @@ class ModBearslivesearchHelper
         $queryDisplay = htmlspecialchars($query, ENT_QUOTES, 'UTF-8');
         $startResult = $offset + 1;
         $endResult = $offset + count($pagedResults);
-        $output = '<div class="bearslivesearch-summary">Results ' . $startResult . '-' . $endResult . ' of ' . $totalMatches . ' for <strong>"' . $queryDisplay . '"</strong></div>';
+        $output = '<div class="bearslivesearch-summary">Results ' . $startResult . '-' . $endResult . ' of ' . $totalMatches;
+        if ($queryDisplay !== '') {
+            $output .= ' for <strong>"' . $queryDisplay . '"</strong>';
+        }
+        $output .= '</div>';
         $output .= '<ul class="bearslivesearch-list" role="list">';
         foreach ($pagedResults as $i => $item) {
             $title = htmlspecialchars($item['title'], ENT_QUOTES, 'UTF-8');
