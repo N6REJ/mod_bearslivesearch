@@ -16,7 +16,6 @@
 }
 
 .bearslivesearch-form {
-  width: var(--bearslivesearch-width, 50%);
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -165,6 +164,71 @@
   box-shadow: none !important;
   border: none !important;
   background: transparent !important;
+}
+
+.form-group.dates {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+}
+.form-group.dates > label {
+  display: inline-block;
+  margin: 0;
+  white-space: nowrap;
+}
+.form-group.dates > input,
+.form-group.dates .form-control,
+.form-group.dates input[type="date"] {
+  width: auto;
+  min-width: 12ch;
+}
+
+/* Stronger overrides scoped to this module to keep labels left of inputs */
+.bearslivesearch .form-group.dates {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+  flex: 0 0 auto !important;
+}
+.bearslivesearch .form-group.dates label {
+  display: inline-block !important;
+  margin: 0 0.5rem 0 0 !important;
+  white-space: nowrap !important;
+}
+.bearslivesearch .form-group.dates input,
+.bearslivesearch .form-group.dates .form-control,
+.bearslivesearch .form-group.dates input[type="date"] {
+  width: auto !important;
+  min-width: 12ch !important;
+}
+.bearslivesearch .form-group.dates > * {
+  flex: 0 0 auto !important;
+}
+.bearslivesearch .form-group.dates .control-label {
+  display: inline-block !important;
+  width: auto !important;
+  margin: 0 0.5rem 0 0 !important;
+  white-space: nowrap !important;
+}
+.bearslivesearch .form-group.dates .controls,
+.bearslivesearch .form-group.dates .input-group,
+.bearslivesearch .form-group.dates .input-append,
+.bearslivesearch .form-group.dates .input-prepend {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+  width: auto !important;
+  flex: 0 0 auto !important;
+}
+.bearslivesearch .form-group.dates br {
+  display: none !important;
+}
+.bearslivesearch .form-group.dates [class*="col-"] {
+  width: auto !important;
+  flex: 0 0 auto !important;
+  padding: 0 !important;
 }
 
 .bearslivesearch-list {
@@ -318,4 +382,24 @@
 
 .bearslivesearch-page-results.bearslivesearch-results--hidden {
   display: none !important;
+}
+
+/* Enforce inline left label for the 'Date to' field specifically */
+.bearslivesearch label[for$="-dateto"],
+.bearslivesearch .control-label label[for$="-dateto"] {
+  display: inline-block !important;
+  white-space: nowrap !important;
+  margin: 0 0.5rem 0 0 !important;
+}
+.bearslivesearch input[name="dateto"],
+.bearslivesearch input[id$="-dateto"],
+.bearslivesearch .form-group.dates input[name="dateto"],
+.bearslivesearch .form-group.dates input[id$="-dateto"] {
+  display: inline-block !important;
+  width: auto !important;
+  min-width: 10ch !important;
+}
+/* Prevent label wrapping above input inside the dates group */
+.bearslivesearch .form-group.dates {
+  flex-wrap: nowrap !important;
 }

@@ -24,7 +24,84 @@
             var originalPageState = null; // Store original page state for restoration
             var isRestoring = false; // Flag to prevent re-transformation during restoration
 
+            // Suppress AJAX when programmatically resetting filters
+            var suppressFilterSearch = false;
+
+            // Capture default values of all filters (non-search input)
+            function captureDefaultFilters() {
+                if (!form || form.__blsDefaultsCaptured) return;
+                var controls = form.querySelectorAll('select, textarea, input:not([type="search"])');
+                controls.forEach(function(ctrl) {
+                    if (ctrl.type === 'radio') {
+                        if (ctrl.checked) ctrl.setAttribute('data-bls-default-checked', '1');
+                        ctrl.setAttribute('data-bls-group', ctrl.name || '');
+                    } else if (ctrl.type === 'checkbox') {
+                        ctrl.setAttribute('data-bls-default-checked', ctrl.checked ? '1' : '0');
+                    } else {
+                        ctrl.setAttribute('data-bls-default', ctrl.value);
+                    }
+                });
+                form.__blsDefaultsCaptured = true;
+            }
+
+            // Reset filters to their captured defaults (does not touch the search input)
+            function resetFiltersToDefault() {
+                if (!form) return;
+                suppressFilterSearch = true;
+                try {
+                    var controls = form.querySelectorAll('select, textarea, input:not([type="search"])');
+                    controls.forEach(function(ctrl) {
+                        if (ctrl.type === 'radio') {
+                            var shouldCheck = ctrl.getAttribute('data-bls-default-checked') === '1';
+                            ctrl.checked = !!shouldCheck;
+                        } else if (ctrl.type === 'checkbox') {
+                            var def = ctrl.getAttribute('data-bls-default-checked');
+                            ctrl.checked = def === '1';
+                        } else {
+                            var defVal = ctrl.getAttribute('data-bls-default');
+                            if (defVal !== null) ctrl.value = defVal;
+                            else ctrl.value = '';
+                        }
+                        // Fire change event to update any UI wrappers
+                        var ev = new Event('change', { bubbles: true });
+                        ctrl.dispatchEvent(ev);
+                    });
+                } finally {
+                    suppressFilterSearch = false;
+                }
+            }
+
+            // Ensure default search phrase is 'exact' unless URL explicitly sets it
+            function enforceDefaultSearchPhrase() {
+                try {
+                    if (!form) return;
+                    var urlParams = new URLSearchParams(window.location.search);
+                    if (urlParams.has('searchphrase')) return; // respect URL if provided
+                    var radios = form.querySelectorAll('input[name="searchphrase"]');
+                    var exactRadio = form.querySelector('input[name="searchphrase"][value="exact"]');
+                    if (!radios || !radios.length || !exactRadio) return;
+                    // Force exact as the only checked on initial load
+                    radios.forEach(function(r){ r.checked = (r === exactRadio); });
+                } catch (e) { /* noop */ }
+            }
+
+            // Also enforce after full window load to override late scripts/autofill
+            try { window.addEventListener('load', enforceDefaultSearchPhrase); } catch (e) {}
+
             function updateResults(html) {
+                // Ensure results container exists
+                if (!results || !module.contains(results)) {
+                    results = module.querySelector('.bearslivesearch-results');
+                    if (!results) {
+                        results = document.createElement('div');
+                        results.className = 'bearslivesearch-results bearslivesearch-results--hidden';
+                        results.id = (module.id || 'bearslivesearch') + '-results';
+                        results.setAttribute('aria-live', 'polite');
+                        results.setAttribute('aria-atomic', 'true');
+                        module.appendChild(results);
+                    }
+                }
+
                 // Reveal criteria/filter rows if hidden (for "after" mode)
                 var criteriaRows = module.querySelectorAll('.bearslivesearch-criteria-hidden');
                 if (criteriaRows.length) {
@@ -40,34 +117,63 @@
                     results.innerHTML = html;
                 }
                 results.classList.remove('bearslivesearch-results--hidden');
-                input.focus();
+                input && input.focus();
             }
 
-            function doSearch(query, page) {
+            // Update browser URL to reflect current search criteria (non-destructive history)
+            function updateBrowserUrl(formData, page) {
+                try {
+                    var params = [];
+                    // Only include non-empty values
+                    formData.forEach(function(value, key) {
+                        if (value !== undefined && value !== null && String(value).trim() !== '') {
+                            params.push(encodeURIComponent(key) + '=' + encodeURIComponent(value));
+                        }
+                    });
+                    if (page && page > 1) {
+                        params.push('page=' + encodeURIComponent(page));
+                    }
+                    var newUrl = window.location.pathname + (params.length ? ('?' + params.join('&')) : '');
+                    // Use replaceState to avoid stacking history entries on every keystroke
+                    history.replaceState(history.state, document.title, newUrl);
+                } catch (e) {
+                    // No-op if history API unavailable
+                }
+            }
+
+            function doSearch(query, page, allowEmpty) {
                 if (xhr) xhr.abort();
-                if (!query.trim()) {
-                    updateResults('');
-                    // Hide and clear results when input is empty
-                    results.innerHTML = '';
-                    results.classList.add('bearslivesearch-results--hidden');
-                    
-                    // Stay on search page instead of reverting to original URL
-                    // This prevents the unwanted behavior of going back when deleting characters
-                    return;
+
+                // Serialize current form fields upfront for URL updates
+                var formData = new FormData(form);
+                updateBrowserUrl(formData, page);
+
+                if (!query || !query.trim()) {
+                    if (!allowEmpty) {
+                        updateResults('');
+                        // Hide and clear results when input is empty
+                        if (results) {
+                            results.innerHTML = '';
+                            results.classList.add('bearslivesearch-results--hidden');
+                        }
+                        return;
+                    }
                 }
 
                 // If we're in separate page mode and not yet transformed, transform the page first
                 if (searchMode === 'separate_page' && !isTransformedOrSearchPage()) {
-                    transformPageToSearchResults(query);
-                    return; // transformPageToSearchResults will trigger the search
+                    if (query && query.trim()) {
+                        transformPageToSearchResults(query);
+                        return; // transformPageToSearchResults will trigger the search
+                    }
+                    // If query is empty, skip transform and proceed with AJAX inline
                 }
 
                 // Show loading indicator
                 updateResults('<div class="bearslivesearch-loading" role="status">Searching...</div>');
 
-                // Serialize all form fields
+                // Serialize all form fields for AJAX (include empties, backend can decide)
                 var params = [];
-                var formData = new FormData(form);
                 formData.forEach(function(value, key) {
                     if (value !== undefined && value !== null) {
                         params.push(encodeURIComponent(key) + '=' + encodeURIComponent(value));
@@ -90,7 +196,6 @@
                 }
                 // Build AJAX URL using the PHP-provided base URL (most reliable)
                 var ajaxUrl = '';
-                var moduleContainer = form.closest('.bearslivesearch');
                 var baseUrl = moduleContainer.getAttribute('data-base-url');
                 
                 if (baseUrl) {
@@ -265,6 +370,8 @@
                             lastQuery = '';
                             
                             // Re-setup event listeners for this specific module
+                            enforceDefaultSearchPhrase();
+                            captureDefaultFilters();
                             setupLiveSearch();
                             setupPagination();
                             
@@ -476,13 +583,25 @@
 
             // Function to set up live search
             function setupLiveSearch() {
+                if (!input) return;
                 input.addEventListener('input', function() {
                     var query = input.value;
+                    var wasCleared = (!query || query.trim() === '') && (lastQuery && lastQuery.trim() !== '');
+                    if (wasCleared) {
+                        resetFiltersToDefault();
+                    }
                     console.log('Input changed. Query:', query, 'Length:', query.length, 'Last query:', lastQuery);
                     if (query !== lastQuery) {
                         lastQuery = query;
                         console.log('Triggering search for:', query);
                         doSearch(query, 1);
+                    }
+                });
+                // Handle native clear (x) in supporting browsers
+                input.addEventListener('search', function() {
+                    if (!input.value || input.value.trim() === '') {
+                        resetFiltersToDefault();
+                        doSearch('', 1);
                     }
                 });
             }
@@ -496,7 +615,7 @@
                             return;
                         }
 
-                        // Allow default behavior for non-left clicks or when modifier keys are used
+                        // Allow default for non-left clicks or with modifier keys (new tab/window)
                         if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) {
                             return;
                         }
@@ -504,14 +623,13 @@
                         var href = anchor.getAttribute('href') || '';
                         var isPagination = /[?&](?:page|start|limitstart)=\d+/.test(href) || !!anchor.closest('.pagination') || anchor.hasAttribute('data-page');
 
+                        // If it's a normal result link, allow default navigation
                         if (!isPagination) {
-                            // Not a pagination link; allow normal navigation
                             return;
                         }
 
                         // Handle pagination via AJAX
                         e.preventDefault();
-
                         var page = 1;
                         var match = href && href.match(/[?&]page=(\d+)/);
                         if (match) {
@@ -528,7 +646,7 @@
                                 page = Math.floor(start / perPage) + 1;
                             }
                         }
-                        doSearch(input.value, page);
+                        doSearch(input.value, page, true);
                     });
                 }
             }
@@ -548,7 +666,7 @@
                 input.value = queryFromUrl;
                 
                 // Set form values from URL
-                var searchphrase = urlParams.get('searchphrase') || 'anywords';
+                var searchphrase = urlParams.get('searchphrase') || 'exact';
                 var ordering = urlParams.get('ordering') || 'newest';
                 var resultsLimit = urlParams.get('results_limit') || '10';
                 
@@ -584,10 +702,27 @@
                 }, 100);
             }
 
+            // Attach change listeners to filters (non-search fields) to trigger AJAX
+            function setupFilterChange() {
+                if (!form) return;
+                var controls = form.querySelectorAll('select, textarea, input:not([type="search"]):not([type="submit"]):not([type="button"])');
+                controls.forEach(function(ctrl) {
+                    var evtName = (ctrl.tagName === 'SELECT' || ctrl.type === 'checkbox' || ctrl.type === 'radio' || ctrl.type === 'date') ? 'change' : 'input';
+                    ctrl.addEventListener(evtName, function() {
+                        if (suppressFilterSearch) return;
+                        // Always search page 1 on filter change; allow empty query searches
+                        doSearch(input.value, 1, true);
+                    });
+                });
+            }
+
             // Set up live search and pagination for all modes
             // This enables search-as-you-type functionality even in separate page mode
+            enforceDefaultSearchPhrase();
+            captureDefaultFilters();
             setupLiveSearch();
             setupPagination();
+            setupFilterChange();
 
             // Re-setup live search after transformation
             var originalTransform = transformPageContent;
@@ -612,8 +747,11 @@
                 }
                 
                 // After transformation, set up live search
+                enforceDefaultSearchPhrase();
+                captureDefaultFilters();
                 setupLiveSearch();
                 setupPagination();
+                setupFilterChange();
             };
         });
     });
