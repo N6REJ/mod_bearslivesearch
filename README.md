@@ -182,7 +182,7 @@ Enable Joomla debug mode to see detailed error messages and performance informat
 ## Support & Contributing
 
 ### Getting Help
-- **Documentation**: [https://hallhome.us/software](https://hallhome.us/software)
+- **Documentation**: [https://hallhome.us/software](https://hallhome.us/joomla-extensions/bears-live-search))
 - **Issues**: [GitHub Issues](https://github.com/N6REJ/mod_bearslivesearch/issues)
 - **Discussions**: [GitHub Discussions](https://github.com/N6REJ/mod_bearslivesearch/discussions)
 
