@@ -71,17 +71,17 @@
                 }
             }
 
-            // Ensure default search phrase is 'exact' unless URL explicitly sets it
+            // Ensure default search phrase is 'allwords' unless URL explicitly sets it
             function enforceDefaultSearchPhrase() {
                 try {
                     if (!form) return;
                     var urlParams = new URLSearchParams(window.location.search);
                     if (urlParams.has('searchphrase')) return; // respect URL if provided
                     var radios = form.querySelectorAll('input[name="searchphrase"]');
-                    var exactRadio = form.querySelector('input[name="searchphrase"][value="exact"]');
-                    if (!radios || !radios.length || !exactRadio) return;
-                    // Force exact as the only checked on initial load
-                    radios.forEach(function(r){ r.checked = (r === exactRadio); });
+                    var allwordsRadio = form.querySelector('input[name="searchphrase"][value="allwords"]');
+                    if (!radios || !radios.length || !allwordsRadio) return;
+                    // Force allwords as the only checked on initial load
+                    radios.forEach(function(r){ r.checked = (r === allwordsRadio); });
                 } catch (e) { /* noop */ }
             }
 
@@ -204,7 +204,6 @@
                         baseUrl = baseUrl.slice(0, -1);
                     }
                     ajaxUrl = baseUrl + '/index.php?option=com_ajax&module=bearslivesearch&method=search&format=raw&' + params.join('&');
-                    console.log('Using PHP-provided base URL:', baseUrl);
                 } else {
                     // Fallback 1: Try to use the base tag if available
                     var baseTag = document.querySelector('base[href]');
@@ -214,16 +213,12 @@
                             baseHref = baseHref.slice(0, -1);
                         }
                         ajaxUrl = baseHref + '/index.php?option=com_ajax&module=bearslivesearch&method=search&format=raw&' + params.join('&');
-                        console.log('Using base tag URL:', baseHref);
                     } else {
                         // Fallback 2: Use root URL (most common case)
                         var origin = window.location.origin;
                         ajaxUrl = origin + '/index.php?option=com_ajax&module=bearslivesearch&method=search&format=raw&' + params.join('&');
-                        console.log('Using root URL fallback:', origin);
                     }
                 }
-                
-                console.log('Final AJAX URL:', ajaxUrl);
 
                 xhr = new XMLHttpRequest();
                 xhr.open('GET', ajaxUrl, true);
@@ -304,8 +299,6 @@
             function storeOriginalPageState() {
                 if (originalPageState) return; // Already stored
                 
-                console.log('Storing original page state...');
-                
                 // Store a more comprehensive snapshot
                 originalPageState = {
                     title: document.title,
@@ -316,14 +309,11 @@
                     }),
                     documentHTML: document.documentElement.outerHTML // Backup: entire document
                 };
-                
-                console.log('Original page state stored');
             }
             
             function restoreOriginalPageState() {
                 if (!originalPageState || isRestoring) return;
                 
-                console.log('Restoring original page state...');
                 isRestoring = true;
                 
                 // First, restore the URL to prevent re-transformation
@@ -338,11 +328,7 @@
                     originalPageState.bodyAttributes.forEach(function(attr) {
                         document.body.setAttribute(attr.name, attr.value);
                     });
-                    
-                    console.log('Page restored using innerHTML method');
                 } catch (e) {
-                    console.error('Failed to restore using innerHTML:', e);
-                    
                     // Fallback: reload the original URL
                     window.location.href = originalPageState.url;
                     return;
@@ -377,8 +363,6 @@
                             
                             // Focus the input
                             input.focus();
-                            
-                            console.log('Module re-initialized after restoration');
                             
                             // Clear the restoration flag after a delay
                             setTimeout(function() {
@@ -424,11 +408,8 @@
                 var targetModule = document.querySelector(moduleSelector);
                 
                 if (!targetModule) {
-                    console.error('Could not find module with selector:', moduleSelector);
                     return;
                 }
-                
-                console.log('Target module found:', targetModule);
                 
                 // AGGRESSIVE APPROACH: Remove all content that comes after the search module in document order
                 // This handles multiple modules in the same position correctly
@@ -440,11 +421,8 @@
                 var moduleIndex = allElements.indexOf(targetModule);
                 
                 if (moduleIndex === -1) {
-                    console.error('Could not find target module in document elements');
                     return;
                 }
-                
-                console.log('Target module found at index:', moduleIndex, 'of', allElements.length, 'total elements');
                 
                 // Collect all elements that come after the module and are not descendants of the module
                 var elementsToRemove = [];
@@ -497,15 +475,10 @@
                         }
                         
                         if (shouldRemove) {
-                            console.log('Removing element after module:', element.tagName, element.id || element.className);
                             element.remove();
-                        } else {
-                            console.log('Preserving element at/after end position:', element.tagName, element.id || element.className);
                         }
                     }
                 });
-                
-                console.log('Removed', elementsToRemove.length, 'elements after the search module');
                 
                 // Transform the target module in place
                 targetModule.classList.add('bearslivesearch-search-page');
@@ -590,10 +563,8 @@
                     if (wasCleared) {
                         resetFiltersToDefault();
                     }
-                    console.log('Input changed. Query:', query, 'Length:', query.length, 'Last query:', lastQuery);
                     if (query !== lastQuery) {
                         lastQuery = query;
-                        console.log('Triggering search for:', query);
                         doSearch(query, 1);
                     }
                 });
@@ -655,18 +626,12 @@
             var urlParams = new URLSearchParams(window.location.search);
             var queryFromUrl = urlParams.get('q');
             
-            console.log('Search mode:', searchMode);
-            console.log('Query from URL:', queryFromUrl);
-            console.log('Module element:', module);
-            
             if (queryFromUrl && queryFromUrl.trim()) {
-                console.log('Found search query in URL, auto-transforming...');
-                
                 // We're on a search results URL, auto-transform the page regardless of mode
                 input.value = queryFromUrl;
                 
                 // Set form values from URL
-                var searchphrase = urlParams.get('searchphrase') || 'exact';
+                var searchphrase = urlParams.get('searchphrase') || 'allwords';
                 var ordering = urlParams.get('ordering') || 'newest';
                 var resultsLimit = urlParams.get('results_limit') || '10';
                 
@@ -696,7 +661,6 @@
                 searchMode = 'separate_page';
                 
                 // Transform the page immediately
-                console.log('Calling transformPageToSearchResults...');
                 setTimeout(function() {
                     transformPageToSearchResults(queryFromUrl);
                 }, 100);
