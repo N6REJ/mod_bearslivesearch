@@ -30,6 +30,17 @@
             // Capture default values of all filters (non-search input)
             function captureDefaultFilters() {
                 if (!form || form.__blsDefaultsCaptured) return;
+                
+                // FIRST: Ensure allwords is checked before capturing defaults
+                var allwordsRadio = form.querySelector('input[name="searchphrase"][value="allwords"]');
+                if (allwordsRadio && !allwordsRadio.checked) {
+                    // Force allwords to be checked if nothing else is explicitly checked
+                    var anyChecked = form.querySelector('input[name="searchphrase"]:checked');
+                    if (!anyChecked) {
+                        allwordsRadio.checked = true;
+                    }
+                }
+                
                 var controls = form.querySelectorAll('select, textarea, input:not([type="search"])');
                 controls.forEach(function(ctrl) {
                     if (ctrl.type === 'radio') {
@@ -71,16 +82,20 @@
                 }
             }
 
-            // Ensure default search phrase is 'allwords' unless URL explicitly sets it
+            // Ensure default search phrase is 'allwords' unless URL has explicit searchphrase parameter
             function enforceDefaultSearchPhrase() {
                 try {
                     if (!form) return;
+                    // Check if URL has explicit searchphrase parameter (from bookmark)
                     var urlParams = new URLSearchParams(window.location.search);
-                    if (urlParams.has('searchphrase')) return; // respect URL if provided
+                    if (urlParams.has('searchphrase')) {
+                        // Honor the bookmarked searchphrase
+                        return;
+                    }
                     var radios = form.querySelectorAll('input[name="searchphrase"]');
                     var allwordsRadio = form.querySelector('input[name="searchphrase"][value="allwords"]');
                     if (!radios || !radios.length || !allwordsRadio) return;
-                    // Force allwords as the only checked on initial load
+                    // Force allwords as the only checked when no URL parameter
                     radios.forEach(function(r){ r.checked = (r === allwordsRadio); });
                 } catch (e) { /* noop */ }
             }
@@ -630,12 +645,12 @@
                 // We're on a search results URL, auto-transform the page regardless of mode
                 input.value = queryFromUrl;
                 
-                // Set form values from URL
+                // Set form values from URL - but default to 'allwords' if not specified
                 var searchphrase = urlParams.get('searchphrase') || 'allwords';
                 var ordering = urlParams.get('ordering') || 'newest';
                 var resultsLimit = urlParams.get('results_limit') || '10';
                 
-                // Set radio buttons
+                // Set radio buttons - ALWAYS default to allwords unless explicitly set in URL
                 var searchphraseRadios = form.querySelectorAll('input[name="searchphrase"]');
                 searchphraseRadios.forEach(function(radio) {
                     radio.checked = (radio.value === searchphrase);
@@ -664,6 +679,9 @@
                 setTimeout(function() {
                     transformPageToSearchResults(queryFromUrl);
                 }, 100);
+            } else {
+                // No search query in URL - enforce default searchphrase immediately
+                enforceDefaultSearchPhrase();
             }
 
             // Attach change listeners to filters (non-search fields) to trigger AJAX
@@ -682,8 +700,21 @@
 
             // Set up live search and pagination for all modes
             // This enables search-as-you-type functionality even in separate page mode
+            
+            // Force allwords IMMEDIATELY before capturing defaults
             enforceDefaultSearchPhrase();
-            captureDefaultFilters();
+            
+            // Small delay to ensure browser form restoration is complete, then enforce again
+            setTimeout(function() {
+                enforceDefaultSearchPhrase();
+                captureDefaultFilters();
+            }, 50);
+            
+            // Also enforce after a longer delay to catch any late browser autofill
+            setTimeout(function() {
+                enforceDefaultSearchPhrase();
+            }, 200);
+            
             setupLiveSearch();
             setupPagination();
             setupFilterChange();
