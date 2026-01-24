@@ -630,12 +630,12 @@
                 // We're on a search results URL, auto-transform the page regardless of mode
                 input.value = queryFromUrl;
                 
-                // Set form values from URL
+                // Set form values from URL - but default to 'allwords' if not specified
                 var searchphrase = urlParams.get('searchphrase') || 'allwords';
                 var ordering = urlParams.get('ordering') || 'newest';
                 var resultsLimit = urlParams.get('results_limit') || '10';
                 
-                // Set radio buttons
+                // Set radio buttons - ALWAYS default to allwords unless explicitly set in URL
                 var searchphraseRadios = form.querySelectorAll('input[name="searchphrase"]');
                 searchphraseRadios.forEach(function(radio) {
                     radio.checked = (radio.value === searchphrase);
@@ -664,6 +664,9 @@
                 setTimeout(function() {
                     transformPageToSearchResults(queryFromUrl);
                 }, 100);
+            } else {
+                // No search query in URL - enforce default searchphrase immediately
+                enforceDefaultSearchPhrase();
             }
 
             // Attach change listeners to filters (non-search fields) to trigger AJAX

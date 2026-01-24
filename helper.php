@@ -98,6 +98,9 @@ class ModBearslivesearchHelper
         }
         $authorisedLevelsString = implode(',', $authorisedLevels);
         
+        // Debug: Log ACL levels being used
+        Log::add('ACL Check - User ID: ' . $user->id . ' | Authorized Levels: ' . $authorisedLevelsString, Log::INFO, 'mod_bearslivesearch');
+        
         // Build WHERE fragments for articles
         $articleWhere = [];
         $articleWhere[] = 'state = 1';
@@ -279,6 +282,9 @@ class ModBearslivesearchHelper
         if (!empty($articleWhere)) {
             $articleSelectSql .= ' WHERE ' . implode(' AND ', $articleWhere);
         }
+        
+        // Debug: Log the actual SQL query being executed
+        Log::add('Article SELECT SQL: ' . $articleSelectSql, Log::INFO, 'mod_bearslivesearch');
 
         // Build Kunena SELECT if available
         if ($kunenaInstalled && $messageColumn) {
