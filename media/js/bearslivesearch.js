@@ -30,6 +30,17 @@
             // Capture default values of all filters (non-search input)
             function captureDefaultFilters() {
                 if (!form || form.__blsDefaultsCaptured) return;
+                
+                // FIRST: Ensure allwords is checked before capturing defaults
+                var allwordsRadio = form.querySelector('input[name="searchphrase"][value="allwords"]');
+                if (allwordsRadio && !allwordsRadio.checked) {
+                    // Force allwords to be checked if nothing else is explicitly checked
+                    var anyChecked = form.querySelector('input[name="searchphrase"]:checked');
+                    if (!anyChecked) {
+                        allwordsRadio.checked = true;
+                    }
+                }
+                
                 var controls = form.querySelectorAll('select, textarea, input:not([type="search"])');
                 controls.forEach(function(ctrl) {
                     if (ctrl.type === 'radio') {
@@ -71,16 +82,14 @@
                 }
             }
 
-            // Ensure default search phrase is 'allwords' unless URL explicitly sets it
+            // Ensure default search phrase is 'allwords' - ALWAYS enforce this default
             function enforceDefaultSearchPhrase() {
                 try {
                     if (!form) return;
-                    var urlParams = new URLSearchParams(window.location.search);
-                    if (urlParams.has('searchphrase')) return; // respect URL if provided
                     var radios = form.querySelectorAll('input[name="searchphrase"]');
                     var allwordsRadio = form.querySelector('input[name="searchphrase"][value="allwords"]');
                     if (!radios || !radios.length || !allwordsRadio) return;
-                    // Force allwords as the only checked on initial load
+                    // Force allwords as the only checked - ignore URL parameters
                     radios.forEach(function(r){ r.checked = (r === allwordsRadio); });
                 } catch (e) { /* noop */ }
             }
