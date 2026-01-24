@@ -694,8 +694,21 @@
 
             // Set up live search and pagination for all modes
             // This enables search-as-you-type functionality even in separate page mode
+            
+            // Force allwords IMMEDIATELY before capturing defaults
             enforceDefaultSearchPhrase();
-            captureDefaultFilters();
+            
+            // Small delay to ensure browser form restoration is complete, then enforce again
+            setTimeout(function() {
+                enforceDefaultSearchPhrase();
+                captureDefaultFilters();
+            }, 50);
+            
+            // Also enforce after a longer delay to catch any late browser autofill
+            setTimeout(function() {
+                enforceDefaultSearchPhrase();
+            }, 200);
+            
             setupLiveSearch();
             setupPagination();
             setupFilterChange();
