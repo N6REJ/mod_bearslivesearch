@@ -5,31 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [2025.09.10] - 2025-09-10
+## [2026.01.24.1] - 2026-01-24
 
 ### Added
-- ACL (Access Control List) permission checks to search results
-  - Users now only see articles they have permission to view based on their user group access levels
-  - Prevents unauthorized access to restricted content through search functionality
-  - Integrates with Joomla's `getAuthorisedViewLevels()` method for proper permission filtering
 
-### Changed
-- Default search phrase mode changed from "Exact Phrase" to "All Words"
-  - Provides more intuitive and flexible search behavior for users
-  - Updated in both template HTML (default.php) and JavaScript (bearslivesearch.js)
-  - Users can still manually select "Exact Phrase" or "Any Words" if desired
-
-### Security
-- **CRITICAL**: Fixed security vulnerability where search was bypassing ACL permissions
-  - Search queries now include `access IN (authorisedLevels)` filter with proper integer sanitization
-  - All access level values are cast to integers using `array_map('intval', ...)` to prevent SQL injection
-  - Filters out zero or negative values and provides fallback to public access level (1) if needed
-  - Aligns search behavior with standard Joomla article viewing permissions
-
-## [2025.09.09] - 2025-09-09
+* Add ACL permission checks and change default search to 'allwords' ([0aeb26e](https://github.com/N6REJ/mod_bearslivesearch/commit/0aeb26e))
 
 ### Changed
 
-* Update version to  [skip ci] ([9275c9d](https://github.com/N6REJ/mod_bearslivesearch/commit/9275c9d))
-* Update .gitignore ([15247c0](https://github.com/N6REJ/mod_bearslivesearch/commit/15247c0))
-* Update version to  [skip ci] ([601bdeb](https://github.com/N6REJ/mod_bearslivesearch/commit/601bdeb))
+* Update version to  [skip ci] ([00f2ed5](https://github.com/N6REJ/mod_bearslivesearch/commit/00f2ed5))
+* Update documentation link in README ([63ac61f](https://github.com/N6REJ/mod_bearslivesearch/commit/63ac61f))
+* Improve ACL security implementation and remove debug logging ([ef37fab](https://github.com/N6REJ/mod_bearslivesearch/commit/ef37fab))
+* Merge pull request #12 from N6REJ/acl ([6f5f9ef](https://github.com/N6REJ/mod_bearslivesearch/commit/6f5f9ef))
+
