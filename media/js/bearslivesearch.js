@@ -15,6 +15,14 @@
         var modules = document.querySelectorAll('.bearslivesearch');
         modules.forEach(function(module) {
             var form = module.querySelector('.bearslivesearch-form');
+            
+            // IMMEDIATELY force allwords to be checked BEFORE anything else
+            // This prevents browser form caching from restoring "exact"
+            var allwordsRadio = form.querySelector('input[name="searchphrase"][value="allwords"]');
+            if (allwordsRadio) {
+                allwordsRadio.checked = true;
+            }
+            
             var input = form.querySelector('input[type="search"]');
             var results = module.querySelector('.bearslivesearch-results');
             var lastQuery = '';
