@@ -82,14 +82,20 @@
                 }
             }
 
-            // Ensure default search phrase is 'allwords' - ALWAYS enforce this default
+            // Ensure default search phrase is 'allwords' unless URL has explicit searchphrase parameter
             function enforceDefaultSearchPhrase() {
                 try {
                     if (!form) return;
+                    // Check if URL has explicit searchphrase parameter (from bookmark)
+                    var urlParams = new URLSearchParams(window.location.search);
+                    if (urlParams.has('searchphrase')) {
+                        // Honor the bookmarked searchphrase
+                        return;
+                    }
                     var radios = form.querySelectorAll('input[name="searchphrase"]');
                     var allwordsRadio = form.querySelector('input[name="searchphrase"][value="allwords"]');
                     if (!radios || !radios.length || !allwordsRadio) return;
-                    // Force allwords as the only checked - ignore URL parameters
+                    // Force allwords as the only checked when no URL parameter
                     radios.forEach(function(r){ r.checked = (r === allwordsRadio); });
                 } catch (e) { /* noop */ }
             }
