@@ -87,14 +87,22 @@ class ModBearslivesearchHelper
         $searchLike = '%' . $db->escape($query, true) . '%';
         
         // Get user's authorized access levels for ACL filtering
+        // SECURITY: Cast all values to integers to prevent SQL injection
         $user = Factory::getUser();
-        $authorisedLevels = implode(',', $user->getAuthorisedViewLevels());
+        $authorisedLevels = array_map('intval', $user->getAuthorisedViewLevels());
+        // Filter out any zero or negative values and ensure we have at least one valid level
+        $authorisedLevels = array_filter($authorisedLevels, function($v) { return $v > 0; });
+        if (empty($authorisedLevels)) {
+            // Fallback to public access level (1) if no valid levels found
+            $authorisedLevels = [1];
+        }
+        $authorisedLevelsString = implode(',', $authorisedLevels);
         
         // Build WHERE fragments for articles
         $articleWhere = [];
         $articleWhere[] = 'state = 1';
         // ACL: Only show articles the user has permission to view
-        $articleWhere[] = 'access IN (' . $authorisedLevels . ')';
+        $articleWhere[] = $db->quoteName('access') . ' IN (' . $authorisedLevelsString . ')';
         // Category filter
         $categoryId = (int) $input->get('category', 0);
         if ($categoryId) {

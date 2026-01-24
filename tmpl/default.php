@@ -81,7 +81,6 @@ document.addEventListener('DOMContentLoaded', function() {
     if (element) {
         // Only handle search functionality here
         // All width and positioning is handled by CSS
-        console.log('Bears Live Search module initialized: <?php echo $moduleId; ?>');
     }
 });
 </script>

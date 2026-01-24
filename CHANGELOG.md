@@ -21,7 +21,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 - **CRITICAL**: Fixed security vulnerability where search was bypassing ACL permissions
-  - Search queries now include `access IN (authorisedLevels)` filter
+  - Search queries now include `access IN (authorisedLevels)` filter with proper integer sanitization
+  - All access level values are cast to integers using `array_map('intval', ...)` to prevent SQL injection
+  - Filters out zero or negative values and provides fallback to public access level (1) if needed
   - Aligns search behavior with standard Joomla article viewing permissions
 
 ## [2025.09.09] - 2025-09-09
