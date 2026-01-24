@@ -113,11 +113,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 <?php echo Text::_('MOD_SEARCH_ANYWORDS'); ?>
             </label>
             <label class="bearslivesearch-radio-label">
-                <input type="radio" name="searchphrase" value="allwords" />
+                <input type="radio" name="searchphrase" value="allwords" checked />
                 <?php echo Text::_('MOD_SEARCH_ALLWORDS'); ?>
             </label>
             <label class="bearslivesearch-radio-label">
-                <input type="radio" name="searchphrase" value="exact" checked />
+                <input type="radio" name="searchphrase" value="exact" />
                 <?php echo Text::_('MOD_SEARCH_EXACTPHRASE'); ?>
             </label>
         </div>

@@ -2,7 +2,7 @@
 /**
  * Bears AJAX Search (Joomla 5, no Finder, with Kunena support, PHP-side pagination)
  *
- * @version 2025.09.09
+ * @version 2025.09.10
  * @package Bears AJAX Search
  * @author N6REJ
  * @email troy@hallhome.us
@@ -10,6 +10,8 @@
  * @copyright Copyright (C) 2025 N6REJ
  * @license GNU General Public License version 3 or later; see License.txt
  * @since 2025.7.16
+ * 
+ * Security Fix 2025.09.10: Added ACL permission checks to honor article access levels
  */
 
 // No direct access
@@ -83,9 +85,16 @@ class ModBearslivesearchHelper
         $effectiveHiddenCategories = array_values(array_unique(array_merge($hiddenCategories, $defaultHiddenCategories)));
 
         $searchLike = '%' . $db->escape($query, true) . '%';
+        
+        // Get user's authorized access levels for ACL filtering
+        $user = Factory::getUser();
+        $authorisedLevels = implode(',', $user->getAuthorisedViewLevels());
+        
         // Build WHERE fragments for articles
         $articleWhere = [];
         $articleWhere[] = 'state = 1';
+        // ACL: Only show articles the user has permission to view
+        $articleWhere[] = 'access IN (' . $authorisedLevels . ')';
         // Category filter
         $categoryId = (int) $input->get('category', 0);
         if ($categoryId) {

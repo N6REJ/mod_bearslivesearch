@@ -71,17 +71,17 @@
                 }
             }
 
-            // Ensure default search phrase is 'exact' unless URL explicitly sets it
+            // Ensure default search phrase is 'allwords' unless URL explicitly sets it
             function enforceDefaultSearchPhrase() {
                 try {
                     if (!form) return;
                     var urlParams = new URLSearchParams(window.location.search);
                     if (urlParams.has('searchphrase')) return; // respect URL if provided
                     var radios = form.querySelectorAll('input[name="searchphrase"]');
-                    var exactRadio = form.querySelector('input[name="searchphrase"][value="exact"]');
-                    if (!radios || !radios.length || !exactRadio) return;
-                    // Force exact as the only checked on initial load
-                    radios.forEach(function(r){ r.checked = (r === exactRadio); });
+                    var allwordsRadio = form.querySelector('input[name="searchphrase"][value="allwords"]');
+                    if (!radios || !radios.length || !allwordsRadio) return;
+                    // Force allwords as the only checked on initial load
+                    radios.forEach(function(r){ r.checked = (r === allwordsRadio); });
                 } catch (e) { /* noop */ }
             }
 
@@ -666,7 +666,7 @@
                 input.value = queryFromUrl;
                 
                 // Set form values from URL
-                var searchphrase = urlParams.get('searchphrase') || 'exact';
+                var searchphrase = urlParams.get('searchphrase') || 'allwords';
                 var ordering = urlParams.get('ordering') || 'newest';
                 var resultsLimit = urlParams.get('results_limit') || '10';
                 

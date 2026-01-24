@@ -15,7 +15,21 @@ Bears Live Search is a modern, fully accessible Joomla 5 module that provides a 
 
 ## What's New in Latest Version
 
-### Major Improvements
+### Version 2025.09.10 - Security & UX Updates
+
+#### 🔒 Security Enhancement
+- **ACL Permission Enforcement**: Search results now properly respect Joomla's Access Control List (ACL) permissions
+  - Users only see articles they have permission to view based on their user group access levels
+  - Prevents unauthorized access to restricted content through search
+  - Aligns search behavior with standard Joomla article viewing permissions
+
+#### 🎯 User Experience Improvement
+- **Default Search Mode Changed**: Search now defaults to "All Words" instead of "Exact Phrase"
+  - More intuitive search behavior for users
+  - Better search results with more flexibility
+  - Users can still choose "Exact Phrase" or "Any Words" if needed
+
+### Previous Major Improvements
 - **Simplified Width Control**: Streamlined from dual width/max-width to single width parameter for easier configuration
 - **Enhanced Results Display**: Search results now use 100% width while form maintains configured width
 - **Improved Accessibility**: Enhanced ARIA labels, skip links, and screen reader compatibility
@@ -23,6 +37,7 @@ Bears Live Search is a modern, fully accessible Joomla 5 module that provides a 
 - **Optimized CSS Architecture**: Cleaner CSS with better specificity and maintainability
 
 ### Technical Enhancements
+- **ACL Integration**: Proper integration with Joomla's user authorization system
 - **Form-Only Width Control**: Width setting now applies only to search form, results use full container width
 - **Improved Positioning**: Better left/right/center positioning with proper float handling
 - **Enhanced Border Controls**: Comprehensive border radius, size, and color customization
@@ -200,7 +215,7 @@ Developed by N6REJ (Troy Hall) with focus on accessibility, performance, and use
 
 ---
 
-**Version**: 2025.07.19.44  
+**Version**: 2025.09.10  
 **Joomla Compatibility**: 5.0+  
 **PHP Compatibility**: 8.0+  
-**Last Updated**: January 2025
+**Last Updated**: September 2025
