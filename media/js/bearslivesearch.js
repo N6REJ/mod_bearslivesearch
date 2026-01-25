@@ -171,8 +171,13 @@
             function doSearch(query, page, allowEmpty) {
                 if (xhr) xhr.abort();
 
+                // DEBUG: Check what searchphrase is in the form RIGHT NOW
+                var currentSearchphrase = form.querySelector('input[name="searchphrase"]:checked');
+                console.log('[BLS] doSearch: searchphrase checked =', currentSearchphrase ? currentSearchphrase.value : 'NONE');
+
                 // Serialize current form fields upfront for URL updates
                 var formData = new FormData(form);
+                console.log('[BLS] doSearch: FormData searchphrase =', formData.get('searchphrase'));
                 updateBrowserUrl(formData, page);
 
                 if (!query || !query.trim()) {
