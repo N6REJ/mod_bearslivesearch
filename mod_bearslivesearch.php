@@ -28,7 +28,7 @@ $width = $params->get('width', '50%');
 $app = Factory::getApplication();
 $wa = $app->getDocument()->getWebAssetManager();
 $wa->registerAndUseStyle('mod_bearslivesearch', 'modules/mod_bearslivesearch/media/css/bearslivesearch.css');
-$wa->registerAndUseScript('mod_bearslivesearch', 'modules/mod_bearslivesearch/media/js/bearslivesearch.js', ['version' => 'auto'], ['defer' => true]);
+$wa->registerAndUseScript('mod_bearslivesearch', 'modules/mod_bearslivesearch/media/js/bearslivesearch.js', ['version' => '2025.09.10'], ['defer' => true]);
 
 // Fetch published article categories (full nested tree, like admin)
 use Joomla\CMS\Categories\Categories;
