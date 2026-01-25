@@ -20,11 +20,7 @@
             // This prevents browser form caching from restoring "exact"
             var allwordsRadio = form.querySelector('input[name="searchphrase"][value="allwords"]');
             if (allwordsRadio) {
-                console.log('[BLS] IMMEDIATE: Setting allwords to checked');
                 allwordsRadio.checked = true;
-                console.log('[BLS] IMMEDIATE: allwords.checked =', allwordsRadio.checked);
-            } else {
-                console.error('[BLS] IMMEDIATE: allwords radio button not found!');
             }
             
             var input = form.querySelector('input[type="search"]');
@@ -171,13 +167,8 @@
             function doSearch(query, page, allowEmpty) {
                 if (xhr) xhr.abort();
 
-                // DEBUG: Check what searchphrase is in the form RIGHT NOW
-                var currentSearchphrase = form.querySelector('input[name="searchphrase"]:checked');
-                console.log('[BLS] doSearch: searchphrase checked =', currentSearchphrase ? currentSearchphrase.value : 'NONE');
-
                 // Serialize current form fields upfront for URL updates
                 var formData = new FormData(form);
-                console.log('[BLS] doSearch: FormData searchphrase =', formData.get('searchphrase'));
                 updateBrowserUrl(formData, page);
 
                 if (!query || !query.trim()) {
