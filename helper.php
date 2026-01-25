@@ -2,7 +2,7 @@
 /**
  * Bears AJAX Search (Joomla 5, no Finder, with Kunena support, PHP-side pagination)
  *
- * @version 2026.01.24.3
+ * @version 2026.01.25
  * @package Bears AJAX Search
  * @author N6REJ
  * @email troy@hallhome.us
