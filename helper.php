@@ -46,7 +46,6 @@ class ModBearslivesearchHelper
             $searchPhrase = strtolower($input->getString('searchphrase', 'exact'));
             
             // Debug logging
-            Log::add('AJAX Search called with query: ' . $query . ' | datefrom=' . $dateFrom . ' | dateto=' . $dateTo, Log::INFO, 'mod_bearslivesearch');
             
             // Allow search to proceed if any filter is present, even with empty query
             $hasAnyFilter = ($query !== '' || $dateFrom !== '' || $dateTo !== '' || $categoryCheck || $authorCheck);
@@ -55,7 +54,6 @@ class ModBearslivesearchHelper
                 return;
             }
         } catch (Exception $e) {
-            Log::add('AJAX Search initialization error: ' . $e->getMessage(), Log::ERROR, 'mod_bearslivesearch');
             echo '<div role="alert">Search initialization error: ' . htmlspecialchars($e->getMessage()) . '</div>';
             return;
         }
@@ -80,8 +78,7 @@ class ModBearslivesearchHelper
             $db->setQuery($catQ);
             $defaultHiddenCategories = array_map('intval', (array) $db->loadColumn());
         } catch (Exception $e) {
-            Log::add('Default hidden categories lookup failed: ' . $e->getMessage(), Log::WARNING, 'mod_bearslivesearch');
-        }
+            }
         $effectiveHiddenCategories = array_values(array_unique(array_merge($hiddenCategories, $defaultHiddenCategories)));
 
         $searchLike = '%' . $db->escape($query, true) . '%';
@@ -99,8 +96,6 @@ class ModBearslivesearchHelper
         $authorisedLevelsString = implode(',', $authorisedLevels);
         
         // Debug: Log ACL levels being used
-        Log::add('ACL Check - User ID: ' . $user->id . ' | Authorized Levels: ' . $authorisedLevelsString, Log::INFO, 'mod_bearslivesearch');
-        
         // Build WHERE fragments for articles
         $articleWhere = [];
         $articleWhere[] = 'state = 1';
@@ -163,8 +158,7 @@ class ModBearslivesearchHelper
             $db->setQuery($articleCountSql);
             $articleCount = (int) $db->loadResult();
         } catch (Exception $e) {
-            Log::add('Article COUNT error: ' . $e->getMessage(), Log::ERROR, 'mod_bearslivesearch');
-        }
+            }
 
         // --- Kunena Forum (optional) WHERE and COUNT ---
         $kunenaInstalled = false;
@@ -242,7 +236,6 @@ class ModBearslivesearchHelper
                 $db->setQuery($kunenaCountSql);
                 $kunenaCount = (int) $db->loadResult();
             } catch (Exception $e) {
-                Log::add('Kunena COUNT error: ' . $e->getMessage(), Log::WARNING, 'mod_bearslivesearch');
                 $kunenaCount = 0;
             }
         }
@@ -284,8 +277,6 @@ class ModBearslivesearchHelper
         }
         
         // Debug: Log the actual SQL query being executed
-        Log::add('Article SELECT SQL: ' . $articleSelectSql, Log::INFO, 'mod_bearslivesearch');
-
         // Build Kunena SELECT if available
         if ($kunenaInstalled && $messageColumn) {
             $kunenaSelectSql = 'SELECT ' .
@@ -316,7 +307,6 @@ class ModBearslivesearchHelper
             $db->setQuery($unionSql, $offset, $resultsLimit);
             $rows = $db->loadObjectList();
         } catch (Exception $e) {
-            Log::add('Unified query error: ' . $e->getMessage(), Log::ERROR, 'mod_bearslivesearch');
             echo '<div role="alert">Search error: ' . htmlspecialchars($e->getMessage()) . '</div>';
             return;
         }
