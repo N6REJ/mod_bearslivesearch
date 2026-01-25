@@ -20,7 +20,11 @@
             // This prevents browser form caching from restoring "exact"
             var allwordsRadio = form.querySelector('input[name="searchphrase"][value="allwords"]');
             if (allwordsRadio) {
+                console.log('[BLS] IMMEDIATE: Setting allwords to checked');
                 allwordsRadio.checked = true;
+                console.log('[BLS] IMMEDIATE: allwords.checked =', allwordsRadio.checked);
+            } else {
+                console.error('[BLS] IMMEDIATE: allwords radio button not found!');
             }
             
             var input = form.querySelector('input[type="search"]');
