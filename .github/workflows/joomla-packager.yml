@@ -1,4 +1,4 @@
-name: Build Joomla Module
+name: package-packager
 
 on:
   pull_request:
