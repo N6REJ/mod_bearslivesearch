@@ -1,7 +1,7 @@
-# Bears Live Search Module for Joomla 5
+# Bears Live Search Module for Joomla 5 and 6
 
 ## What is Bears Live Search?
-Bears Live Search is a modern, fully accessible Joomla 5 module that provides a lightning-fast AJAX search experience for your website visitors. Built with accessibility-first design principles, it delivers live search results as users type while maintaining excellent performance and user experience across all devices.
+Bears Live Search is a modern, fully accessible Joomla 5 and 6 module that provides a lightning-fast AJAX search experience for your website visitors. Built with accessibility-first design principles, it delivers live search results as users type while maintaining excellent performance and user experience across all devices.
 
 ## Key Features
 - **🚀 Lightning Fast**: AJAX-powered live search with instant results
@@ -89,8 +89,8 @@ Bears Live Search is a modern, fully accessible Joomla 5 module that provides a 
 ## Installation & Setup
 
 ### Requirements
-- Joomla 5.0 or higher
-- PHP 8.0 or higher
+- Joomla 5.0 or higher (Joomla 4 is not supported)
+- PHP 8.1 or higher for Joomla 5; PHP 8.3 or higher for Joomla 6
 - Modern web browser with JavaScript enabled
 
 ### Installation Steps
@@ -215,7 +215,10 @@ Developed by N6REJ (Troy Hall) with focus on accessibility, performance, and use
 
 ---
 
-**Version**: 2025.09.10  
-**Joomla Compatibility**: 5.0+  
-**PHP Compatibility**: 8.0+  
+**Version**: 2025.09.10
+
+**Joomla Compatibility**: 5.0+ (Joomla 5 and 6; Joomla 4 is not supported)
+
+**PHP Compatibility**: 8.1+ for Joomla 5; 8.3+ for Joomla 6
+
 **Last Updated**: September 2025

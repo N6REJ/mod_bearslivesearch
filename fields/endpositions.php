@@ -12,6 +12,7 @@ defined('JPATH_BASE') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\FormField;
 use Joomla\CMS\Language\Text;
+use Joomla\Database\DatabaseInterface;
 
 /**
  * End Positions field - reads actual positions from site template
@@ -35,7 +36,7 @@ class JFormFieldEndpositions extends FormField
         
         try {
             // Get the active site template (not admin template)
-            $db = Factory::getDbo();
+            $db = Factory::getContainer()->get(DatabaseInterface::class);
             $query = $db->getQuery(true)
                 ->select($db->quoteName('template'))
                 ->from($db->quoteName('#__template_styles'))

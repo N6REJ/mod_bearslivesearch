@@ -1,6 +1,6 @@
 <?php
 /**
- * Bears AJAX Search (Joomla 5, no Finder, with Kunena support, PHP-side pagination)
+ * Bears AJAX Search (Joomla 5/6, no Finder, with Kunena support, PHP-side pagination)
  *
  * @version 2026.01.25.2
  * @package Bears AJAX Search
@@ -21,6 +21,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Log\Log;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Helper\ModuleHelper;
+use Joomla\Database\DatabaseInterface;
 
 class ModBearslivesearchHelper
 {
@@ -66,7 +67,7 @@ class ModBearslivesearchHelper
         $offset = ($page - 1) * $resultsLimit;
 
 
-        $db = Factory::getDbo();
+        $db = Factory::getContainer()->get(DatabaseInterface::class);
         // Determine default 'hidden' categories for com_content
         $defaultHiddenCategories = [];
         try {
@@ -85,7 +86,7 @@ class ModBearslivesearchHelper
         
         // Get user's authorized access levels for ACL filtering
         // SECURITY: Cast all values to integers to prevent SQL injection
-        $user = Factory::getUser();
+        $user = Factory::getApplication()->getIdentity();
         $authorisedLevels = array_map('intval', $user->getAuthorisedViewLevels());
         // Filter out any zero or negative values and ensure we have at least one valid level
         $authorisedLevels = array_filter($authorisedLevels, function($v) { return $v > 0; });
@@ -354,7 +355,7 @@ class ModBearslivesearchHelper
         }
         $output .= '</ul>';
 
-        // Pagination (accessible) - Joomla 5 compatible
+        // Pagination (accessible) - Joomla 5 and 6 compatible
         $totalPages = max(1, (int) ceil($totalMatches / $resultsLimit));
         if ($totalPages > 1) {
             $paginationHtml = self::buildPagination($page, $totalPages, $query, $input);
@@ -364,7 +365,7 @@ class ModBearslivesearchHelper
     }
 
     /**
-     * Build pagination HTML for Joomla 5 compatibility
+     * Build pagination HTML for Joomla 5 and 6 compatibility
      *
      * @param int $currentPage Current page number
      * @param int $totalPages Total number of pages
@@ -400,7 +401,7 @@ class ModBearslivesearchHelper
         }
         // Also include default 'hidden' categories by title/alias so pagination preserves them
         try {
-            $db = Factory::getDbo();
+            $db = Factory::getContainer()->get(DatabaseInterface::class);
             $catQ = $db->getQuery(true)
                 ->select($db->qn('id'))
                 ->from($db->qn('#__categories'))
@@ -529,7 +530,7 @@ class ModBearslivesearchHelper
 
 
     /**
-     * Main AJAX handler method for Joomla 5
+     * Main AJAX handler method for Joomla 5 and 6
      *
      * @return void Outputs response directly
      */

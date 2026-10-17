@@ -18,6 +18,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Helper\ModuleHelper;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Factory;
+use Joomla\Database\DatabaseInterface;
 
 // Load module params
 $inputMargin = $params->get('input_margin', '1em 0');
@@ -41,7 +42,7 @@ try {
     $hiddenFromParams = array_values(array_filter(array_map('intval', $hiddenFromParams), function($v){ return $v > 0; }));
     $hiddenIds = $hiddenFromParams;
     // Also auto-detect a category named/aliased 'hidden' for com_content
-    $db = \Joomla\CMS\Factory::getDbo();
+    $db = Factory::getContainer()->get(DatabaseInterface::class);
     $q = $db->getQuery(true)
         ->select($db->qn('id'))
         ->from($db->qn('#__categories'))
@@ -99,7 +100,7 @@ try {
 // Fetch authors with published articles
 $authors = [];
 try {
-    $db = \Joomla\CMS\Factory::getDbo();
+    $db = Factory::getContainer()->get(DatabaseInterface::class);
     $query = $db->getQuery(true)
         ->select('created_by, COUNT(*) as num')
         ->from($db->qn('#__content'))
