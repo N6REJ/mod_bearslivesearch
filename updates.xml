@@ -5,13 +5,13 @@
     <description />
     <element>mod_bearslivesearch</element>
     <type>module</type>
-    <version>2026.10.17</version>
+    <version>2026.10.17.1</version>
     <client>site</client>
     <infourl />
     <downloads>
-      <downloadurl type="full" format="zip">https://github.com/N6REJ/mod_bearslivesearch/releases/download/2026.10.17/mod_bearslivesearch_2026.10.17.zip</downloadurl>
+      <downloadurl type="full" format="zip">https://github.com/N6REJ/mod_bearslivesearch/releases/download/2026.10.17.1/mod_bearslivesearch_2026.10.17.1.zip</downloadurl>
     </downloads>
     <targetplatform name="joomla" version="(5|6).*" />
-    <sha256>936c07cdfd5c28b689eb7ca1e0dab078bb0b22c20a173a078f7b4d6ca271a61f</sha256>
+    <sha256>761f97ce99f6c584f3c31050af689d5c234bfa7b33ac0a9bbfdf2d944d315a34</sha256>
   </update>
 </updates>
