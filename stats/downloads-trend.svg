@@ -19,31 +19,31 @@
   </defs>
   <rect class="bg" x="0" y="0" width="1000" height="360" rx="16" />
   <text class="title" x="64" y="34">N6REJ/mod_bearslivesearch release downloads</text>
-  <text class="sub" x="64" y="352">Generated 2026-10-26</text>
+  <text class="sub" x="64" y="352">Generated 2026-10-27</text>
   <line x1="64" y1="52.00" x2="976" y2="52.00" class="grid"/>
-  <text x="56" y="56.00" text-anchor="end" class="axis">234</text>
+  <text x="56" y="56.00" text-anchor="end" class="axis">236</text>
   <line x1="64" y1="94.00" x2="976" y2="94.00" class="grid"/>
-  <text x="56" y="98.00" text-anchor="end" class="axis">195</text>
+  <text x="56" y="98.00" text-anchor="end" class="axis">197</text>
   <line x1="64" y1="136.00" x2="976" y2="136.00" class="grid"/>
-  <text x="56" y="140.00" text-anchor="end" class="axis">156</text>
+  <text x="56" y="140.00" text-anchor="end" class="axis">157</text>
   <line x1="64" y1="178.00" x2="976" y2="178.00" class="grid"/>
-  <text x="56" y="182.00" text-anchor="end" class="axis">117</text>
+  <text x="56" y="182.00" text-anchor="end" class="axis">118</text>
   <line x1="64" y1="220.00" x2="976" y2="220.00" class="grid"/>
-  <text x="56" y="224.00" text-anchor="end" class="axis">78</text>
+  <text x="56" y="224.00" text-anchor="end" class="axis">79</text>
   <line x1="64" y1="262.00" x2="976" y2="262.00" class="grid"/>
   <text x="56" y="266.00" text-anchor="end" class="axis">39</text>
   <line x1="64" y1="304.00" x2="976" y2="304.00" class="grid"/>
   <text x="56" y="308.00" text-anchor="end" class="axis">0</text>
-  <path d="M 64.00 304 L 64.00 139.23 L 121.00 138.15 L 178.00 138.15 L 235.00 138.15 L 292.00 138.15 L 349.00 137.08 L 406.00 137.08 L 463.00 129.54 L 520.00 129.54 L 577.00 128.46 L 634.00 127.38 L 691.00 92.92 L 748.00 90.77 L 805.00 89.69 L 862.00 88.62 L 919.00 87.54 L 976.00 52.00 L 976.00 304 Z" fill="url(#fill-total-trend-black)"/>
-  <polyline class="line" points="64.00,139.23 121.00,138.15 178.00,138.15 235.00,138.15 292.00,138.15 349.00,137.08 406.00,137.08 463.00,129.54 520.00,129.54 577.00,128.46 634.00,127.38 691.00,92.92 748.00,90.77 805.00,89.69 862.00,88.62 919.00,87.54 976.00,52.00"/>
+  <path d="M 64.00 304 L 64.00 140.63 L 117.65 139.56 L 171.29 139.56 L 224.94 139.56 L 278.59 139.56 L 332.24 138.49 L 385.88 138.49 L 439.53 131.02 L 493.18 131.02 L 546.82 129.95 L 600.47 128.88 L 654.12 94.71 L 707.76 92.58 L 761.41 91.51 L 815.06 90.44 L 868.71 89.37 L 922.35 54.14 L 976.00 52.00 L 976.00 304 Z" fill="url(#fill-total-trend-black)"/>
+  <polyline class="line" points="64.00,140.63 117.65,139.56 171.29,139.56 224.94,139.56 278.59,139.56 332.24,138.49 385.88,138.49 439.53,131.02 493.18,131.02 546.82,129.95 600.47,128.88 654.12,94.71 707.76,92.58 761.41,91.51 815.06,90.44 868.71,89.37 922.35,54.14 976.00,52.00"/>
   <circle class="dot" cx="976.00" cy="52.00" r="4.5"/>
   
   <text class="axis" x="64.00" y="336" text-anchor="start">2026-10-10</text>
-  <text class="axis" x="235.00" y="336" text-anchor="middle">2026-10-13</text>
-  <text class="axis" x="406.00" y="336" text-anchor="middle">2026-10-16</text>
-  <text class="axis" x="577.00" y="336" text-anchor="middle">2026-10-19</text>
-  <text class="axis" x="748.00" y="336" text-anchor="middle">2026-10-22</text>
-  <text class="axis" x="919.00" y="336" text-anchor="middle">2026-10-25</text>
-  <text class="axis" x="976.00" y="336" text-anchor="end">2026-10-26</text>
-  <text class="latest" x="976" y="34" text-anchor="end">Latest total: 234</text>
+  <text class="axis" x="224.94" y="336" text-anchor="middle">2026-10-13</text>
+  <text class="axis" x="385.88" y="336" text-anchor="middle">2026-10-16</text>
+  <text class="axis" x="546.82" y="336" text-anchor="middle">2026-10-19</text>
+  <text class="axis" x="707.76" y="336" text-anchor="middle">2026-10-22</text>
+  <text class="axis" x="868.71" y="336" text-anchor="middle">2026-10-25</text>
+  <text class="axis" x="976.00" y="336" text-anchor="end">2026-10-27</text>
+  <text class="latest" x="976" y="34" text-anchor="end">Latest total: 236</text>
 </svg>
