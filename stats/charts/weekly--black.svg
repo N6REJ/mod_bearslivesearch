@@ -19,7 +19,7 @@
   </defs>
   <rect class="bg" x="0" y="0" width="1000" height="360" rx="16" />
   <text class="title" x="64" y="34">N6REJ/mod_bearslivesearch release downloads</text>
-  <text class="sub" x="64" y="352">Generated 2026-10-29</text>
+  <text class="sub" x="64" y="352">Generated 2026-10-30</text>
   <line x1="64" y1="52.00" x2="976" y2="52.00" class="grid"/>
   <text x="56" y="56.00" text-anchor="end" class="axis">72</text>
   <line x1="64" y1="94.00" x2="976" y2="94.00" class="grid"/>
@@ -34,17 +34,15 @@
   <text x="56" y="266.00" text-anchor="end" class="axis">12</text>
   <line x1="64" y1="304.00" x2="976" y2="304.00" class="grid"/>
   <text x="56" y="308.00" text-anchor="end" class="axis">0</text>
-  <path d="M 64.00 304 L 64.00 304.00 L 112.00 300.50 L 160.00 300.50 L 208.00 300.50 L 256.00 300.50 L 304.00 297.00 L 352.00 297.00 L 400.00 272.50 L 448.00 276.00 L 496.00 272.50 L 544.00 269.00 L 592.00 157.00 L 640.00 153.50 L 688.00 150.00 L 736.00 171.00 L 784.00 167.50 L 832.00 55.50 L 880.00 52.00 L 928.00 164.00 L 976.00 55.50 L 976.00 304 Z" fill="url(#fill-weekly-black)"/>
-  <polyline class="line" points="64.00,304.00 112.00,300.50 160.00,300.50 208.00,300.50 256.00,300.50 304.00,297.00 352.00,297.00 400.00,272.50 448.00,276.00 496.00,272.50 544.00,269.00 592.00,157.00 640.00,153.50 688.00,150.00 736.00,171.00 784.00,167.50 832.00,55.50 880.00,52.00 928.00,164.00 976.00,55.50"/>
-  <circle class="dot" cx="976.00" cy="55.50" r="4.5"/>
+  <path d="M 64.00 304 L 64.00 304.00 L 109.60 300.50 L 155.20 300.50 L 200.80 300.50 L 246.40 300.50 L 292.00 297.00 L 337.60 297.00 L 383.20 272.50 L 428.80 276.00 L 474.40 272.50 L 520.00 269.00 L 565.60 157.00 L 611.20 153.50 L 656.80 150.00 L 702.40 171.00 L 748.00 167.50 L 793.60 55.50 L 839.20 52.00 L 884.80 164.00 L 930.40 55.50 L 976.00 59.00 L 976.00 304 Z" fill="url(#fill-weekly-black)"/>
+  <polyline class="line" points="64.00,304.00 109.60,300.50 155.20,300.50 200.80,300.50 246.40,300.50 292.00,297.00 337.60,297.00 383.20,272.50 428.80,276.00 474.40,272.50 520.00,269.00 565.60,157.00 611.20,153.50 656.80,150.00 702.40,171.00 748.00,167.50 793.60,55.50 839.20,52.00 884.80,164.00 930.40,55.50 976.00,59.00"/>
+  <circle class="dot" cx="976.00" cy="59.00" r="4.5"/>
   
   <text class="axis" x="64.00" y="336" text-anchor="start">2026-10-10</text>
-  <text class="axis" x="208.00" y="336" text-anchor="middle">2026-10-13</text>
-  <text class="axis" x="352.00" y="336" text-anchor="middle">2026-10-16</text>
-  <text class="axis" x="496.00" y="336" text-anchor="middle">2026-10-19</text>
-  <text class="axis" x="640.00" y="336" text-anchor="middle">2026-10-22</text>
-  <text class="axis" x="784.00" y="336" text-anchor="middle">2026-10-25</text>
-  <text class="axis" x="928.00" y="336" text-anchor="middle">2026-10-28</text>
-  <text class="axis" x="976.00" y="336" text-anchor="end">2026-10-29</text>
-  <text class="latest" x="976" y="34" text-anchor="end">Latest week: 71</text>
+  <text class="axis" x="246.40" y="336" text-anchor="middle">2026-10-14</text>
+  <text class="axis" x="428.80" y="336" text-anchor="middle">2026-10-18</text>
+  <text class="axis" x="611.20" y="336" text-anchor="middle">2026-10-22</text>
+  <text class="axis" x="793.60" y="336" text-anchor="middle">2026-10-26</text>
+  <text class="axis" x="976.00" y="336" text-anchor="end">2026-10-30</text>
+  <text class="latest" x="976" y="34" text-anchor="end">Latest week: 70</text>
 </svg>
