@@ -3,12 +3,12 @@
   "owner": "N6REJ",
   "repo": "mod_bearslivesearch",
   "visibility": "public",
-  "generatedAt": "2026-11-20T14:39:57.318Z",
+  "generatedAt": "2026-11-21T13:56:54.593Z",
   "stats": {
     "total": 277,
     "day": 0,
-    "week": 3,
-    "month": 81
+    "week": 2,
+    "month": 79
   },
   "partial": {
     "day": false,
@@ -17,9 +17,9 @@
   },
   "snapshots": {
     "windowDays": 180,
-    "count": 42,
+    "count": 43,
     "firstDate": "2026-10-10",
-    "lastDate": "2026-11-20",
+    "lastDate": "2026-11-21",
     "series": {
       "2026-10-10": 153,
       "2026-10-11": 154,
@@ -62,7 +62,8 @@
       "2026-11-17": 275,
       "2026-11-18": 276,
       "2026-11-19": 277,
-      "2026-11-20": 277
+      "2026-11-20": 277,
+      "2026-11-21": 277
     }
   },
   "profile": {
